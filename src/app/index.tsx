@@ -1,11 +1,14 @@
 import {
   ActivityIndicator,
+  StyleSheet,
   View,
 } from "react-native";
 
 import { Redirect } from "expo-router";
 
-import { useAuth } from "@/features/auth/hooks/useAuth";
+import {
+  useAuth,
+} from "@/features/auth/hooks/useAuth";
 
 export default function IndexScreen() {
   const {
@@ -15,7 +18,7 @@ export default function IndexScreen() {
 
   if (isInitializing) {
     return (
-      <View className="flex-1 items-center justify-center bg-slate-50">
+      <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" />
       </View>
     );
@@ -23,7 +26,7 @@ export default function IndexScreen() {
 
   if (isAuthenticated) {
     return (
-      <Redirect href="/(app)" />
+      <Redirect href="/(app)/home" />
     );
   }
 
@@ -31,3 +34,12 @@ export default function IndexScreen() {
     <Redirect href="/(auth)/login" />
   );
 }
+
+const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#f8fafc",
+  },
+});

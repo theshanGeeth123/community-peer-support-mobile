@@ -64,7 +64,6 @@ export default function LoginScreen() {
         password: data.password,
       });
 
-      router.replace("/(app)");
     } catch (error) {
       setApiError(
         getApiErrorMessage(error)
