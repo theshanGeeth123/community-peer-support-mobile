@@ -1,17 +1,33 @@
-import { Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  View,
+} from "react-native";
 
-export default function HomeScreen() {
-  return (
-    <View className="flex-1 items-center justify-center bg-white">
-      <Text className="text-3xl font-bold text-blue-500">
-        Welcome to NativeWind!
-      </Text>
+import { Redirect } from "expo-router";
 
-      <View className="mt-6 rounded-xl bg-green-500 px-6 py-4">
-        <Text className="font-semibold text-white">
-          NativeWind is working
-        </Text>
+import { useAuth } from "@/features/auth/hooks/useAuth";
+
+export default function IndexScreen() {
+  const {
+    isAuthenticated,
+    isInitializing,
+  } = useAuth();
+
+  if (isInitializing) {
+    return (
+      <View className="flex-1 items-center justify-center bg-slate-50">
+        <ActivityIndicator size="large" />
       </View>
-    </View>
+    );
+  }
+
+  if (isAuthenticated) {
+    return (
+      <Redirect href="/(app)" />
+    );
+  }
+
+  return (
+    <Redirect href="/(auth)/login" />
   );
 }
