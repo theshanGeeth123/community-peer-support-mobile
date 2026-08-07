@@ -39,10 +39,3 @@ export interface UserFilters {
   status?: AccountStatus;
   provider?: AuthProvider;
 }
-
-export interface AdminStats {
-  totalUsers: number;
-  activeUsers: number;
-  suspendedUsers: number;
-  deactivatedUsers: number;
-}

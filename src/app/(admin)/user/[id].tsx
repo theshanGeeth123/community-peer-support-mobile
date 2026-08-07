@@ -58,18 +58,21 @@ const ROLES: Array<{
     description:
       "Standard platform access",
   },
+
   {
     value: "PEER_SUPPORTER",
     label: "Peer Supporter",
     description:
-      "Peer-support privileges",
+      "Peer support privileges",
   },
+
   {
     value: "MODERATOR",
     label: "Moderator",
     description:
-      "Community moderation privileges",
+      "Community moderation access",
   },
+
   {
     value: "ADMIN",
     label: "Administrator",
@@ -89,12 +92,14 @@ const STATUSES: Array<{
     description:
       "User can access the platform",
   },
+
   {
     value: "SUSPENDED",
     label: "Suspended",
     description:
-      "Temporarily prevent account access",
+      "Temporarily block account access",
   },
+
   {
     value: "DEACTIVATED",
     label: "Deactivated",
@@ -186,8 +191,8 @@ export default function AdminUserDetailsScreen() {
       }
 
       try {
-        setError(null);
         setLoading(true);
+        setError(null);
 
         const response =
           await adminApi.getUser(
@@ -212,50 +217,6 @@ export default function AdminUserDetailsScreen() {
     void loadUser();
   }, [loadUser]);
 
-  const confirmRoleChange = (
-    role: UserRole
-  ) => {
-    if (!user) {
-      return;
-    }
-
-    if (
-      user.role === role
-    ) {
-      return;
-    }
-
-    if (isCurrentAdmin) {
-      Alert.alert(
-        "Action not allowed",
-        "You cannot change your own administrator role."
-      );
-
-      return;
-    }
-
-    Alert.alert(
-      "Change user role",
-      `Change ${user.fullName}'s role to ${role}?`,
-      [
-        {
-          text: "Cancel",
-          style: "cancel",
-        },
-
-        {
-          text: "Change Role",
-
-          onPress: () => {
-            void updateRole(
-              role
-            );
-          },
-        },
-      ]
-    );
-  };
-
   const updateRole =
     async (
       role: UserRole
@@ -278,12 +239,12 @@ export default function AdminUserDetailsScreen() {
         );
 
         Alert.alert(
-          "Role updated",
-          "The user's role was updated successfully."
+          "Role Updated",
+          "The user role was updated successfully."
         );
       } catch (requestError) {
         Alert.alert(
-          "Unable to update role",
+          "Unable to Update Role",
           getApiErrorMessage(
             requestError
           )
@@ -293,32 +254,31 @@ export default function AdminUserDetailsScreen() {
       }
     };
 
-  const confirmStatusChange = (
-    status: AccountStatus
+  const confirmRoleChange = (
+    role: UserRole
   ) => {
     if (!user) {
       return;
     }
 
     if (
-      user.accountStatus ===
-      status
+      user.role === role
     ) {
       return;
     }
 
     if (isCurrentAdmin) {
       Alert.alert(
-        "Action not allowed",
-        "You cannot change your own account status."
+        "Action Not Allowed",
+        "You cannot change your own administrator role."
       );
 
       return;
     }
 
     Alert.alert(
-      "Change account status",
-      `Change ${user.fullName}'s status to ${status}?`,
+      "Change Role",
+      `Change ${user.fullName}'s role to ${role}?`,
       [
         {
           text: "Cancel",
@@ -326,16 +286,11 @@ export default function AdminUserDetailsScreen() {
         },
 
         {
-          text: "Continue",
-
-          style:
-            status === "ACTIVE"
-              ? "default"
-              : "destructive",
+          text: "Change",
 
           onPress: () => {
-            void updateStatus(
-              status
+            void updateRole(
+              role
             );
           },
         },
@@ -365,12 +320,12 @@ export default function AdminUserDetailsScreen() {
         );
 
         Alert.alert(
-          "Status updated",
+          "Status Updated",
           "The account status was updated successfully."
         );
       } catch (requestError) {
         Alert.alert(
-          "Unable to update status",
+          "Unable to Update Status",
           getApiErrorMessage(
             requestError
           )
@@ -380,32 +335,55 @@ export default function AdminUserDetailsScreen() {
       }
     };
 
-  const confirmRevokeSessions =
-    () => {
-      if (!user) {
-        return;
-      }
+  const confirmStatusChange = (
+    status: AccountStatus
+  ) => {
+    if (!user) {
+      return;
+    }
 
+    if (
+      user.accountStatus ===
+      status
+    ) {
+      return;
+    }
+
+    if (isCurrentAdmin) {
       Alert.alert(
-        "Revoke active sessions",
-        `This will sign ${user.fullName} out from every active device. Continue?`,
-        [
-          {
-            text: "Cancel",
-            style: "cancel",
-          },
-
-          {
-            text: "Revoke Sessions",
-            style: "destructive",
-
-            onPress: () => {
-              void revokeSessions();
-            },
-          },
-        ]
+        "Action Not Allowed",
+        "You cannot suspend or deactivate your own administrator account."
       );
-    };
+
+      return;
+    }
+
+    Alert.alert(
+      "Change Account Status",
+      `Change ${user.fullName}'s account status to ${status}?`,
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+
+        {
+          text: "Continue",
+
+          style:
+            status === "ACTIVE"
+              ? "default"
+              : "destructive",
+
+          onPress: () => {
+            void updateStatus(
+              status
+            );
+          },
+        },
+      ]
+    );
+  };
 
   const revokeSessions =
     async () => {
@@ -422,12 +400,12 @@ export default function AdminUserDetailsScreen() {
           );
 
         Alert.alert(
-          "Sessions revoked",
+          "Sessions Revoked",
           `${response.data.revokedSessionCount} active session(s) were revoked.`
         );
       } catch (requestError) {
         Alert.alert(
-          "Unable to revoke sessions",
+          "Unable to Revoke Sessions",
           getApiErrorMessage(
             requestError
           )
@@ -435,6 +413,33 @@ export default function AdminUserDetailsScreen() {
       } finally {
         setWorking(false);
       }
+    };
+
+  const confirmRevokeSessions =
+    () => {
+      if (!user) {
+        return;
+      }
+
+      Alert.alert(
+        "Revoke Sessions",
+        `Sign ${user.fullName} out from all active devices?`,
+        [
+          {
+            text: "Cancel",
+            style: "cancel",
+          },
+
+          {
+            text: "Revoke",
+            style: "destructive",
+
+            onPress: () => {
+              void revokeSessions();
+            },
+          },
+        ]
+      );
     };
 
   if (loading) {
@@ -466,8 +471,7 @@ export default function AdminUserDetailsScreen() {
     <SafeAreaView
       style={{
         flex: 1,
-        backgroundColor:
-          "#f8fafc",
+        backgroundColor: "#f8fafc",
       }}
       edges={[
         "top",
@@ -476,8 +480,14 @@ export default function AdminUserDetailsScreen() {
       ]}
     >
       <ScrollView
-        className="flex-1"
-        contentContainerClassName="px-5 pb-10 pt-4"
+        style={{
+          flex: 1,
+        }}
+        contentContainerStyle={{
+          paddingHorizontal: 20,
+          paddingTop: 16,
+          paddingBottom: 40,
+        }}
         showsVerticalScrollIndicator={
           false
         }
@@ -502,7 +512,7 @@ export default function AdminUserDetailsScreen() {
             </Text>
 
             <Text className="mt-1 text-sm text-slate-500">
-              Manage account permissions and access
+              Manage permissions and access
             </Text>
           </View>
         </View>
@@ -524,7 +534,7 @@ export default function AdminUserDetailsScreen() {
             />
 
             <Text className="mt-4 font-bold text-slate-900">
-              User unavailable
+              User not available
             </Text>
           </View>
         ) : (
@@ -585,6 +595,16 @@ export default function AdminUserDetailsScreen() {
 
               <View className="mt-5">
                 <Text className="text-xs font-semibold uppercase text-slate-400">
+                  Email
+                </Text>
+
+                <Text className="mt-2 font-semibold text-slate-700">
+                  {user.email}
+                </Text>
+              </View>
+
+              <View className="mt-5">
+                <Text className="text-xs font-semibold uppercase text-slate-400">
                   Email Verification
                 </Text>
 
@@ -606,14 +626,14 @@ export default function AdminUserDetailsScreen() {
                   <Text className="ml-2 font-semibold text-slate-700">
                     {user.isEmailVerified
                       ? "Verified"
-                      : "Not verified"}
+                      : "Not Verified"}
                   </Text>
                 </View>
               </View>
 
               <View className="mt-5">
                 <Text className="text-xs font-semibold uppercase text-slate-400">
-                  Authentication Methods
+                  Login Methods
                 </Text>
 
                 <View className="mt-3 flex-row flex-wrap gap-2">
@@ -640,7 +660,7 @@ export default function AdminUserDetailsScreen() {
 
               <View className="mt-5">
                 <Text className="text-xs font-semibold uppercase text-slate-400">
-                  Created At
+                  Created
                 </Text>
 
                 <Text className="mt-2 font-medium text-slate-700">
@@ -679,7 +699,7 @@ export default function AdminUserDetailsScreen() {
                   </Text>
 
                   <Text className="mt-1 text-sm text-slate-500">
-                    Control platform permissions
+                    Manage platform permissions
                   </Text>
                 </View>
               </View>
@@ -687,7 +707,8 @@ export default function AdminUserDetailsScreen() {
               {isCurrentAdmin && (
                 <View className="mt-5 rounded-2xl border border-orange-200 bg-orange-50 p-4">
                   <Text className="text-sm leading-5 text-orange-700">
-                    You cannot modify your own administrator role.
+                    You cannot modify your own
+                    administrator role.
                   </Text>
                 </View>
               )}
@@ -771,7 +792,7 @@ export default function AdminUserDetailsScreen() {
                   </Text>
 
                   <Text className="mt-1 text-sm text-slate-500">
-                    Control account accessibility
+                    Control account access
                   </Text>
                 </View>
               </View>
@@ -779,7 +800,8 @@ export default function AdminUserDetailsScreen() {
               {isCurrentAdmin && (
                 <View className="mt-5 rounded-2xl border border-orange-200 bg-orange-50 p-4">
                   <Text className="text-sm leading-5 text-orange-700">
-                    You cannot suspend or deactivate your own administrator account.
+                    You cannot change your own
+                    administrator account status.
                   </Text>
                 </View>
               )}
@@ -871,13 +893,14 @@ export default function AdminUserDetailsScreen() {
                   </Text>
 
                   <Text className="mt-1 text-sm text-slate-500">
-                    End active login sessions
+                    End active sessions
                   </Text>
                 </View>
               </View>
 
               <Text className="mt-5 text-sm leading-6 text-slate-500">
-                Revoking sessions will immediately require the user to sign in again on every device.
+                Revoking sessions signs this user
+                out from every active device.
               </Text>
 
               <Pressable
