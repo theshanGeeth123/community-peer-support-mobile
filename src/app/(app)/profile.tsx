@@ -1,33 +1,35 @@
 import {
-    useEffect,
-    useState,
+  useEffect,
+  useState,
 } from "react";
 
 import {
-    Alert,
-    Pressable,
-    ScrollView,
-    Text,
-    View,
+  Alert,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
 } from "react-native";
 
 import {
-    SafeAreaView,
+  SafeAreaView,
 } from "react-native-safe-area-context";
 
 import { router } from "expo-router";
 
+import { Ionicons } from "@expo/vector-icons";
+
 import {
-    Controller,
-    useForm,
+  Controller,
+  useForm,
 } from "react-hook-form";
 
 import {
-    zodResolver,
+  zodResolver,
 } from "@hookform/resolvers/zod";
 
 import {
-    authApi,
+  authApi,
 } from "@/features/auth/api/auth.api";
 
 import ApiMessage from "@/features/auth/components/ApiMessage";
@@ -35,16 +37,16 @@ import AuthButton from "@/features/auth/components/AuthButton";
 import AuthInput from "@/features/auth/components/AuthInput";
 
 import {
-    useAuth,
+  useAuth,
 } from "@/features/auth/hooks/useAuth";
 
 import {
-    updateProfileSchema,
-    type UpdateProfileFormData,
+  updateProfileSchema,
+  type UpdateProfileFormData,
 } from "@/features/auth/schemas/auth.schemas";
 
 import {
-    getApiErrorMessage,
+  getApiErrorMessage,
 } from "@/services/api/apiError";
 
 export default function ProfileScreen() {
@@ -130,28 +132,10 @@ export default function ProfileScreen() {
       }
     };
 
-  const performLogout =
-    async () => {
-      await logout();
-
-      router.replace(
-        "/(auth)/login"
-      );
-    };
-
-  const performLogoutAll =
-    async () => {
-      await logoutAll();
-
-      router.replace(
-        "/(auth)/login"
-      );
-    };
-
   const handleLogout = () => {
     Alert.alert(
       "Sign out",
-      "Are you sure you want to sign out?",
+      "Are you sure you want to sign out from this device?",
       [
         {
           text: "Cancel",
@@ -163,39 +147,41 @@ export default function ProfileScreen() {
           style: "destructive",
 
           onPress: () => {
-            void performLogout();
+            void logout();
           },
         },
       ]
     );
   };
 
-  const handleLogoutAll =
-    () => {
-      Alert.alert(
-        "Logout from all devices",
-        "This will end all active login sessions for your account.",
-        [
-          {
-            text: "Cancel",
-            style: "cancel",
-          },
+  const handleLogoutAll = () => {
+    Alert.alert(
+      "Logout from all devices",
+      "This will end all active sessions for your account.",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
 
-          {
-            text: "Continue",
-            style: "destructive",
+        {
+          text: "Continue",
+          style: "destructive",
 
-            onPress: () => {
-              void performLogoutAll();
-            },
+          onPress: () => {
+            void logoutAll();
           },
-        ]
-      );
-    };
+        },
+      ]
+    );
+  };
 
   return (
     <SafeAreaView
-      style={{ flex: 1, backgroundColor: "#f8fafc" }}
+      style={{
+        flex: 1,
+        backgroundColor: "#f8fafc",
+      }}
       edges={[
         "top",
         "left",
@@ -204,64 +190,80 @@ export default function ProfileScreen() {
     >
       <ScrollView
         className="flex-1"
-        contentContainerClassName="px-6 pb-10 pt-6"
+        contentContainerClassName="px-5 pb-8 pt-4"
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={
           false
         }
       >
-        <View className="mb-7 flex-row items-center justify-between">
-          <View className="flex-1">
-            <Text className="text-3xl font-bold text-slate-900">
-              Profile
-            </Text>
+        <View className="mb-6">
+          <Text className="text-3xl font-bold text-slate-900">
+            Profile
+          </Text>
 
-            <Text className="mt-1 text-slate-500">
-              Manage your account
-            </Text>
-          </View>
-
-          <Pressable
-            onPress={() =>
-              router.back()
-            }
-            className="rounded-xl bg-slate-200 px-4 py-2"
-          >
-            <Text className="font-semibold text-slate-700">
-              Back
-            </Text>
-          </Pressable>
+          <Text className="mt-2 leading-6 text-slate-500">
+            Manage your personal information
+            and account security.
+          </Text>
         </View>
 
-        <View className="mb-6 rounded-3xl bg-indigo-600 p-6">
-          <View className="h-16 w-16 items-center justify-center rounded-full bg-white/20">
-            <Text className="text-2xl font-bold text-white">
-              {user?.fullName
-                ?.charAt(0)
-                .toUpperCase() ??
-                "U"}
-            </Text>
+        <View className="rounded-3xl bg-indigo-600 p-6">
+          <View className="flex-row items-center">
+            <View className="h-16 w-16 items-center justify-center rounded-full bg-white/20">
+              <Text className="text-2xl font-bold text-white">
+                {user?.fullName
+                  ?.charAt(0)
+                  .toUpperCase() ||
+                  "U"}
+              </Text>
+            </View>
+
+            <View className="ml-4 flex-1">
+              <Text className="text-xl font-bold text-white">
+                {user?.fullName}
+              </Text>
+
+              <Text className="mt-1 text-indigo-100">
+                {user?.email}
+              </Text>
+            </View>
           </View>
 
-          <Text className="mt-4 text-2xl font-bold text-white">
-            {user?.fullName}
-          </Text>
+          <View className="mt-5 flex-row gap-2">
+            <View className="rounded-full bg-white/15 px-4 py-2">
+              <Text className="text-xs font-bold text-white">
+                {user?.role}
+              </Text>
+            </View>
 
-          <Text className="mt-1 text-indigo-100">
-            {user?.email}
-          </Text>
-
-          <View className="mt-4 self-start rounded-full bg-white/20 px-4 py-2">
-            <Text className="text-xs font-bold text-white">
-              {user?.role}
-            </Text>
+            <View className="rounded-full bg-white/15 px-4 py-2">
+              <Text className="text-xs font-bold text-white">
+                {user?.accountStatus}
+              </Text>
+            </View>
           </View>
         </View>
 
-        <View className="rounded-3xl border border-slate-200 bg-white p-6">
-          <Text className="mb-5 text-xl font-bold text-slate-900">
-            Personal Information
-          </Text>
+        <View className="mt-6 rounded-3xl border border-slate-200 bg-white p-6">
+          <View className="mb-5 flex-row items-center">
+            <View className="h-10 w-10 items-center justify-center rounded-xl bg-indigo-50">
+              <Ionicons
+                name="person-outline"
+                size={21}
+                color="#4f46e5"
+              />
+            </View>
+
+            <View className="ml-3">
+              <Text className="text-lg font-bold text-slate-900">
+                Personal Information
+              </Text>
+
+              <Text className="mt-1 text-sm text-slate-500">
+                Update your account details
+              </Text>
+            </View>
+          </View>
 
           <ApiMessage
             message={apiError}
@@ -307,15 +309,29 @@ export default function ProfileScreen() {
               Email address
             </Text>
 
-            <View className="min-h-14 justify-center rounded-2xl border border-slate-200 bg-slate-100 px-4">
-              <Text className="text-slate-500">
+            <View className="min-h-14 flex-row items-center rounded-2xl border border-slate-200 bg-slate-100 px-4">
+              <Ionicons
+                name="mail-outline"
+                size={19}
+                color="#64748b"
+              />
+
+              <Text className="ml-3 flex-1 text-slate-500">
                 {user?.email}
               </Text>
+
+              {user?.isEmailVerified && (
+                <Ionicons
+                  name="checkmark-circle"
+                  size={20}
+                  color="#059669"
+                />
+              )}
             </View>
           </View>
 
           <AuthButton
-            title="Save changes"
+            title="Save Changes"
             loading={
               isSubmitting
             }
@@ -326,16 +342,37 @@ export default function ProfileScreen() {
         </View>
 
         <View className="mt-6 rounded-3xl border border-slate-200 bg-white p-6">
-          <Text className="text-xl font-bold text-slate-900">
-            Security
-          </Text>
+          <View className="mb-5 flex-row items-center">
+            <View className="h-10 w-10 items-center justify-center rounded-xl bg-emerald-50">
+              <Ionicons
+                name="shield-checkmark-outline"
+                size={21}
+                color="#059669"
+              />
+            </View>
 
-          <Text className="mt-2 text-sm leading-5 text-slate-500">
-            Login methods:{" "}
-            {user?.authProviders.join(
-              ", "
-            )}
-          </Text>
+            <View className="ml-3">
+              <Text className="text-lg font-bold text-slate-900">
+                Security
+              </Text>
+
+              <Text className="mt-1 text-sm text-slate-500">
+                Manage sign-in and sessions
+              </Text>
+            </View>
+          </View>
+
+          <View className="mb-4 rounded-2xl bg-slate-50 p-4">
+            <Text className="text-xs font-semibold uppercase text-slate-400">
+              Login Methods
+            </Text>
+
+            <Text className="mt-2 font-semibold text-slate-700">
+              {user?.authProviders?.join(
+                ", "
+              ) || "LOCAL"}
+            </Text>
+          </View>
 
           <Pressable
             onPress={() =>
@@ -343,38 +380,85 @@ export default function ProfileScreen() {
                 "/(app)/change-password"
               )
             }
-            className="mt-5 min-h-14 justify-center rounded-2xl border border-slate-200 px-4"
+            className="mb-3 flex-row items-center rounded-2xl border border-slate-200 p-4"
           >
-            <Text className="font-semibold text-slate-800">
-              Change Password
-            </Text>
+            <View className="h-10 w-10 items-center justify-center rounded-xl bg-indigo-50">
+              <Ionicons
+                name="key-outline"
+                size={21}
+                color="#4f46e5"
+              />
+            </View>
+
+            <View className="ml-3 flex-1">
+              <Text className="font-bold text-slate-800">
+                Change Password
+              </Text>
+
+              <Text className="mt-1 text-xs text-slate-500">
+                Update your account password
+              </Text>
+            </View>
+
+            <Ionicons
+              name="chevron-forward"
+              size={20}
+              color="#94a3b8"
+            />
           </Pressable>
 
           <Pressable
             onPress={
               handleLogoutAll
             }
-            className="mt-3 min-h-14 justify-center rounded-2xl border border-orange-200 bg-orange-50 px-4"
+            className="mb-3 flex-row items-center rounded-2xl border border-orange-200 bg-orange-50 p-4"
           >
-            <Text className="font-semibold text-orange-700">
-              Logout From All Devices
-            </Text>
+            <View className="h-10 w-10 items-center justify-center rounded-xl bg-orange-100">
+              <Ionicons
+                name="phone-portrait-outline"
+                size={21}
+                color="#c2410c"
+              />
+            </View>
+
+            <View className="ml-3 flex-1">
+              <Text className="font-bold text-orange-800">
+                Logout From All Devices
+              </Text>
+
+              <Text className="mt-1 text-xs text-orange-600">
+                End every active session
+              </Text>
+            </View>
           </Pressable>
 
           <Pressable
             onPress={
               handleLogout
             }
-            className="mt-3 min-h-14 justify-center rounded-2xl border border-red-200 bg-red-50 px-4"
+            className="flex-row items-center rounded-2xl border border-red-200 bg-red-50 p-4"
           >
-            <Text className="font-semibold text-red-700">
-              Sign Out
-            </Text>
+            <View className="h-10 w-10 items-center justify-center rounded-xl bg-red-100">
+              <Ionicons
+                name="log-out-outline"
+                size={21}
+                color="#dc2626"
+              />
+            </View>
+
+            <View className="ml-3 flex-1">
+              <Text className="font-bold text-red-700">
+                Sign Out
+              </Text>
+
+              <Text className="mt-1 text-xs text-red-500">
+                Sign out from this device
+              </Text>
+            </View>
           </Pressable>
         </View>
 
-        {user?.role ===
-          "ADMIN" && (
+        {user?.role === "ADMIN" && (
           <Pressable
             onPress={() =>
               router.push(
@@ -383,14 +467,32 @@ export default function ProfileScreen() {
             }
             className="mt-6 rounded-3xl bg-slate-900 p-6"
           >
-            <Text className="text-lg font-bold text-white">
-              Admin User Management
-            </Text>
+            <View className="flex-row items-center">
+              <View className="h-12 w-12 items-center justify-center rounded-2xl bg-white/10">
+                <Ionicons
+                  name="settings-outline"
+                  size={24}
+                  color="white"
+                />
+              </View>
 
-            <Text className="mt-1 text-sm text-slate-300">
-              Manage users, roles
-              and account access
-            </Text>
+              <View className="ml-4 flex-1">
+                <Text className="text-lg font-bold text-white">
+                  Admin User Management
+                </Text>
+
+                <Text className="mt-1 text-sm leading-5 text-slate-300">
+                  Manage users, roles and
+                  account access.
+                </Text>
+              </View>
+
+              <Ionicons
+                name="chevron-forward"
+                size={20}
+                color="#cbd5e1"
+              />
+            </View>
           </Pressable>
         )}
       </ScrollView>

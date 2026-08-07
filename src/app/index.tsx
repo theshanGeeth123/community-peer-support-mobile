@@ -4,7 +4,9 @@ import {
   View,
 } from "react-native";
 
-import { Redirect } from "expo-router";
+import {
+  Redirect,
+} from "expo-router";
 
 import {
   useAuth,
@@ -18,8 +20,11 @@ export default function IndexScreen() {
 
   if (isInitializing) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" />
+      <View style={styles.container}>
+        <ActivityIndicator
+          size="large"
+          color="#4f46e5"
+        />
       </View>
     );
   }
@@ -36,10 +41,13 @@ export default function IndexScreen() {
 }
 
 const styles = StyleSheet.create({
-  loadingContainer: {
+  container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#f8fafc",
+    alignItems:
+      "center",
+    justifyContent:
+      "center",
+    backgroundColor:
+      "#f8fafc",
   },
 });
