@@ -1,23 +1,21 @@
 import apiClient from "@/services/api/apiClient";
 
 import type {
-    AccountStatus,
-    ApiResponse,
-    UserRole,
+  AccountStatus,
+  ApiResponse,
+  UserRole,
 } from "@/features/auth/types/auth.types";
 
 import type {
-    AdminUser,
-    UserFilters,
-    UsersResponseData,
+  AdminUser,
+  UserFilters,
+  UsersResponseData,
 } from "../types/admin.types";
 
 export const adminApi = {
   async getUsers(
     filters: UserFilters = {}
-  ): Promise<
-    ApiResponse<UsersResponseData>
-  > {
+  ): Promise<ApiResponse<UsersResponseData>> {
     const response = await apiClient.get<
       ApiResponse<UsersResponseData>
     >("/admin/users", {
@@ -51,17 +49,16 @@ export const adminApi = {
       user: AdminUser;
     }>
   > {
-    const response =
-      await apiClient.patch<
-        ApiResponse<{
-          user: AdminUser;
-        }>
-      >(
-        `/admin/users/${userId}/role`,
-        {
-          role,
-        }
-      );
+    const response = await apiClient.patch<
+      ApiResponse<{
+        user: AdminUser;
+      }>
+    >(
+      `/admin/users/${userId}/role`,
+      {
+        role,
+      }
+    );
 
     return response.data;
   },
@@ -74,17 +71,16 @@ export const adminApi = {
       user: AdminUser;
     }>
   > {
-    const response =
-      await apiClient.patch<
-        ApiResponse<{
-          user: AdminUser;
-        }>
-      >(
-        `/admin/users/${userId}/status`,
-        {
-          accountStatus,
-        }
-      );
+    const response = await apiClient.patch<
+      ApiResponse<{
+        user: AdminUser;
+      }>
+    >(
+      `/admin/users/${userId}/status`,
+      {
+        accountStatus,
+      }
+    );
 
     return response.data;
   },
@@ -96,14 +92,13 @@ export const adminApi = {
       revokedSessionCount: number;
     }>
   > {
-    const response =
-      await apiClient.post<
-        ApiResponse<{
-          revokedSessionCount: number;
-        }>
-      >(
-        `/admin/users/${userId}/revoke-sessions`
-      );
+    const response = await apiClient.post<
+      ApiResponse<{
+        revokedSessionCount: number;
+      }>
+    >(
+      `/admin/users/${userId}/revoke-sessions`
+    );
 
     return response.data;
   },
