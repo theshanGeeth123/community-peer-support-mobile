@@ -18,6 +18,13 @@ import {
   useAuth,
 } from "@/features/auth/hooks/useAuth";
 
+import GlobalProfileButton from "@/features/navigation/components/GlobalProfileButton";
+import ProfileDrawer from "@/features/navigation/components/ProfileDrawer";
+
+import {
+  ProfileDrawerProvider,
+} from "@/features/navigation/context/ProfileDrawerContext";
+
 export default function AppLayout() {
   const {
     user,
@@ -68,409 +75,428 @@ export default function AppLayout() {
     isPeerSupporter;
 
   return (
-    <Tabs
-      initialRouteName="home"
-      screenOptions={{
-        headerShown: false,
+    <ProfileDrawerProvider>
+      <View style={styles.appContainer}>
+        <Tabs
+          initialRouteName="home"
+          screenOptions={{
+            headerShown: false,
 
-        tabBarHideOnKeyboard:
-          true,
+            tabBarHideOnKeyboard:
+              true,
 
-        tabBarActiveTintColor:
-          "#4f46e5",
+            tabBarActiveTintColor:
+              "#4f46e5",
 
-        tabBarInactiveTintColor:
-          "#94a3b8",
+            tabBarInactiveTintColor:
+              "#94a3b8",
 
-        tabBarLabelStyle: {
-          fontSize: 10.5,
-          fontWeight: "600",
-          marginTop: 2,
-        },
+            tabBarLabelStyle: {
+              fontSize: 10.5,
+              fontWeight: "600",
+              marginTop: 2,
+            },
 
-        tabBarItemStyle: {
-          paddingTop: 4,
-        },
+            tabBarItemStyle: {
+              paddingTop: 4,
+            },
 
-        tabBarStyle: {
-          backgroundColor:
-            "#ffffff",
+            tabBarStyle: {
+              backgroundColor:
+                "#ffffff",
 
-          borderTopColor:
-            "#e2e8f0",
+              borderTopColor:
+                "#e2e8f0",
 
-          borderTopWidth: 1,
+              borderTopWidth: 1,
 
-          height:
-            Platform.OS === "ios"
-              ? 88
-              : 72,
+              height:
+                Platform.OS ===
+                "ios"
+                  ? 88
+                  : 72,
 
-          paddingTop: 6,
+              paddingTop: 6,
 
-          paddingBottom:
-            Platform.OS === "ios"
-              ? 24
-              : 8,
+              paddingBottom:
+                Platform.OS ===
+                "ios"
+                  ? 24
+                  : 8,
 
-          elevation: 12,
+              elevation: 12,
 
-          shadowColor: "#000",
+              shadowColor:
+                "#000000",
 
-          shadowOffset: {
-            width: 0,
-            height: -2,
-          },
+              shadowOffset: {
+                width: 0,
+                height: -2,
+              },
 
-          shadowOpacity: 0.06,
+              shadowOpacity:
+                0.06,
 
-          shadowRadius: 8,
-        },
-      }}
-    >
-      {/* HOME / ADMIN DASHBOARD */}
+              shadowRadius: 8,
+            },
+          }}
+        >
+          <Tabs.Screen
+            name="home"
+            options={{
+              title: isAdmin
+                ? "Dashboard"
+                : "Home",
 
-      <Tabs.Screen
-        name="home"
-        options={{
-          title: isAdmin
-            ? "Dashboard"
-            : "Home",
+              tabBarIcon: ({
+                color,
+                size,
+                focused,
+              }) => (
+                <Ionicons
+                  name={
+                    isAdmin
+                      ? focused
+                        ? "grid"
+                        : "grid-outline"
+                      : focused
+                        ? "home"
+                        : "home-outline"
+                  }
+                  size={size}
+                  color={color}
+                />
+              ),
+            }}
+          />
 
-          tabBarIcon: ({
-            color,
-            size,
-            focused,
-          }) => (
-            <Ionicons
-              name={
-                isAdmin
-                  ? focused
-                    ? "grid"
-                    : "grid-outline"
-                  : focused
-                    ? "home"
-                    : "home-outline"
-              }
-              size={size}
-              color={color}
-            />
-          ),
-        }}
-      />
+          <Tabs.Screen
+            name="groups"
+            options={{
+              title: "Groups",
 
-      {/* NORMAL USER GROUPS */}
+              href: isUser
+                ? undefined
+                : null,
 
-      <Tabs.Screen
-        name="groups"
-        options={{
-          title: "Groups",
+              tabBarIcon: ({
+                color,
+                size,
+                focused,
+              }) => (
+                <Ionicons
+                  name={
+                    focused
+                      ? "people"
+                      : "people-outline"
+                  }
+                  size={size}
+                  color={color}
+                />
+              ),
+            }}
+          />
 
-          href: isUser
-            ? undefined
-            : null,
+          <Tabs.Screen
+            name="peer-groups"
+            options={{
+              title:
+                "My Groups",
 
-          tabBarIcon: ({
-            color,
-            size,
-            focused,
-          }) => (
-            <Ionicons
-              name={
-                focused
-                  ? "people"
-                  : "people-outline"
-              }
-              size={size}
-              color={color}
-            />
-          ),
-        }}
-      />
+              href:
+                isPeerSupporter
+                  ? undefined
+                  : null,
 
-      {/* PEER SUPPORTER */}
+              tabBarIcon: ({
+                color,
+                size,
+                focused,
+              }) => (
+                <Ionicons
+                  name={
+                    focused
+                      ? "people"
+                      : "people-outline"
+                  }
+                  size={size}
+                  color={color}
+                />
+              ),
+            }}
+          />
 
-      <Tabs.Screen
-        name="peer-groups"
-        options={{
-          title: "My Groups",
+          <Tabs.Screen
+            name="peer-join-requests"
+            options={{
+              title:
+                "Requests",
 
-          href: isPeerSupporter
-            ? undefined
-            : null,
+              href:
+                isPeerSupporter
+                  ? undefined
+                  : null,
 
-          tabBarIcon: ({
-            color,
-            size,
-            focused,
-          }) => (
-            <Ionicons
-              name={
-                focused
-                  ? "people"
-                  : "people-outline"
-              }
-              size={size}
-              color={color}
-            />
-          ),
-        }}
-      />
+              tabBarIcon: ({
+                color,
+                size,
+                focused,
+              }) => (
+                <Ionicons
+                  name={
+                    focused
+                      ? "person-add"
+                      : "person-add-outline"
+                  }
+                  size={size}
+                  color={color}
+                />
+              ),
+            }}
+          />
 
-      <Tabs.Screen
-        name="peer-join-requests"
-        options={{
-          title: "Requests",
+          <Tabs.Screen
+            name="moderator-reports"
+            options={{
+              title:
+                "Reports",
 
-          href: isPeerSupporter
-            ? undefined
-            : null,
+              href:
+                isModerator
+                  ? undefined
+                  : null,
 
-          tabBarIcon: ({
-            color,
-            size,
-            focused,
-          }) => (
-            <Ionicons
-              name={
-                focused
-                  ? "person-add"
-                  : "person-add-outline"
-              }
-              size={size}
-              color={color}
-            />
-          ),
-        }}
-      />
+              tabBarIcon: ({
+                color,
+                size,
+                focused,
+              }) => (
+                <Ionicons
+                  name={
+                    focused
+                      ? "flag"
+                      : "flag-outline"
+                  }
+                  size={size}
+                  color={color}
+                />
+              ),
+            }}
+          />
 
-      {/* MODERATOR */}
+          <Tabs.Screen
+            name="moderator-groups"
+            options={{
+              title:
+                "Groups",
 
-      <Tabs.Screen
-        name="moderator-reports"
-        options={{
-          title: "Reports",
+              href:
+                isModerator
+                  ? undefined
+                  : null,
 
-          href: isModerator
-            ? undefined
-            : null,
+              tabBarIcon: ({
+                color,
+                size,
+                focused,
+              }) => (
+                <Ionicons
+                  name={
+                    focused
+                      ? "people"
+                      : "people-outline"
+                  }
+                  size={size}
+                  color={color}
+                />
+              ),
+            }}
+          />
 
-          tabBarIcon: ({
-            color,
-            size,
-            focused,
-          }) => (
-            <Ionicons
-              name={
-                focused
-                  ? "flag"
-                  : "flag-outline"
-              }
-              size={size}
-              color={color}
-            />
-          ),
-        }}
-      />
+          <Tabs.Screen
+            name="moderator-history"
+            options={{
+              title:
+                "History",
 
-      <Tabs.Screen
-        name="moderator-groups"
-        options={{
-          title: "Groups",
+              href:
+                isModerator
+                  ? undefined
+                  : null,
 
-          href: isModerator
-            ? undefined
-            : null,
+              tabBarIcon: ({
+                color,
+                size,
+                focused,
+              }) => (
+                <Ionicons
+                  name={
+                    focused
+                      ? "time"
+                      : "time-outline"
+                  }
+                  size={size}
+                  color={color}
+                />
+              ),
+            }}
+          />
 
-          tabBarIcon: ({
-            color,
-            size,
-            focused,
-          }) => (
-            <Ionicons
-              name={
-                focused
-                  ? "people"
-                  : "people-outline"
-              }
-              size={size}
-              color={color}
-            />
-          ),
-        }}
-      />
+          <Tabs.Screen
+            name="admin-users"
+            options={{
+              title: "Users",
 
-      <Tabs.Screen
-        name="moderator-history"
-        options={{
-          title: "History",
+              href: isAdmin
+                ? undefined
+                : null,
 
-          href: isModerator
-            ? undefined
-            : null,
+              tabBarIcon: ({
+                color,
+                size,
+                focused,
+              }) => (
+                <Ionicons
+                  name={
+                    focused
+                      ? "people"
+                      : "people-outline"
+                  }
+                  size={size}
+                  color={color}
+                />
+              ),
+            }}
+          />
 
-          tabBarIcon: ({
-            color,
-            size,
-            focused,
-          }) => (
-            <Ionicons
-              name={
-                focused
-                  ? "time"
-                  : "time-outline"
-              }
-              size={size}
-              color={color}
-            />
-          ),
-        }}
-      />
+          <Tabs.Screen
+            name="admin-groups"
+            options={{
+              title: "Groups",
 
-      {/* ADMIN */}
+              href: isAdmin
+                ? undefined
+                : null,
 
-      <Tabs.Screen
-        name="admin-users"
-        options={{
-          title: "Users",
+              tabBarIcon: ({
+                color,
+                size,
+                focused,
+              }) => (
+                <Ionicons
+                  name={
+                    focused
+                      ? "layers"
+                      : "layers-outline"
+                  }
+                  size={size}
+                  color={color}
+                />
+              ),
+            }}
+          />
 
-          href: isAdmin
-            ? undefined
-            : null,
+          <Tabs.Screen
+            name="admin-reports"
+            options={{
+              title:
+                "Reports",
 
-          tabBarIcon: ({
-            color,
-            size,
-            focused,
-          }) => (
-            <Ionicons
-              name={
-                focused
-                  ? "people"
-                  : "people-outline"
-              }
-              size={size}
-              color={color}
-            />
-          ),
-        }}
-      />
+              href: isAdmin
+                ? undefined
+                : null,
 
-      <Tabs.Screen
-        name="admin-groups"
-        options={{
-          title: "Groups",
+              tabBarIcon: ({
+                color,
+                size,
+                focused,
+              }) => (
+                <Ionicons
+                  name={
+                    focused
+                      ? "flag"
+                      : "flag-outline"
+                  }
+                  size={size}
+                  color={color}
+                />
+              ),
+            }}
+          />
 
-          href: isAdmin
-            ? undefined
-            : null,
+          <Tabs.Screen
+            name="community"
+            options={{
+              title:
+                "Community",
 
-          tabBarIcon: ({
-            color,
-            size,
-            focused,
-          }) => (
-            <Ionicons
-              name={
-                focused
-                  ? "layers"
-                  : "layers-outline"
-              }
-              size={size}
-              color={color}
-            />
-          ),
-        }}
-      />
+              href:
+                canViewCommunity
+                  ? undefined
+                  : null,
 
-      <Tabs.Screen
-        name="admin-reports"
-        options={{
-          title: "Reports",
+              tabBarIcon: ({
+                color,
+                size,
+                focused,
+              }) => (
+                <Ionicons
+                  name={
+                    focused
+                      ? "chatbubbles"
+                      : "chatbubbles-outline"
+                  }
+                  size={size}
+                  color={color}
+                />
+              ),
+            }}
+          />
 
-          href: isAdmin
-            ? undefined
-            : null,
+          <Tabs.Screen
+            name="profile"
+            options={{
+              href: null,
+            }}
+          />
 
-          tabBarIcon: ({
-            color,
-            size,
-            focused,
-          }) => (
-            <Ionicons
-              name={
-                focused
-                  ? "flag"
-                  : "flag-outline"
-              }
-              size={size}
-              color={color}
-            />
-          ),
-        }}
-      />
+          <Tabs.Screen
+            name="change-password"
+            options={{
+              href: null,
 
-      {/* SHARED COMMUNITY */}
+              tabBarStyle: {
+                display:
+                  "none",
+              },
+            }}
+          />
+        </Tabs>
 
-      <Tabs.Screen
-        name="community"
-        options={{
-          title: "Community",
+        <GlobalProfileButton />
 
-          href: canViewCommunity
-            ? undefined
-            : null,
-
-          tabBarIcon: ({
-            color,
-            size,
-            focused,
-          }) => (
-            <Ionicons
-              name={
-                focused
-                  ? "chatbubbles"
-                  : "chatbubbles-outline"
-              }
-              size={size}
-              color={color}
-            />
-          ),
-        }}
-      />
-
-      {/* PROFILE STILL EXISTS,
-          ONLY REMOVED FROM BOTTOM BAR */}
-
-      <Tabs.Screen
-        name="profile"
-        options={{
-          href: null,
-        }}
-      />
-
-      {/* EXISTING HIDDEN SCREEN */}
-
-      <Tabs.Screen
-        name="change-password"
-        options={{
-          href: null,
-
-          tabBarStyle: {
-            display: "none",
-          },
-        }}
-      />
-    </Tabs>
+        <ProfileDrawer />
+      </View>
+    </ProfileDrawerProvider>
   );
 }
 
 const styles =
   StyleSheet.create({
+    appContainer: {
+      flex: 1,
+      backgroundColor:
+        "#f8fafc",
+    },
+
     loadingContainer: {
       flex: 1,
+
       alignItems: "center",
-      justifyContent: "center",
+
+      justifyContent:
+        "center",
+
       backgroundColor:
         "#f8fafc",
     },
