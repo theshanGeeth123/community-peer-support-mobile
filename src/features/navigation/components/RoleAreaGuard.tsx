@@ -1,23 +1,32 @@
+import type { PropsWithChildren } from "react";
+
 import {
-  ActivityIndicator,
-  StyleSheet,
-  View,
+    ActivityIndicator,
+    StyleSheet,
+    View,
 } from "react-native";
 
-import {
-  Redirect,
-  Stack,
-} from "expo-router";
+import { Redirect } from "expo-router";
+
+import { useAuth } from "@/features/auth/hooks/useAuth";
+
+import type {
+    UserRole,
+} from "@/features/auth/types/auth.types";
 
 import {
-  useAuth,
-} from "@/features/auth/hooks/useAuth";
-
-import {
-  getRoleHomeRoute,
+    getRoleHomeRoute,
 } from "@/features/navigation/roleNavigation";
 
-export default function AdminLayout() {
+interface RoleAreaGuardProps
+  extends PropsWithChildren {
+  allowedRole: UserRole;
+}
+
+export default function RoleAreaGuard({
+  allowedRole,
+  children,
+}: RoleAreaGuardProps) {
   const {
     user,
     isAuthenticated,
@@ -44,7 +53,7 @@ export default function AdminLayout() {
     );
   }
 
-  if (user.role !== "ADMIN") {
+  if (user.role !== allowedRole) {
     return (
       <Redirect
         href={getRoleHomeRoute(
@@ -54,18 +63,7 @@ export default function AdminLayout() {
     );
   }
 
-  return (
-    <Stack
-      screenOptions={{
-        headerShown: false,
-        animation: "slide_from_right",
-
-        contentStyle: {
-          backgroundColor: "#f8fafc",
-        },
-      }}
-    />
-  );
+  return <>{children}</>;
 }
 
 const styles = StyleSheet.create({

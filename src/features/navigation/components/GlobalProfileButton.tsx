@@ -21,23 +21,26 @@ import {
 
 import UserAvatar from "./UserAvatar";
 
-const MAIN_TAB_PATHS = [
-  "/home",
+const MAIN_TAB_PATHS = new Set([
+  "/user/home",
+  "/user/groups",
+  "/user/community",
 
-  "/groups",
-  "/community",
+  "/peer-supporter/home",
+  "/peer-supporter/my-groups",
+  "/peer-supporter/join-requests",
+  "/peer-supporter/community",
 
-  "/peer-groups",
-  "/peer-join-requests",
+  "/moderator/home",
+  "/moderator/reports",
+  "/moderator/groups",
+  "/moderator/history",
 
-  "/moderator-reports",
-  "/moderator-groups",
-  "/moderator-history",
-
-  "/admin-users",
-  "/admin-groups",
-  "/admin-reports",
-];
+  "/admin/dashboard",
+  "/admin/users",
+  "/admin/groups",
+  "/admin/reports",
+]);
 
 export default function GlobalProfileButton() {
   const pathname =
@@ -49,17 +52,15 @@ export default function GlobalProfileButton() {
   const { user } =
     useAuth();
 
-  const { openDrawer } =
-    useProfileDrawer();
-
-  const shouldShow =
-    MAIN_TAB_PATHS.includes(
-      pathname
-    );
+  const {
+    openDrawer,
+  } = useProfileDrawer();
 
   if (
-    !shouldShow ||
-    !user
+    !user ||
+    !MAIN_TAB_PATHS.has(
+      pathname
+    )
   ) {
     return null;
   }
@@ -67,14 +68,15 @@ export default function GlobalProfileButton() {
   return (
     <Pressable
       onPress={openDrawer}
+      hitSlop={8}
       style={[
         styles.button,
+
         {
           top:
-            insets.top + 16,
+            insets.top + 14,
         },
       ]}
-      hitSlop={8}
     >
       <UserAvatar
         fullName={
@@ -83,7 +85,7 @@ export default function GlobalProfileButton() {
         avatarUrl={
           user.avatarUrl
         }
-        size={44}
+        size={43}
       />
     </Pressable>
   );
@@ -93,9 +95,8 @@ const styles =
   StyleSheet.create({
     button: {
       position: "absolute",
-      right: 20,
-      zIndex: 100,
-      elevation: 20,
+
+      right: 18,
 
       width: 48,
       height: 48,
@@ -103,6 +104,7 @@ const styles =
       borderRadius: 24,
 
       alignItems: "center",
+
       justifyContent:
         "center",
 
@@ -110,8 +112,13 @@ const styles =
         "#ffffff",
 
       borderWidth: 2,
+
       borderColor:
         "#ffffff",
+
+      zIndex: 100,
+
+      elevation: 20,
 
       shadowColor:
         "#000000",
@@ -122,6 +129,7 @@ const styles =
       },
 
       shadowOpacity: 0.12,
+
       shadowRadius: 5,
     },
   });
