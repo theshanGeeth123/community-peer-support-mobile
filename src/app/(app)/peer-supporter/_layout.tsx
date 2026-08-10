@@ -1,13 +1,13 @@
 import {
-    Platform,
+  Platform,
 } from "react-native";
 
 import {
-    Tabs,
+  Tabs,
 } from "expo-router";
 
 import {
-    Ionicons,
+  Ionicons,
 } from "@expo/vector-icons";
 
 import RoleAreaGuard from "@/features/navigation/components/RoleAreaGuard";
@@ -22,38 +22,46 @@ export default function PeerSupporterLayout() {
         screenOptions={{
           headerShown: false,
 
+          tabBarHideOnKeyboard:
+            true,
+
           tabBarActiveTintColor:
             "#4f46e5",
 
           tabBarInactiveTintColor:
             "#94a3b8",
 
-          tabBarHideOnKeyboard:
-            true,
-
           tabBarLabelStyle: {
-            fontSize: 10,
-            fontWeight: "600",
+            fontSize: 11,
+
+            fontWeight:
+              "600",
+
+            marginTop: 2,
           },
 
           tabBarStyle: {
+            backgroundColor:
+              "#ffffff",
+
+            borderTopColor:
+              "#e2e8f0",
+
+            borderTopWidth: 1,
+
             height:
-              Platform.OS === "ios"
+              Platform.OS ===
+              "ios"
                 ? 88
                 : 72,
 
             paddingTop: 6,
 
             paddingBottom:
-              Platform.OS === "ios"
+              Platform.OS ===
+              "ios"
                 ? 24
                 : 8,
-
-            backgroundColor:
-              "#ffffff",
-
-            borderTopColor:
-              "#e2e8f0",
           },
         }}
       >
@@ -65,9 +73,14 @@ export default function PeerSupporterLayout() {
             tabBarIcon: ({
               color,
               size,
+              focused,
             }) => (
               <Ionicons
-                name="home-outline"
+                name={
+                  focused
+                    ? "home"
+                    : "home-outline"
+                }
                 size={size}
                 color={color}
               />
@@ -78,14 +91,20 @@ export default function PeerSupporterLayout() {
         <Tabs.Screen
           name="my-groups"
           options={{
-            title: "My Groups",
+            title:
+              "My Groups",
 
             tabBarIcon: ({
               color,
               size,
+              focused,
             }) => (
               <Ionicons
-                name="people-outline"
+                name={
+                  focused
+                    ? "people"
+                    : "people-outline"
+                }
                 size={size}
                 color={color}
               />
@@ -96,14 +115,20 @@ export default function PeerSupporterLayout() {
         <Tabs.Screen
           name="join-requests"
           options={{
-            title: "Requests",
+            title:
+              "Requests",
 
             tabBarIcon: ({
               color,
               size,
+              focused,
             }) => (
               <Ionicons
-                name="person-add-outline"
+                name={
+                  focused
+                    ? "person-add"
+                    : "person-add-outline"
+                }
                 size={size}
                 color={color}
               />
@@ -114,14 +139,20 @@ export default function PeerSupporterLayout() {
         <Tabs.Screen
           name="community"
           options={{
-            title: "Community",
+            title:
+              "Community",
 
             tabBarIcon: ({
               color,
               size,
+              focused,
             }) => (
               <Ionicons
-                name="chatbubbles-outline"
+                name={
+                  focused
+                    ? "chatbubbles"
+                    : "chatbubbles-outline"
+                }
                 size={size}
                 color={color}
               />

@@ -3,6 +3,7 @@ import {
 } from "react";
 
 import {
+  ActivityIndicator,
   Pressable,
   Text,
   View,
@@ -39,8 +40,51 @@ import {
   getApiErrorMessage,
 } from "@/services/api/apiError";
 
+const DEMO_PASSWORD =
+  "Test@12345";
+
+const DEMO_ACCOUNTS = [
+  {
+    role: "USER",
+    label: "User",
+    email:
+      "user.test@example.com",
+    icon:
+      "person-outline" as const,
+  },
+
+  {
+    role: "PEER_SUPPORTER",
+    label: "Peer Supporter",
+    email:
+      "peer.test@example.com",
+    icon:
+      "people-outline" as const,
+  },
+
+  {
+    role: "MODERATOR",
+    label: "Moderator",
+    email:
+      "moderator.test@example.com",
+    icon:
+      "shield-checkmark-outline" as const,
+  },
+
+  {
+    role: "ADMIN",
+    label: "Admin",
+    email:
+      "admin.test@example.com",
+    icon:
+      "settings-outline" as const,
+  },
+];
+
 export default function LoginScreen() {
-  const { login } = useAuth();
+  const {
+    login,
+  } = useAuth();
 
   const [
     apiError,
@@ -48,6 +92,13 @@ export default function LoginScreen() {
   ] = useState<string | null>(
     null
   );
+
+  const [
+    demoLoadingRole,
+    setDemoLoadingRole,
+  ] = useState<
+    string | null
+  >(null);
 
   const {
     control,
@@ -78,16 +129,17 @@ export default function LoginScreen() {
       await login({
         email:
           data.email.trim(),
+
         password:
           data.password,
       });
 
       /*
-       * Do not manually navigate here.
+       * Navigation happens automatically
+       * after AuthContext updates the user.
        *
-       * Auth state changes after login and
-       * (auth)/_layout.tsx redirects the user
-       * to /(app)/home automatically.
+       * The auth layout redirects each role
+       * to its correct home screen.
        */
     } catch (error) {
       setApiError(
@@ -98,6 +150,46 @@ export default function LoginScreen() {
     }
   };
 
+  const handleDemoLogin =
+    async (
+      role: string,
+      email: string
+    ) => {
+      try {
+        setApiError(null);
+
+        setDemoLoadingRole(
+          role
+        );
+
+        await login({
+          email,
+          password:
+            DEMO_PASSWORD,
+        });
+
+        /*
+         * No manual router navigation here.
+         *
+         * Role-based redirect happens
+         * automatically after login.
+         */
+      } catch (error) {
+        setApiError(
+          getApiErrorMessage(
+            error
+          )
+        );
+      } finally {
+        setDemoLoadingRole(
+          null
+        );
+      }
+    };
+
+  const isDemoLoginLoading =
+    demoLoadingRole !== null;
+
   return (
     <AuthScreen
       title="Welcome back"
@@ -106,6 +198,118 @@ export default function LoginScreen() {
       <ApiMessage
         message={apiError}
       />
+
+      {/*
+       * DEVELOPMENT-ONLY DEMO LOGIN
+       *
+       * These buttons are shown only while
+       * running the app in development mode.
+       */}
+      {__DEV__ && (
+        <View className="mb-6 rounded-2xl border border-amber-200 bg-amber-50 p-4">
+          <View className="mb-3 flex-row items-center">
+            <View className="mr-2 h-8 w-8 items-center justify-center rounded-full bg-amber-100">
+              <Ionicons
+                name="flash-outline"
+                size={17}
+                color="#b45309"
+              />
+            </View>
+
+            <View className="flex-1">
+              <Text className="font-bold text-amber-900">
+                Demo Login
+              </Text>
+
+              <Text className="mt-0.5 text-xs text-amber-700">
+                Quick access for role testing
+              </Text>
+            </View>
+          </View>
+
+          <View className="gap-2">
+            {DEMO_ACCOUNTS.map(
+              (
+                account
+              ) => {
+                const isCurrentLoading =
+                  demoLoadingRole ===
+                  account.role;
+
+                const isDisabled =
+                  isSubmitting ||
+                  isDemoLoginLoading;
+
+                return (
+                  <Pressable
+                    key={
+                      account.role
+                    }
+                    disabled={
+                      isDisabled
+                    }
+                    onPress={() =>
+                      handleDemoLogin(
+                        account.role,
+                        account.email
+                      )
+                    }
+                    className={`min-h-12 flex-row items-center rounded-xl border px-4 ${
+                      isDisabled
+                        ? "border-slate-200 bg-slate-100"
+                        : "border-amber-200 bg-white active:bg-amber-100"
+                    }`}
+                  >
+                    <View className="mr-3 h-8 w-8 items-center justify-center rounded-lg bg-indigo-50">
+                      {isCurrentLoading ? (
+                        <ActivityIndicator
+                          size="small"
+                          color="#4f46e5"
+                        />
+                      ) : (
+                        <Ionicons
+                          name={
+                            account.icon
+                          }
+                          size={
+                            18
+                          }
+                          color="#4f46e5"
+                        />
+                      )}
+                    </View>
+
+                    <View className="flex-1">
+                      <Text className="font-semibold text-slate-800">
+                        {
+                          account.label
+                        }
+                      </Text>
+
+                      <Text
+                        numberOfLines={
+                          1
+                        }
+                        className="text-xs text-slate-500"
+                      >
+                        {
+                          account.email
+                        }
+                      </Text>
+                    </View>
+
+                    <Ionicons
+                      name="arrow-forward-outline"
+                      size={18}
+                      color="#64748b"
+                    />
+                  </Pressable>
+                );
+              }
+            )}
+          </View>
+        </View>
+      )}
 
       <Controller
         control={control}
@@ -118,7 +322,9 @@ export default function LoginScreen() {
             placeholder="you@example.com"
             keyboardType="email-address"
             autoCapitalize="none"
-            autoCorrect={false}
+            autoCorrect={
+              false
+            }
             value={
               field.value
             }
@@ -181,6 +387,9 @@ export default function LoginScreen() {
         loading={
           isSubmitting
         }
+        disabled={
+          isDemoLoginLoading
+        }
         onPress={handleSubmit(
           handleLogin
         )}
@@ -201,8 +410,7 @@ export default function LoginScreen() {
         onPress={() => {
           /*
            * Google Login will be integrated
-           * after the tab navigation work
-           * is completed.
+           * separately.
            */
         }}
       >
