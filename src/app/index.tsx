@@ -12,8 +12,13 @@ import {
   useAuth,
 } from "@/features/auth/hooks/useAuth";
 
+import {
+  getRoleHomeRoute,
+} from "@/features/navigation/roleNavigation";
+
 export default function IndexScreen() {
   const {
+    user,
     isAuthenticated,
     isInitializing,
   } = useAuth();
@@ -29,25 +34,37 @@ export default function IndexScreen() {
     );
   }
 
-  if (isAuthenticated) {
+  if (
+    isAuthenticated &&
+    user
+  ) {
     return (
-      <Redirect href="/(app)/home" />
+      <Redirect
+        href={getRoleHomeRoute(
+          user.role
+        )}
+      />
     );
   }
 
   return (
-    <Redirect href="/(auth)/login" />
+    <Redirect
+      href="/(auth)/login"
+    />
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems:
-      "center",
-    justifyContent:
-      "center",
-    backgroundColor:
-      "#f8fafc",
-  },
-});
+const styles =
+  StyleSheet.create({
+    container: {
+      flex: 1,
+
+      alignItems: "center",
+
+      justifyContent:
+        "center",
+
+      backgroundColor:
+        "#f8fafc",
+    },
+  });
