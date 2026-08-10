@@ -1,13 +1,13 @@
 import {
-    Platform,
+  Platform,
 } from "react-native";
 
 import {
-    Tabs,
+  Tabs,
 } from "expo-router";
 
 import {
-    Ionicons,
+  Ionicons,
 } from "@expo/vector-icons";
 
 import RoleAreaGuard from "@/features/navigation/components/RoleAreaGuard";
@@ -33,7 +33,8 @@ export default function UserLayout() {
 
           tabBarLabelStyle: {
             fontSize: 11,
-            fontWeight: "600",
+            fontWeight:
+              "600",
             marginTop: 2,
           },
 
@@ -47,14 +48,16 @@ export default function UserLayout() {
             borderTopWidth: 1,
 
             height:
-              Platform.OS === "ios"
+              Platform.OS ===
+              "ios"
                 ? 88
                 : 72,
 
             paddingTop: 6,
 
             paddingBottom:
-              Platform.OS === "ios"
+              Platform.OS ===
+              "ios"
                 ? 24
                 : 8,
           },
@@ -109,7 +112,8 @@ export default function UserLayout() {
         <Tabs.Screen
           name="community"
           options={{
-            title: "Community",
+            title:
+              "Community",
 
             tabBarIcon: ({
               color,
@@ -126,6 +130,22 @@ export default function UserLayout() {
                 color={color}
               />
             ),
+          }}
+        />
+
+        {/*
+         * Group Details is a real
+         * route, but must NOT appear
+         * as a bottom tab.
+         */}
+        <Tabs.Screen
+          name="group/[groupId]"
+          options={{
+            href: null,
+
+            tabBarStyle: {
+              display: "none",
+            },
           }}
         />
       </Tabs>
