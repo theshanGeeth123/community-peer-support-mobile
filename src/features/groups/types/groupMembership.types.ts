@@ -139,12 +139,33 @@ export interface GroupJoinRequestsResponseData {
   totalRequests: number;
 }
 
+export interface ModeratorGroupMembersResponseData {
+  group: {
+    id: string;
+    name: string;
+  };
+
+  memberships: GroupMembership[];
+
+  totalMembers: number;
+}
+
 export interface JoinGroupPayload {
   reason: string;
 }
 
 export interface ReviewJoinRequestPayload {
   reviewNote?:
+    | string
+    | null;
+}
+
+export interface ModerateMembershipPayload {
+  reason: string;
+}
+
+export interface ReactivateMembershipPayload {
+  reason?:
     | string
     | null;
 }
