@@ -190,6 +190,20 @@ export default function PeerSupporterMyGroupsScreen() {
       });
     };
 
+  const handleViewPosts =
+    (
+      groupId: string
+    ) => {
+      router.push({
+        pathname:
+          "/(app)/peer-supporter/group/[groupId]/posts" as Href,
+
+        params: {
+          groupId,
+        },
+      });
+    };
+
   return (
     <SafeAreaView
       style={
@@ -448,6 +462,11 @@ export default function PeerSupporterMyGroupsScreen() {
                       group.id
                     )
                   }
+                  onViewPosts={() =>
+                    handleViewPosts(
+                      group.id
+                    )
+                  }
                 />
               )
             )}
@@ -461,10 +480,12 @@ export default function PeerSupporterMyGroupsScreen() {
 function GroupCard({
   group,
   onViewRequests,
+  onViewPosts,
 }: {
   group: SupportGroup;
 
   onViewRequests: () => void;
+  onViewPosts: () => void;
 }) {
   const peerSupporterCount =
     group.peerSupporters
@@ -669,6 +690,62 @@ function GroupCard({
           >
             Review requests for
             this group
+          </Text>
+        </View>
+
+        <Ionicons
+          name="chevron-forward"
+          size={19}
+          color="#6366f1"
+        />
+      </Pressable>
+
+      <Pressable
+        onPress={
+          onViewPosts
+        }
+        style={({
+          pressed,
+        }) => [
+          styles.requestsButton,
+          { marginTop: 10 },
+
+          pressed && {
+            opacity: 0.82,
+          },
+        ]}
+      >
+        <View
+          style={
+            styles.requestsButtonIcon
+          }
+        >
+          <Ionicons
+            name="chatbubbles-outline"
+            size={18}
+            color="#4f46e5"
+          />
+        </View>
+
+        <View
+          style={
+            styles.requestsButtonContent
+          }
+        >
+          <Text
+            style={
+              styles.requestsButtonTitle
+            }
+          >
+            Posts
+          </Text>
+
+          <Text
+            style={
+              styles.requestsButtonDescription
+            }
+          >
+            View and moderate posts
           </Text>
         </View>
 
