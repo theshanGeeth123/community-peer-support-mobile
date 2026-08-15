@@ -92,7 +92,7 @@ export default function PeerSupporterLayout() {
           name="my-groups"
           options={{
             title:
-              "My Groups",
+              "Groups",
 
             tabBarIcon: ({
               color,
@@ -104,30 +104,6 @@ export default function PeerSupporterLayout() {
                   focused
                     ? "people"
                     : "people-outline"
-                }
-                size={size}
-                color={color}
-              />
-            ),
-          }}
-        />
-
-        <Tabs.Screen
-          name="join-requests"
-          options={{
-            title:
-              "Requests",
-
-            tabBarIcon: ({
-              color,
-              size,
-              focused,
-            }) => (
-              <Ionicons
-                name={
-                  focused
-                    ? "person-add"
-                    : "person-add-outline"
                 }
                 size={size}
                 color={color}
@@ -150,13 +126,70 @@ export default function PeerSupporterLayout() {
               <Ionicons
                 name={
                   focused
-                    ? "chatbubbles"
-                    : "chatbubbles-outline"
+                    ? "globe"
+                    : "globe-outline"
                 }
                 size={size}
                 color={color}
               />
             ),
+          }}
+        />
+
+        <Tabs.Screen
+          name="profile"
+          options={{
+            title:
+              "Profile",
+
+            tabBarIcon: ({
+              color,
+              size,
+              focused,
+            }) => (
+              <Ionicons
+                name={
+                  focused
+                    ? "person-circle"
+                    : "person-circle-outline"
+                }
+                size={size}
+                color={color}
+              />
+            ),
+          }}
+        />
+
+        {/*
+         * Requests remains a real
+         * route, reachable from Home
+         * quick actions, but must NOT
+         * appear as a bottom tab.
+         */}
+        <Tabs.Screen
+          name="join-requests"
+          options={{
+            href: null,
+
+            tabBarStyle: {
+              display: "none",
+            },
+          }}
+        />
+
+        {/*
+         * Group Details is a real
+         * route, but must NOT appear
+         * as a bottom tab.
+         */}
+        <Tabs.Screen
+          name="group/[groupId]/posts"
+          options={{
+            href: null,
+
+            tabBarStyle: {
+              display: "none",
+            },
           }}
         />
       </Tabs>
