@@ -28,6 +28,7 @@ import {
     router,
     useFocusEffect,
     useLocalSearchParams,
+    type Href,
 } from "expo-router";
 
 import {
@@ -128,6 +129,12 @@ export default function UserGroupDetailsScreen() {
   ] =
     useState(false);
 
+  const [
+    redirecting,
+    setRedirecting,
+  ] =
+    useState(false);
+
   const loadDetails =
     useCallback(
       async () => {
@@ -208,6 +215,21 @@ export default function UserGroupDetailsScreen() {
           setMembershipActive(
             isMember
           );
+
+          if (isMember) {
+            setRedirecting(true);
+
+            router.replace({
+              pathname:
+                "/(app)/user/group/[groupId]/posts" as Href,
+
+              params: {
+                groupId,
+              },
+            });
+
+            return;
+          }
         } catch (
           requestErrorValue
         ) {
@@ -337,7 +359,7 @@ export default function UserGroupDetailsScreen() {
       }
     };
 
-  if (loading) {
+  if (loading || redirecting) {
     return (
       <SafeAreaView
         style={
@@ -359,7 +381,9 @@ export default function UserGroupDetailsScreen() {
               styles.loadingText
             }
           >
-            Loading group...
+            {redirecting
+              ? "Opening group..."
+              : "Loading group..."}
           </Text>
         </View>
       </SafeAreaView>
@@ -551,14 +575,6 @@ export default function UserGroupDetailsScreen() {
             </View>
           )}
         </View>
-
-        {approved && (
-          <StatusMessage
-            type="success"
-            title="Membership Active"
-            description="Your join request has been approved. You are now a member of this support group."
-          />
-        )}
 
         {pending && (
           <StatusMessage
@@ -807,27 +823,6 @@ export default function UserGroupDetailsScreen() {
           </View>
         )}
 
-        {approved && (
-          <View
-            style={
-              styles.joinedButton
-            }
-          >
-            <Ionicons
-              name="checkmark-circle-outline"
-              size={22}
-              color="#047857"
-            />
-
-            <Text
-              style={
-                styles.joinedButtonText
-              }
-            >
-              You are a member
-            </Text>
-          </View>
-        )}
       </ScrollView>
 
       <Modal
@@ -1407,6 +1402,55 @@ const styles =
       fontSize: 12,
 
       lineHeight: 18,
+
+      color: "#64748b",
+    },
+
+    postsButton: {
+      minHeight: 66,
+
+      marginTop: 15,
+
+      paddingHorizontal: 14,
+
+      flexDirection: "row",
+
+      alignItems: "center",
+
+      borderWidth: 1,
+
+      borderColor: "#c7d2fe",
+
+      borderRadius: 18,
+
+      backgroundColor: "#eef2ff",
+    },
+
+    postsButtonIcon: {
+      width: 40,
+      height: 40,
+
+      alignItems: "center",
+
+      justifyContent: "center",
+
+      borderRadius: 13,
+
+      backgroundColor: "#ffffff",
+    },
+
+    postsButtonTitle: {
+      fontSize: 15,
+
+      fontWeight: "800",
+
+      color: "#0f172a",
+    },
+
+    postsButtonDescription: {
+      marginTop: 2,
+
+      fontSize: 11,
 
       color: "#64748b",
     },

@@ -13,13 +13,6 @@ import {
   useAuth,
 } from "@/features/auth/hooks/useAuth";
 
-import GlobalProfileButton from "@/features/navigation/components/GlobalProfileButton";
-import ProfileDrawer from "@/features/navigation/components/ProfileDrawer";
-
-import {
-  ProfileDrawerProvider,
-} from "@/features/navigation/context/ProfileDrawerContext";
-
 export default function AppLayout() {
   const {
     isAuthenticated,
@@ -50,24 +43,18 @@ export default function AppLayout() {
   }
 
   return (
-    <ProfileDrawerProvider>
-      <View style={styles.container}>
-        <Stack
-          screenOptions={{
-            headerShown: false,
+    <View style={styles.container}>
+      <Stack
+        screenOptions={{
+          headerShown: false,
 
-            contentStyle: {
-              backgroundColor:
-                "#f8fafc",
-            },
-          }}
-        />
-
-        <GlobalProfileButton />
-
-        <ProfileDrawer />
-      </View>
-    </ProfileDrawerProvider>
+          contentStyle: {
+            backgroundColor:
+              "#f8fafc",
+          },
+        }}
+      />
+    </View>
   );
 }
 

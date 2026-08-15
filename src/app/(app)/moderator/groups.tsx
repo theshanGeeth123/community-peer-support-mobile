@@ -442,6 +442,44 @@ export default function ModeratorGroupsScreen() {
                     color="#6366f1"
                   />
                 </Pressable>
+
+                <Pressable
+                  onPress={() =>
+                    router.push({
+                      pathname:
+                        "/(app)/moderator/group/[groupId]/posts" as Href,
+
+                      params: {
+                        groupId:
+                          group.id,
+                      },
+                    })
+                  }
+                  style={[
+                    styles.manageButton,
+                    { marginTop: 10 },
+                  ]}
+                >
+                  <Ionicons
+                    name="chatbubbles-outline"
+                    size={20}
+                    color="#4f46e5"
+                  />
+
+                  <Text
+                    style={
+                      styles.manageButtonText
+                    }
+                  >
+                    View Posts
+                  </Text>
+
+                  <Ionicons
+                    name="chevron-forward"
+                    size={19}
+                    color="#6366f1"
+                  />
+                </Pressable>
               </View>
             )
           )

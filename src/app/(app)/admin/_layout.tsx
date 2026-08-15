@@ -60,32 +60,14 @@ export default function AdminTabsLayout() {
         <Tabs.Screen
           name="dashboard"
           options={{
-            title: "Dashboard",
+            title: "Home",
 
             tabBarIcon: ({
               color,
               size,
             }) => (
               <Ionicons
-                name="grid-outline"
-                size={size}
-                color={color}
-              />
-            ),
-          }}
-        />
-
-        <Tabs.Screen
-          name="users"
-          options={{
-            title: "Users",
-
-            tabBarIcon: ({
-              color,
-              size,
-            }) => (
-              <Ionicons
-                name="people-outline"
+                name="home-outline"
                 size={size}
                 color={color}
               />
@@ -103,7 +85,7 @@ export default function AdminTabsLayout() {
               size,
             }) => (
               <Ionicons
-                name="layers-outline"
+                name="people-outline"
                 size={size}
                 color={color}
               />
@@ -112,20 +94,82 @@ export default function AdminTabsLayout() {
         />
 
         <Tabs.Screen
-          name="reports"
+          name="community"
           options={{
-            title: "Reports",
+            title: "Community",
 
             tabBarIcon: ({
               color,
               size,
             }) => (
               <Ionicons
-                name="flag-outline"
+                name="globe-outline"
                 size={size}
                 color={color}
               />
             ),
+          }}
+        />
+
+        <Tabs.Screen
+          name="profile"
+          options={{
+            title: "Profile",
+
+            tabBarIcon: ({
+              color,
+              size,
+            }) => (
+              <Ionicons
+                name="person-circle-outline"
+                size={size}
+                color={color}
+              />
+            ),
+          }}
+        />
+
+        {/*
+         * Users and Reports remain
+         * real routes, reachable from
+         * Home quick actions, but must
+         * NOT appear as bottom tabs.
+         */}
+        <Tabs.Screen
+          name="users"
+          options={{
+            href: null,
+
+            tabBarStyle: {
+              display: "none",
+            },
+          }}
+        />
+
+        <Tabs.Screen
+          name="reports"
+          options={{
+            href: null,
+
+            tabBarStyle: {
+              display: "none",
+            },
+          }}
+        />
+
+        {/*
+         * Group Details is a real
+         * route, but must NOT appear
+         * as a bottom tab.
+         */}
+        <Tabs.Screen
+          name="group/[groupId]/posts"
+          options={{
+            href: null,
+
+            tabBarStyle: {
+              display: "none",
+            },
           }}
         />
       </Tabs>

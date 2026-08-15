@@ -1,11 +1,8 @@
-import {
-  useCallback,
-  useMemo,
-  useState,
-} from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import {
   ActivityIndicator,
+  Alert,
   Pressable,
   RefreshControl,
   ScrollView,
@@ -15,177 +12,95 @@ import {
   View,
 } from "react-native";
 
-import {
-  SafeAreaView,
-} from "react-native-safe-area-context";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import {
-  Ionicons,
-} from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 
-import {
-  router,
-  useFocusEffect,
-  type Href,
-} from "expo-router";
+import { router, useFocusEffect, type Href } from "expo-router";
 
-import {
-  groupApi,
-} from "@/features/groups/api/group.api";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 
-import {
-  groupMembershipApi,
-} from "@/features/groups/api/groupMembership.api";
+import { groupMembershipApi } from "@/features/groups/api/groupMembership.api";
+import { postApi } from "@/features/groups/api/post.api";
 
-import type {
-  SupportGroup,
-} from "@/features/groups/types/group.types";
+import CreatePostComposer, {
+  type ComposerGroupOption,
+} from "@/features/groups/components/CreatePostComposer";
+import PostCard from "@/features/groups/components/PostCard";
+import PostCommentsModal from "@/features/groups/components/PostCommentsModal";
 
-import type {
-  GroupJoinRequest,
-  GroupMembership,
-  GroupReference,
-  JoinRequestStatus,
-} from "@/features/groups/types/groupMembership.types";
+import type { GroupReference } from "@/features/groups/types/groupMembership.types";
+import type { Post } from "@/features/groups/types/post.types";
 
-import {
-  getApiErrorMessage,
-} from "@/services/api/apiError";
+import { getApiErrorMessage } from "@/services/api/apiError";
 
-export default function UserGroupsScreen() {
-  const [
-    groups,
-    setGroups,
-  ] =
-    useState<SupportGroup[]>(
-      []
-    );
+function getGroupReferenceId(reference: GroupReference): string | null {
+  if (typeof reference === "string") {
+    return reference;
+  }
 
-  const [
-    joinRequests,
-    setJoinRequests,
-  ] =
-    useState<GroupJoinRequest[]>(
-      []
-    );
+  return reference.id ?? reference._id ?? null;
+}
 
-  const [
-    memberships,
-    setMemberships,
-  ] =
-    useState<GroupMembership[]>(
-      []
-    );
+export default function UserGroupsFeedScreen() {
+  const { user } = useAuth();
 
-  const [
-    search,
-    setSearch,
-  ] =
-    useState("");
+  const [joinedGroups, setJoinedGroups] = useState<ComposerGroupOption[]>([]);
 
-  const [
-    loading,
-    setLoading,
-  ] =
-    useState(true);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [submittingPost, setSubmittingPost] = useState(false);
 
-  const [
-    refreshing,
-    setRefreshing,
-  ] =
-    useState(false);
+  const [search, setSearch] = useState("");
+  const [activeCommentsPostId, setActiveCommentsPostId] = useState<
+    string | null
+  >(null);
 
-  const [
-    error,
-    setError,
-  ] =
-    useState<string | null>(
-      null
-    );
+  const loadData = useCallback(async (showLoading = true) => {
+    try {
+      if (showLoading) {
+        setLoading(true);
+      }
 
-  const loadData =
-    useCallback(
-      async (
-        showLoading = true
-      ) => {
-        try {
-          if (showLoading) {
-            setLoading(
-              true
-            );
-          }
+      setError(null);
 
-          setError(null);
+      const [membershipsResponse, feedResponse] = await Promise.all([
+        groupMembershipApi.getMyJoinedGroups(),
+        postApi.listMyFeed(),
+      ]);
 
-          const [
-            groupsResponse,
-            requestsResponse,
-            membershipsResponse,
-          ] =
-            await Promise.all([
-              groupApi.getGroups(
-                {
-                  page: 1,
-                  limit: 100,
-                }
-              ),
+      const groups: ComposerGroupOption[] = [];
 
-              groupMembershipApi.getMyJoinRequests(),
-
-              groupMembershipApi.getMyJoinedGroups(),
-            ]);
-
-          setGroups(
-            Array.isArray(
-              groupsResponse
-                .data.groups
-            )
-              ? groupsResponse
-                  .data.groups
-              : []
-          );
-
-          setJoinRequests(
-            Array.isArray(
-              requestsResponse
-                .data.requests
-            )
-              ? requestsResponse
-                  .data.requests
-              : []
-          );
-
-          setMemberships(
-            Array.isArray(
-              membershipsResponse
-                .data
-                .memberships
-            )
-              ? membershipsResponse
-                  .data
-                  .memberships
-              : []
-          );
-        } catch (
-          requestError
-        ) {
-          setError(
-            getApiErrorMessage(
-              requestError
-            )
-          );
-        } finally {
-          setLoading(
-            false
-          );
-
-          setRefreshing(
-            false
-          );
+      (membershipsResponse.data.memberships ?? []).forEach((membership) => {
+        if (membership.status !== "ACTIVE") {
+          return;
         }
-      },
-      []
-    );
+
+        const groupRef = membership.group;
+
+        if (typeof groupRef === "string") {
+          return;
+        }
+
+        const id = groupRef.id ?? groupRef._id;
+        const name = groupRef.name;
+
+        if (id && name) {
+          groups.push({ id, name });
+        }
+      });
+
+      setJoinedGroups(groups);
+      setPosts(feedResponse.data.posts ?? []);
+    } catch (requestError) {
+      setError(getApiErrorMessage(requestError));
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
@@ -195,1086 +110,453 @@ export default function UserGroupsScreen() {
     }, [loadData])
   );
 
-  const joinedGroupIds =
-    useMemo(() => {
-      const ids =
-        new Set<string>();
+  const handleRefresh = () => {
+    setRefreshing(true);
+    void loadData(false);
+  };
 
-      memberships.forEach(
-        (membership) => {
-          if (
-            membership.status !==
-            "ACTIVE"
-          ) {
-            return;
-          }
+  const normalizedSearch = search.trim().toLowerCase();
 
-          const groupId =
-            getGroupReferenceId(
-              membership.group
-            );
+  const matchingGroups = useMemo(() => {
+    if (!normalizedSearch) {
+      return [];
+    }
 
-          if (groupId) {
-            ids.add(
-              groupId
-            );
-          }
-        }
-      );
-
-      return ids;
-    }, [memberships]);
-
-  const latestRequestByGroup =
-    useMemo(() => {
-      const map =
-        new Map<
-          string,
-          GroupJoinRequest
-        >();
-
-      joinRequests.forEach(
-        (request) => {
-          const groupId =
-            getGroupReferenceId(
-              request.group
-            );
-
-          if (
-            groupId &&
-            !map.has(
-              groupId
-            )
-          ) {
-            map.set(
-              groupId,
-              request
-            );
-          }
-        }
-      );
-
-      return map;
-    }, [joinRequests]);
-
-  const normalizedSearch =
-    search
-      .trim()
-      .toLowerCase();
-
-  const filteredGroups =
-    useMemo(() => {
-      if (
-        !normalizedSearch
-      ) {
-        return groups;
-      }
-
-      return groups.filter(
-        (group) => {
-          const searchable =
-            [
-              group.name,
-              group.category,
-              group.description,
-              group.communityLocation ??
-                "",
-            ]
-              .join(" ")
-              .toLowerCase();
-
-          return searchable.includes(
-            normalizedSearch
-          );
-        }
-      );
-    }, [
-      groups,
-      normalizedSearch,
-    ]);
-
-  const myGroups =
-    filteredGroups.filter(
-      (group) =>
-        joinedGroupIds.has(
-          group.id
-        )
+    return joinedGroups.filter((group) =>
+      group.name.toLowerCase().includes(normalizedSearch)
     );
+  }, [joinedGroups, normalizedSearch]);
 
-  const availableGroups =
-    filteredGroups.filter(
-      (group) =>
-        !joinedGroupIds.has(
-          group.id
-        )
-    );
+  const visitGroup = (groupId: string) => {
+    setSearch("");
 
-  const handleRefresh =
-    () => {
-      setRefreshing(
-        true
-      );
+    router.push({
+      pathname: "/(app)/user/group/[groupId]/posts" as Href,
+      params: { groupId },
+    });
+  };
 
-      void loadData(false);
-    };
+  const handleCreatePost = async (
+    content: string,
+    isAnonymous: boolean,
+    groupId?: string
+  ) => {
+    if (!groupId) {
+      return;
+    }
 
-  const openGroup =
-    (
-      groupId: string
-    ) => {
-      router.push({
-        pathname:
-          "/(app)/user/group/[groupId]" as Href,
+    try {
+      setSubmittingPost(true);
 
-        params: {
-          groupId,
-        },
+      const response = await postApi.createPost(groupId, {
+        content,
+        isAnonymous,
       });
-    };
+
+      const groupName = joinedGroups.find(
+        (group) => group.id === groupId
+      )?.name;
+
+      setPosts((previous) => [
+        { ...response.data.post, groupName },
+        ...previous,
+      ]);
+    } catch (requestError) {
+      Alert.alert("Unable to post", getApiErrorMessage(requestError));
+    } finally {
+      setSubmittingPost(false);
+    }
+  };
+
+  const handleToggleLike = async (postId: string) => {
+    setPosts((previous) =>
+      previous.map((post) =>
+        post.id === postId
+          ? {
+              ...post,
+              likedByMe: !post.likedByMe,
+              likeCount: post.likedByMe
+                ? post.likeCount - 1
+                : post.likeCount + 1,
+            }
+          : post
+      )
+    );
+
+    try {
+      const response = await postApi.toggleLike(postId);
+
+      setPosts((previous) =>
+        previous.map((post) =>
+          post.id === postId
+            ? {
+                ...post,
+                likedByMe: response.data.liked,
+                likeCount: response.data.likeCount,
+              }
+            : post
+        )
+      );
+    } catch (requestError) {
+      Alert.alert("Unable to update like", getApiErrorMessage(requestError));
+      void loadData(false);
+    }
+  };
+
+  const handleDeletePost = (postId: string) => {
+    Alert.alert("Delete post", "Are you sure you want to delete this post?", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: () => void confirmDeletePost(postId),
+      },
+    ]);
+  };
+
+  const confirmDeletePost = async (postId: string) => {
+    try {
+      await postApi.deletePost(postId);
+
+      setPosts((previous) => previous.filter((post) => post.id !== postId));
+    } catch (requestError) {
+      Alert.alert("Unable to delete post", getApiErrorMessage(requestError));
+    }
+  };
 
   return (
-    <SafeAreaView
-      style={
-        styles.safeArea
-      }
-      edges={[
-        "top",
-        "left",
-        "right",
-      ]}
-    >
+    <SafeAreaView style={styles.safeArea} edges={["top", "left", "right"]}>
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Groups</Text>
+
+        <Pressable
+          onPress={() => router.push("/(app)/user/discover" as Href)}
+          style={styles.discoverButton}
+        >
+          <Ionicons name="compass-outline" size={16} color="#4f46e5" />
+
+          <Text style={styles.discoverButtonText}>Discover</Text>
+        </Pressable>
+      </View>
+
       <ScrollView
-        style={{
-          flex: 1,
-        }}
-        showsVerticalScrollIndicator={
-          false
-        }
-        contentContainerStyle={
-          styles.content
-        }
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.content}
         refreshControl={
-          <RefreshControl
-            refreshing={
-              refreshing
-            }
-            onRefresh={
-              handleRefresh
-            }
-          />
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }
+        keyboardShouldPersistTaps="handled"
       >
-        <View
-          style={
-            styles.headingArea
-          }
-        >
-          <Text
-            style={
-              styles.heading
-            }
-          >
-            Support Groups
-          </Text>
-
-          <Text
-            style={
-              styles.headingDescription
-            }
-          >
-            Find a supportive
-            community, request to
-            join, and connect once
-            approved.
-          </Text>
-        </View>
-
-        <View
-          style={
-            styles.searchBox
-          }
-        >
-          <Ionicons
-            name="search-outline"
-            size={20}
-            color="#94a3b8"
-          />
+        <View style={styles.searchBox}>
+          <Ionicons name="search-outline" size={19} color="#94a3b8" />
 
           <TextInput
             value={search}
-            onChangeText={
-              setSearch
-            }
-            placeholder="Search groups..."
+            onChangeText={setSearch}
+            placeholder="Search your groups to visit..."
             placeholderTextColor="#94a3b8"
-            style={
-              styles.searchInput
-            }
+            style={styles.searchInput}
           />
 
-          {search.length >
-            0 && (
-            <Pressable
-              hitSlop={10}
-              onPress={() =>
-                setSearch("")
-              }
-            >
-              <Ionicons
-                name="close-circle"
-                size={20}
-                color="#94a3b8"
-              />
+          {search.length > 0 && (
+            <Pressable hitSlop={10} onPress={() => setSearch("")}>
+              <Ionicons name="close-circle" size={19} color="#94a3b8" />
             </Pressable>
           )}
         </View>
 
-        {error && (
-          <View
-            style={
-              styles.errorBox
-            }
-          >
-            <Ionicons
-              name="alert-circle-outline"
-              size={20}
-              color="#b91c1c"
-            />
-
-            <View
-              style={{
-                flex: 1,
-                marginLeft: 8,
-              }}
-            >
-              <Text
-                style={
-                  styles.errorText
-                }
-              >
-                {error}
+        {normalizedSearch.length > 0 && (
+          <View style={styles.searchResults}>
+            {matchingGroups.length === 0 ? (
+              <Text style={styles.searchResultsEmpty}>
+                No joined groups match "{search}".
               </Text>
-
-              <Pressable
-                onPress={() =>
-                  void loadData()
-                }
-              >
-                <Text
-                  style={
-                    styles.retryText
-                  }
+            ) : (
+              matchingGroups.map((group) => (
+                <Pressable
+                  key={group.id}
+                  onPress={() => visitGroup(group.id)}
+                  style={styles.searchResultRow}
                 >
-                  Try Again
-                </Text>
-              </Pressable>
-            </View>
+                  <View style={styles.searchResultIcon}>
+                    <Ionicons name="people" size={18} color="#4f46e5" />
+                  </View>
+
+                  <Text style={styles.searchResultName}>{group.name}</Text>
+
+                  <Ionicons
+                    name="chevron-forward"
+                    size={18}
+                    color="#94a3b8"
+                  />
+                </Pressable>
+              ))
+            )}
+          </View>
+        )}
+
+        {joinedGroups.length > 0 && (
+          <CreatePostComposer
+            currentUserName={user?.fullName}
+            submitting={submittingPost}
+            groupOptions={joinedGroups}
+            onSubmit={(content, isAnonymous, groupId) =>
+              void handleCreatePost(content, isAnonymous, groupId)
+            }
+          />
+        )}
+
+        {error && (
+          <View style={styles.errorBox}>
+            <Text style={styles.errorText}>{error}</Text>
           </View>
         )}
 
         {loading ? (
-          <View
-            style={
-              styles.loadingArea
-            }
-          >
-            <ActivityIndicator
-              size="large"
-              color="#4f46e5"
-            />
+          <View style={styles.center}>
+            <ActivityIndicator size="large" color="#4f46e5" />
 
-            <Text
-              style={
-                styles.loadingText
-              }
+            <Text style={styles.loadingText}>Loading your feed...</Text>
+          </View>
+        ) : joinedGroups.length === 0 ? (
+          <View style={styles.emptyCard}>
+            <View style={styles.emptyIcon}>
+              <Ionicons name="people-outline" size={30} color="#4f46e5" />
+            </View>
+
+            <Text style={styles.emptyTitle}>No groups joined yet</Text>
+
+            <Text style={styles.emptyDescription}>
+              Discover a support group to join and start seeing posts here.
+            </Text>
+
+            <Pressable
+              onPress={() => router.push("/(app)/user/discover" as Href)}
+              style={styles.emptyDiscoverButton}
             >
-              Loading support
-              groups...
+              <Ionicons name="compass-outline" size={17} color="#ffffff" />
+
+              <Text style={styles.emptyDiscoverButtonText}>
+                Discover Groups
+              </Text>
+            </Pressable>
+          </View>
+        ) : posts.length === 0 ? (
+          <View style={styles.emptyCard}>
+            <View style={styles.emptyIcon}>
+              <Ionicons
+                name="chatbubbles-outline"
+                size={29}
+                color="#4f46e5"
+              />
+            </View>
+
+            <Text style={styles.emptyTitle}>No posts yet</Text>
+
+            <Text style={styles.emptyDescription}>
+              Be the first to share something with your groups.
             </Text>
           </View>
         ) : (
-          <>
-            <SectionHeader
-              title="My Groups"
-              count={
-                myGroups.length
-              }
+          posts.map((post) => (
+            <PostCard
+              key={post.id}
+              post={post}
+              currentUserId={user?.id}
+              canModerate={false}
+              onToggleLike={() => void handleToggleLike(post.id)}
+              onOpenComments={() => setActiveCommentsPostId(post.id)}
+              onDelete={() => handleDeletePost(post.id)}
             />
-
-            {myGroups.length ===
-            0 ? (
-              <View
-                style={
-                  styles.smallEmptyCard
-                }
-              >
-                <Ionicons
-                  name="people-outline"
-                  size={25}
-                  color="#94a3b8"
-                />
-
-                <Text
-                  style={
-                    styles.emptyTitle
-                  }
-                >
-                  No joined groups
-                  yet
-                </Text>
-
-                <Text
-                  style={
-                    styles.emptyDescription
-                  }
-                >
-                  Groups approved
-                  by a Peer
-                  Supporter will
-                  appear here.
-                </Text>
-              </View>
-            ) : (
-              myGroups.map(
-                (group) => (
-                  <GroupCard
-                    key={
-                      group.id
-                    }
-                    group={
-                      group
-                    }
-                    membershipActive
-                    request={
-                      latestRequestByGroup.get(
-                        group.id
-                      )
-                    }
-                    onPress={() =>
-                      openGroup(
-                        group.id
-                      )
-                    }
-                  />
-                )
-              )
-            )}
-
-            <SectionHeader
-              title="Available Groups"
-              count={
-                availableGroups.length
-              }
-            />
-
-            {availableGroups.length ===
-            0 ? (
-              <View
-                style={
-                  styles.smallEmptyCard
-                }
-              >
-                <Ionicons
-                  name="search-outline"
-                  size={25}
-                  color="#94a3b8"
-                />
-
-                <Text
-                  style={
-                    styles.emptyTitle
-                  }
-                >
-                  No groups found
-                </Text>
-
-                <Text
-                  style={
-                    styles.emptyDescription
-                  }
-                >
-                  Try another
-                  search or refresh
-                  the page.
-                </Text>
-              </View>
-            ) : (
-              availableGroups.map(
-                (group) => (
-                  <GroupCard
-                    key={
-                      group.id
-                    }
-                    group={
-                      group
-                    }
-                    request={
-                      latestRequestByGroup.get(
-                        group.id
-                      )
-                    }
-                    onPress={() =>
-                      openGroup(
-                        group.id
-                      )
-                    }
-                  />
-                )
-              )
-            )}
-          </>
+          ))
         )}
       </ScrollView>
+
+      <PostCommentsModal
+        postId={activeCommentsPostId}
+        visible={activeCommentsPostId !== null}
+        currentUserId={user?.id}
+        canModerate={false}
+        onClose={() => setActiveCommentsPostId(null)}
+      />
     </SafeAreaView>
   );
 }
 
-function SectionHeader({
-  title,
-  count,
-}: {
-  title: string;
-  count: number;
-}) {
-  return (
-    <View
-      style={
-        styles.sectionHeader
-      }
-    >
-      <Text
-        style={
-          styles.sectionTitle
-        }
-      >
-        {title}
-      </Text>
-
-      <View
-        style={
-          styles.countBadge
-        }
-      >
-        <Text
-          style={
-            styles.countText
-          }
-        >
-          {count}
-        </Text>
-      </View>
-    </View>
-  );
-}
-
-function GroupCard({
-  group,
-  request,
-  membershipActive = false,
-  onPress,
-}: {
-  group: SupportGroup;
-
-  request?:
-    | GroupJoinRequest
-    | undefined;
-
-  membershipActive?: boolean;
-
-  onPress: () => void;
-}) {
-  return (
-    <Pressable
-      onPress={onPress}
-      style={({
-        pressed,
-      }) => [
-        styles.groupCard,
-
-        pressed &&
-          styles.pressedCard,
-      ]}
-    >
-      <View
-        style={
-          styles.cardTop
-        }
-      >
-        <View
-          style={
-            styles.groupIcon
-          }
-        >
-          <Ionicons
-            name="people"
-            size={23}
-            color="#4f46e5"
-          />
-        </View>
-
-        <View
-          style={
-            styles.groupTitleArea
-          }
-        >
-          <Text
-            style={
-              styles.groupName
-            }
-          >
-            {group.name}
-          </Text>
-
-          <Text
-            style={
-              styles.category
-            }
-          >
-            {group.category}
-          </Text>
-        </View>
-
-        {membershipActive ? (
-          <StatusBadge
-            status="APPROVED"
-            label="Joined"
-          />
-        ) : request ? (
-          <StatusBadge
-            status={
-              request.status
-            }
-          />
-        ) : null}
-      </View>
-
-      <Text
-        numberOfLines={3}
-        style={
-          styles.groupDescription
-        }
-      >
-        {group.description}
-      </Text>
-
-      {group.communityLocation && (
-        <View
-          style={
-            styles.locationRow
-          }
-        >
-          <Ionicons
-            name="location-outline"
-            size={16}
-            color="#64748b"
-          />
-
-          <Text
-            style={
-              styles.locationText
-            }
-          >
-            {
-              group.communityLocation
-            }
-          </Text>
-        </View>
-      )}
-
-      <View
-        style={
-          styles.cardBottom
-        }
-      >
-        <View
-          style={
-            styles.staffInfo
-          }
-        >
-          <Ionicons
-            name="heart-outline"
-            size={17}
-            color="#6366f1"
-          />
-
-          <Text
-            style={
-              styles.staffInfoText
-            }
-          >
-            {
-              group
-                .peerSupporters
-                .length
-            }{" "}
-            Peer Supporter
-            {group
-              .peerSupporters
-              .length === 1
-              ? ""
-              : "s"}
-          </Text>
-        </View>
-
-        <Ionicons
-          name="chevron-forward"
-          size={20}
-          color="#94a3b8"
-        />
-      </View>
-    </Pressable>
-  );
-}
-
-function StatusBadge({
-  status,
-  label,
-}: {
-  status: JoinRequestStatus;
-  label?: string;
-}) {
-  const config = {
-    PENDING: {
-      background:
-        "#fff7ed",
-
-      text:
-        "#c2410c",
-
-      icon:
-        "time-outline" as const,
-    },
-
-    APPROVED: {
-      background:
-        "#ecfdf5",
-
-      text:
-        "#047857",
-
-      icon:
-        "checkmark-circle-outline" as const,
-    },
-
-    REJECTED: {
-      background:
-        "#fef2f2",
-
-      text:
-        "#b91c1c",
-
-      icon:
-        "close-circle-outline" as const,
-    },
-  }[status];
-
-  return (
-    <View
-      style={[
-        styles.statusBadge,
-
-        {
-          backgroundColor:
-            config.background,
-        },
-      ]}
-    >
-      <Ionicons
-        name={
-          config.icon
-        }
-        size={13}
-        color={
-          config.text
-        }
-      />
-
-      <Text
-        style={[
-          styles.statusText,
-
-          {
-            color:
-              config.text,
-          },
-        ]}
-      >
-        {label ??
-          formatStatus(
-            status
-          )}
-      </Text>
-    </View>
-  );
-}
-
-function getGroupReferenceId(
-  reference: GroupReference
-): string | null {
-  if (
-    typeof reference ===
-    "string"
-  ) {
-    return reference;
-  }
-
-  return (
-    reference.id ??
-    reference._id ??
-    null
-  );
-}
-
-function formatStatus(
-  status: JoinRequestStatus
-) {
-  if (
-    status === "PENDING"
-  ) {
-    return "Pending";
-  }
-
-  if (
-    status === "APPROVED"
-  ) {
-    return "Approved";
-  }
-
-  return "Rejected";
-}
-
-const styles =
-  StyleSheet.create({
-    safeArea: {
-      flex: 1,
-      backgroundColor:
-        "#f8fafc",
-    },
-
-    content: {
-      paddingHorizontal:
-        20,
-
-      paddingTop: 18,
-
-      paddingBottom: 120,
-    },
-
-    headingArea: {
-      paddingRight: 55,
-    },
-
-    heading: {
-      fontSize: 28,
-      fontWeight: "800",
-      color: "#0f172a",
-    },
-
-    headingDescription: {
-      marginTop: 6,
-      fontSize: 14,
-      lineHeight: 21,
-      color: "#64748b",
-    },
-
-    searchBox: {
-      minHeight: 50,
-
-      marginTop: 20,
-
-      paddingHorizontal:
-        14,
-
-      flexDirection:
-        "row",
-
-      alignItems:
-        "center",
-
-      borderRadius: 16,
-
-      borderWidth: 1,
-
-      borderColor:
-        "#e2e8f0",
-
-      backgroundColor:
-        "#ffffff",
-    },
-
-    searchInput: {
-      flex: 1,
-      marginLeft: 9,
-      fontSize: 15,
-      color: "#0f172a",
-    },
-
-    errorBox: {
-      marginTop: 15,
-
-      padding: 14,
-
-      flexDirection:
-        "row",
-
-      borderRadius: 14,
-
-      borderWidth: 1,
-
-      borderColor:
-        "#fecaca",
-
-      backgroundColor:
-        "#fef2f2",
-    },
-
-    errorText: {
-      lineHeight: 19,
-      color: "#b91c1c",
-    },
-
-    retryText: {
-      marginTop: 8,
-      fontWeight: "700",
-      color: "#4f46e5",
-    },
-
-    loadingArea: {
-      paddingVertical: 90,
-      alignItems:
-        "center",
-    },
-
-    loadingText: {
-      marginTop: 12,
-      color: "#64748b",
-    },
-
-    sectionHeader: {
-      marginTop: 26,
-
-      marginBottom: 12,
-
-      flexDirection:
-        "row",
-
-      alignItems:
-        "center",
-    },
-
-    sectionTitle: {
-      fontSize: 20,
-      fontWeight: "800",
-      color: "#0f172a",
-    },
-
-    countBadge: {
-      minWidth: 27,
-
-      height: 27,
-
-      marginLeft: 8,
-
-      paddingHorizontal: 7,
-
-      alignItems:
-        "center",
-
-      justifyContent:
-        "center",
-
-      borderRadius: 14,
-
-      backgroundColor:
-        "#eef2ff",
-    },
-
-    countText: {
-      fontSize: 12,
-      fontWeight: "800",
-      color: "#4f46e5",
-    },
-
-    smallEmptyCard: {
-      paddingVertical: 30,
-
-      paddingHorizontal:
-        20,
-
-      alignItems:
-        "center",
-
-      borderRadius: 18,
-
-      borderWidth: 1,
-
-      borderColor:
-        "#e2e8f0",
-
-      backgroundColor:
-        "#ffffff",
-    },
-
-    emptyTitle: {
-      marginTop: 9,
-      fontWeight: "700",
-      color: "#475569",
-    },
-
-    emptyDescription: {
-      marginTop: 5,
-
-      textAlign: "center",
-
-      fontSize: 12,
-
-      lineHeight: 18,
-
-      color: "#94a3b8",
-    },
-
-    groupCard: {
-      marginBottom: 13,
-
-      padding: 16,
-
-      borderRadius: 20,
-
-      borderWidth: 1,
-
-      borderColor:
-        "#e2e8f0",
-
-      backgroundColor:
-        "#ffffff",
-    },
-
-    pressedCard: {
-      opacity: 0.82,
-    },
-
-    cardTop: {
-      flexDirection:
-        "row",
-
-      alignItems:
-        "flex-start",
-    },
-
-    groupIcon: {
-      width: 44,
-      height: 44,
-
-      alignItems:
-        "center",
-
-      justifyContent:
-        "center",
-
-      borderRadius: 14,
-
-      backgroundColor:
-        "#eef2ff",
-    },
-
-    groupTitleArea: {
-      flex: 1,
-      marginLeft: 11,
-      paddingRight: 5,
-    },
-
-    groupName: {
-      fontSize: 16,
-      fontWeight: "800",
-      color: "#0f172a",
-    },
-
-    category: {
-      marginTop: 3,
-
-      fontSize: 12,
-
-      fontWeight: "600",
-
-      color: "#6366f1",
-    },
-
-    groupDescription: {
-      marginTop: 13,
-
-      fontSize: 14,
-
-      lineHeight: 20,
-
-      color: "#475569",
-    },
-
-    locationRow: {
-      marginTop: 10,
-
-      flexDirection:
-        "row",
-
-      alignItems:
-        "center",
-    },
-
-    locationText: {
-      marginLeft: 5,
-      fontSize: 12,
-      color: "#64748b",
-    },
-
-    cardBottom: {
-      marginTop: 14,
-
-      paddingTop: 13,
-
-      flexDirection:
-        "row",
-
-      alignItems:
-        "center",
-
-      borderTopWidth: 1,
-
-      borderTopColor:
-        "#f1f5f9",
-    },
-
-    staffInfo: {
-      flex: 1,
-
-      flexDirection:
-        "row",
-
-      alignItems:
-        "center",
-    },
-
-    staffInfoText: {
-      marginLeft: 5,
-      fontSize: 11,
-      color: "#64748b",
-    },
-
-    statusBadge: {
-      paddingHorizontal: 8,
-
-      paddingVertical: 5,
-
-      flexDirection:
-        "row",
-
-      alignItems:
-        "center",
-
-      borderRadius: 999,
-    },
-
-    statusText: {
-      marginLeft: 3,
-      fontSize: 10,
-      fontWeight: "800",
-    },
-  });
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#f8fafc",
+  },
+
+  header: {
+    minHeight: 56,
+    paddingHorizontal: 20,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: "800",
+    color: "#0f172a",
+  },
+
+  discoverButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: "#c7d2fe",
+    backgroundColor: "#eef2ff",
+  },
+
+  discoverButtonText: {
+    marginLeft: 6,
+    fontSize: 13,
+    fontWeight: "700",
+    color: "#4f46e5",
+  },
+
+  content: {
+    paddingHorizontal: 20,
+    paddingTop: 8,
+    paddingBottom: 100,
+  },
+
+  searchBox: {
+    minHeight: 46,
+    paddingHorizontal: 14,
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: "#e2e8f0",
+    backgroundColor: "#ffffff",
+  },
+
+  searchInput: {
+    flex: 1,
+    marginLeft: 8,
+    fontSize: 14,
+    color: "#0f172a",
+  },
+
+  searchResults: {
+    marginTop: 8,
+    padding: 8,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: "#e2e8f0",
+    backgroundColor: "#ffffff",
+  },
+
+  searchResultsEmpty: {
+    padding: 10,
+    fontSize: 13,
+    color: "#94a3b8",
+  },
+
+  searchResultRow: {
+    paddingVertical: 10,
+    paddingHorizontal: 8,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+
+  searchResultIcon: {
+    width: 32,
+    height: 32,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 10,
+    backgroundColor: "#eef2ff",
+  },
+
+  searchResultName: {
+    flex: 1,
+    marginLeft: 10,
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#0f172a",
+  },
+
+  errorBox: {
+    marginTop: 14,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: "#fecaca",
+    borderRadius: 14,
+    backgroundColor: "#fef2f2",
+  },
+
+  errorText: {
+    color: "#b91c1c",
+  },
+
+  center: {
+    paddingVertical: 80,
+    alignItems: "center",
+  },
+
+  loadingText: {
+    marginTop: 12,
+    color: "#64748b",
+  },
+
+  emptyCard: {
+    marginTop: 14,
+    paddingVertical: 44,
+    paddingHorizontal: 22,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#e2e8f0",
+    borderRadius: 20,
+    backgroundColor: "#ffffff",
+  },
+
+  emptyIcon: {
+    width: 62,
+    height: 62,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 31,
+    backgroundColor: "#eef2ff",
+  },
+
+  emptyTitle: {
+    marginTop: 13,
+    fontSize: 17,
+    fontWeight: "700",
+    color: "#475569",
+  },
+
+  emptyDescription: {
+    marginTop: 6,
+    maxWidth: 280,
+    textAlign: "center",
+    fontSize: 12,
+    lineHeight: 18,
+    color: "#94a3b8",
+  },
+
+  emptyDiscoverButton: {
+    marginTop: 18,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 18,
+    paddingVertical: 12,
+    borderRadius: 14,
+    backgroundColor: "#4f46e5",
+  },
+
+  emptyDiscoverButtonText: {
+    marginLeft: 8,
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#ffffff",
+  },
+});

@@ -76,24 +76,6 @@ export default function ModeratorLayout() {
         />
 
         <Tabs.Screen
-          name="reports"
-          options={{
-            title: "Reports",
-
-            tabBarIcon: ({
-              color,
-              size,
-            }) => (
-              <Ionicons
-                name="flag-outline"
-                size={size}
-                color={color}
-              />
-            ),
-          }}
-        />
-
-        <Tabs.Screen
           name="groups"
           options={{
             title: "Groups",
@@ -112,20 +94,93 @@ export default function ModeratorLayout() {
         />
 
         <Tabs.Screen
-          name="history"
+          name="community"
           options={{
-            title: "History",
+            title: "Community",
 
             tabBarIcon: ({
               color,
               size,
             }) => (
               <Ionicons
-                name="time-outline"
+                name="globe-outline"
                 size={size}
                 color={color}
               />
             ),
+          }}
+        />
+
+        <Tabs.Screen
+          name="profile"
+          options={{
+            title: "Profile",
+
+            tabBarIcon: ({
+              color,
+              size,
+            }) => (
+              <Ionicons
+                name="person-circle-outline"
+                size={size}
+                color={color}
+              />
+            ),
+          }}
+        />
+
+        {/*
+         * Reports and History remain
+         * real routes, reachable from
+         * Home quick actions, but must
+         * NOT appear as bottom tabs.
+         */}
+        <Tabs.Screen
+          name="reports"
+          options={{
+            href: null,
+
+            tabBarStyle: {
+              display: "none",
+            },
+          }}
+        />
+
+        <Tabs.Screen
+          name="history"
+          options={{
+            href: null,
+
+            tabBarStyle: {
+              display: "none",
+            },
+          }}
+        />
+
+        {/*
+         * Group Details is a real
+         * route, but must NOT appear
+         * as a bottom tab.
+         */}
+        <Tabs.Screen
+          name="group/[groupId]/posts"
+          options={{
+            href: null,
+
+            tabBarStyle: {
+              display: "none",
+            },
+          }}
+        />
+
+        <Tabs.Screen
+          name="group/[groupId]/members"
+          options={{
+            href: null,
+
+            tabBarStyle: {
+              display: "none",
+            },
           }}
         />
       </Tabs>

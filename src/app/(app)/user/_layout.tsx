@@ -123,8 +123,32 @@ export default function UserLayout() {
               <Ionicons
                 name={
                   focused
-                    ? "chatbubbles"
-                    : "chatbubbles-outline"
+                    ? "globe"
+                    : "globe-outline"
+                }
+                size={size}
+                color={color}
+              />
+            ),
+          }}
+        />
+
+        <Tabs.Screen
+          name="profile"
+          options={{
+            title:
+              "Profile",
+
+            tabBarIcon: ({
+              color,
+              size,
+              focused,
+            }) => (
+              <Ionicons
+                name={
+                  focused
+                    ? "person-circle"
+                    : "person-circle-outline"
                 }
                 size={size}
                 color={color}
@@ -139,7 +163,34 @@ export default function UserLayout() {
          * as a bottom tab.
          */}
         <Tabs.Screen
-          name="group/[groupId]"
+          name="group/[groupId]/index"
+          options={{
+            href: null,
+
+            tabBarStyle: {
+              display: "none",
+            },
+          }}
+        />
+
+        <Tabs.Screen
+          name="group/[groupId]/posts"
+          options={{
+            href: null,
+
+            tabBarStyle: {
+              display: "none",
+            },
+          }}
+        />
+
+        {/*
+         * Discover is a real route,
+         * reached via a button on the
+         * Groups tab, not a bottom tab.
+         */}
+        <Tabs.Screen
+          name="discover"
           options={{
             href: null,
 
