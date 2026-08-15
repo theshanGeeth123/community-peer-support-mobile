@@ -48,6 +48,7 @@ export default function PostCard({
   onToggleLike,
   onOpenComments,
   onDelete,
+  onTogglePin,
 }: {
   post: Post;
 
@@ -57,12 +58,20 @@ export default function PostCard({
   onToggleLike: () => void;
   onOpenComments: () => void;
   onDelete: () => void;
+  onTogglePin?: () => void;
 }) {
   const canDelete =
     canModerate || (currentUserId && post.author.id === currentUserId);
 
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, post.isPinned && styles.cardPinned]}>
+      {post.isPinned && (
+        <View style={styles.pinnedBadge}>
+          <Ionicons name="pin" size={12} color="#b45309" />
+          <Text style={styles.pinnedBadgeText}>Pinned</Text>
+        </View>
+      )}
+
       <View style={styles.header}>
         <View style={styles.avatar}>
           {post.author.id === null ? (
@@ -83,6 +92,16 @@ export default function PostCard({
               : formatRelativeTime(post.createdAt)}
           </Text>
         </View>
+
+        {canModerate && onTogglePin && (
+          <Pressable hitSlop={10} onPress={onTogglePin} style={{ marginRight: 14 }}>
+            <Ionicons
+              name={post.isPinned ? "pin" : "pin-outline"}
+              size={19}
+              color={post.isPinned ? "#b45309" : "#94a3b8"}
+            />
+          </Pressable>
+        )}
 
         {canDelete && (
           <Pressable hitSlop={10} onPress={onDelete}>
@@ -122,6 +141,29 @@ const styles = StyleSheet.create({
     borderColor: "#e2e8f0",
     borderRadius: 18,
     backgroundColor: "#ffffff",
+  },
+
+  cardPinned: {
+    borderColor: "#fbbf24",
+    backgroundColor: "#fffbeb",
+  },
+
+  pinnedBadge: {
+    marginBottom: 10,
+    flexDirection: "row",
+    alignSelf: "flex-start",
+    alignItems: "center",
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 999,
+    backgroundColor: "#fef3c7",
+  },
+
+  pinnedBadgeText: {
+    marginLeft: 5,
+    fontSize: 11,
+    fontWeight: "700",
+    color: "#b45309",
   },
 
   header: {

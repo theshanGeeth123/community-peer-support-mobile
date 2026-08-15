@@ -27,6 +27,11 @@ import {
 } from "@expo/vector-icons";
 
 import {
+    type Href,
+    router,
+} from "expo-router";
+
+import {
     groupApi,
 } from "@/features/groups/api/group.api";
 
@@ -1075,6 +1080,49 @@ function GroupCard({
           }
         >
           Manage Staff
+        </Text>
+
+        <Ionicons
+          name="chevron-forward"
+          size={18}
+          color="#6366f1"
+        />
+      </Pressable>
+
+      <Pressable
+        onPress={() =>
+          router.push({
+            pathname:
+              "/(app)/admin/group/[groupId]/posts" as Href,
+
+            params: {
+              groupId: group.id,
+            },
+          })
+        }
+        style={({
+          pressed,
+        }) => [
+          styles.manageButton,
+          { marginTop: 10 },
+
+          pressed && {
+            opacity: 0.8,
+          },
+        ]}
+      >
+        <Ionicons
+          name="chatbubbles-outline"
+          size={19}
+          color="#4f46e5"
+        />
+
+        <Text
+          style={
+            styles.manageButtonText
+          }
+        >
+          View Posts
         </Text>
 
         <Ionicons

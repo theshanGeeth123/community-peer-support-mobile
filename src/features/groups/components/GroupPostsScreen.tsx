@@ -48,6 +48,18 @@ function getReferenceId(
   return reference.id ?? reference._id ?? null;
 }
 
+function sortPosts(posts: Post[]) {
+  return [...posts].sort((a, b) => {
+    if (a.isPinned !== b.isPinned) {
+      return a.isPinned ? -1 : 1;
+    }
+
+    return (
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+  });
+}
+
 export default function GroupPostsScreen() {
   const params = useLocalSearchParams();
   const rawGroupId = params.groupId;
@@ -116,11 +128,11 @@ export default function GroupPostsScreen() {
           );
         }
 
-        setCanPost(hasActiveMembership);
+        setCanPost(canModerate || hasActiveMembership);
 
         const postsResponse = await postApi.listPosts(groupId);
 
-        setPosts(postsResponse.data.posts ?? []);
+        setPosts(sortPosts(postsResponse.data.posts ?? []));
       } catch (requestError) {
         setError(getApiErrorMessage(requestError));
       } finally {
@@ -197,6 +209,24 @@ export default function GroupPostsScreen() {
     } catch (requestError) {
       Alert.alert("Unable to update like", getApiErrorMessage(requestError));
       void loadEverything(false);
+    }
+  };
+
+  const handleTogglePin = async (postId: string) => {
+    try {
+      const response = await postApi.togglePin(postId);
+
+      setPosts((previous) =>
+        sortPosts(
+          previous.map((post) =>
+            post.id === postId
+              ? { ...post, isPinned: response.data.isPinned }
+              : post
+          )
+        )
+      );
+    } catch (requestError) {
+      Alert.alert("Unable to update pin", getApiErrorMessage(requestError));
     }
   };
 
@@ -292,6 +322,7 @@ export default function GroupPostsScreen() {
               onToggleLike={() => void handleToggleLike(post.id)}
               onOpenComments={() => setActiveCommentsPostId(post.id)}
               onDelete={() => handleDeletePost(post.id)}
+              onTogglePin={() => void handleTogglePin(post.id)}
             />
           ))
         )}

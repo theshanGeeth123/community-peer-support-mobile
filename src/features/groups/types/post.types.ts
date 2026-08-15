@@ -16,6 +16,7 @@ export interface Post {
 
   imageUrl: string | null;
   isAnonymous: boolean;
+  isPinned: boolean;
 
   author: PostAuthorSummary;
 
@@ -75,4 +76,8 @@ export interface CreateCommentPayload {
 export interface ToggleLikeResponseData {
   liked: boolean;
   likeCount: number;
+}
+
+export interface TogglePinResponseData {
+  isPinned: boolean;
 }

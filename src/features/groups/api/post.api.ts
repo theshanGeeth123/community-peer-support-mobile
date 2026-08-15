@@ -10,6 +10,7 @@ import type {
   PostComment,
   PostsResponseData,
   ToggleLikeResponseData,
+  TogglePinResponseData,
 } from "../types/post.types";
 
 export const postApi = {
@@ -70,6 +71,16 @@ export const postApi = {
     const response = await apiClient.post<
       ApiResponse<ToggleLikeResponseData>
     >(`/posts/${postId}/like`);
+
+    return response.data;
+  },
+
+  async togglePin(
+    postId: string
+  ): Promise<ApiResponse<TogglePinResponseData>> {
+    const response = await apiClient.post<ApiResponse<TogglePinResponseData>>(
+      `/posts/${postId}/pin`
+    );
 
     return response.data;
   },
