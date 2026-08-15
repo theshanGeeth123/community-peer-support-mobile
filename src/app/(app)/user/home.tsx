@@ -18,6 +18,8 @@ import {
     Ionicons,
 } from "@expo/vector-icons";
 
+import LottieView from "lottie-react-native";
+
 import {
     useAuth,
 } from "@/features/auth/hooks/useAuth";
@@ -51,7 +53,7 @@ export default function UserHomeScreen() {
           false
         }
       >
-        <View className="mb-6 pr-16">
+        <View className="mb-6">
           <Text className="text-sm font-medium text-slate-500">
             Welcome back
           </Text>
@@ -93,42 +95,17 @@ export default function UserHomeScreen() {
           </View>
         </View>
 
-        <View className="mt-5 flex-row gap-3">
-          <View className="flex-1 rounded-3xl border border-slate-200 bg-white p-5">
-            <View className="h-10 w-10 items-center justify-center rounded-xl bg-indigo-50">
-              <Ionicons
-                name="person-outline"
-                size={20}
-                color="#4f46e5"
-              />
-            </View>
+        <View className="mt-5 items-center rounded-3xl border border-slate-200 bg-white py-6">
+          <LottieView
+            source={require("../../../../assets/animations/breathing-pulse.json")}
+            autoPlay
+            loop
+            style={{ width: 140, height: 140 }}
+          />
 
-            <Text className="mt-4 text-xs font-medium uppercase text-slate-400">
-              Account Role
-            </Text>
-
-            <Text className="mt-1 text-sm font-bold text-slate-900">
-              {user?.role}
-            </Text>
-          </View>
-
-          <View className="flex-1 rounded-3xl border border-slate-200 bg-white p-5">
-            <View className="h-10 w-10 items-center justify-center rounded-xl bg-emerald-50">
-              <Ionicons
-                name="shield-checkmark-outline"
-                size={21}
-                color="#059669"
-              />
-            </View>
-
-            <Text className="mt-4 text-xs font-medium uppercase text-slate-400">
-              Account
-            </Text>
-
-            <Text className="mt-1 text-sm font-bold text-emerald-600">
-              {user?.accountStatus}
-            </Text>
-          </View>
+          <Text className="-mt-6 text-sm font-medium text-slate-500">
+            Take a moment to breathe
+          </Text>
         </View>
 
         <Text className="mb-4 mt-8 text-xl font-bold text-slate-900">
