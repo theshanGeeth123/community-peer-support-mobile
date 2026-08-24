@@ -61,72 +61,166 @@ export default function PostCard({
   onTogglePin?: () => void;
 }) {
   const canDelete =
-    canModerate || (currentUserId && post.author.id === currentUserId);
+    canModerate ||
+    (currentUserId &&
+      post.author.id === currentUserId);
 
   return (
-    <View style={[styles.card, post.isPinned && styles.cardPinned]}>
+    <View
+      style={[
+        styles.card,
+        post.isPinned && styles.cardPinned,
+      ]}
+    >
+      {/* PINNED BADGE */}
+
       {post.isPinned && (
         <View style={styles.pinnedBadge}>
-          <Ionicons name="pin" size={12} color="#b45309" />
-          <Text style={styles.pinnedBadgeText}>Pinned</Text>
+          <Ionicons
+            name="pin"
+            size={12}
+            color="#b45309"
+          />
+
+          <Text style={styles.pinnedBadgeText}>
+            Pinned post
+          </Text>
         </View>
       )}
+
+      {/* HEADER */}
 
       <View style={styles.header}>
         <View style={styles.avatar}>
           {post.author.id === null ? (
-            <Ionicons name="person" size={20} color="#4f46e5" />
+            <Ionicons
+              name="person"
+              size={20}
+              color="#4f46e5"
+            />
           ) : (
             <Text style={styles.avatarText}>
-              {getInitials(post.author.fullName)}
+              {getInitials(
+                post.author.fullName
+              )}
             </Text>
           )}
         </View>
 
         <View style={styles.headerText}>
-          <Text style={styles.authorName}>{post.author.fullName}</Text>
+          <Text style={styles.authorName}>
+            {post.author.fullName}
+          </Text>
 
           <Text style={styles.timestamp}>
             {post.groupName
-              ? `${post.groupName} · ${formatRelativeTime(post.createdAt)}`
-              : formatRelativeTime(post.createdAt)}
+              ? `${post.groupName} · ${formatRelativeTime(
+                  post.createdAt
+                )}`
+              : formatRelativeTime(
+                  post.createdAt
+                )}
           </Text>
         </View>
 
-        {canModerate && onTogglePin && (
-          <Pressable hitSlop={10} onPress={onTogglePin} style={{ marginRight: 14 }}>
-            <Ionicons
-              name={post.isPinned ? "pin" : "pin-outline"}
-              size={19}
-              color={post.isPinned ? "#b45309" : "#94a3b8"}
-            />
-          </Pressable>
-        )}
+        <View style={styles.headerActions}>
+          {canModerate && onTogglePin && (
+            <Pressable
+              hitSlop={10}
+              onPress={onTogglePin}
+              style={styles.headerIconButton}
+            >
+              <Ionicons
+                name={
+                  post.isPinned
+                    ? "pin"
+                    : "pin-outline"
+                }
+                size={19}
+                color={
+                  post.isPinned
+                    ? "#b45309"
+                    : "#94a3b8"
+                }
+              />
+            </Pressable>
+          )}
 
-        {canDelete && (
-          <Pressable hitSlop={10} onPress={onDelete}>
-            <Ionicons name="trash-outline" size={19} color="#94a3b8" />
-          </Pressable>
-        )}
+          {canDelete && (
+            <Pressable
+              hitSlop={10}
+              onPress={onDelete}
+              style={styles.headerIconButton}
+            >
+              <Ionicons
+                name="trash-outline"
+                size={19}
+                color="#94a3b8"
+              />
+            </Pressable>
+          )}
+        </View>
       </View>
 
-      <Text style={styles.content}>{post.content}</Text>
+      {/* POST CONTENT */}
+
+      <Text style={styles.content}>
+        {post.content}
+      </Text>
+
+      {/* POST ACTIONS */}
 
       <View style={styles.footer}>
-        <Pressable style={styles.actionButton} onPress={onToggleLike}>
+        <Pressable
+          style={[
+            styles.actionButton,
+            post.likedByMe &&
+              styles.likedActionButton,
+          ]}
+          onPress={onToggleLike}
+        >
           <Ionicons
-            name={post.likedByMe ? "heart" : "heart-outline"}
+            name={
+              post.likedByMe
+                ? "heart"
+                : "heart-outline"
+            }
             size={19}
-            color={post.likedByMe ? "#ef4444" : "#64748b"}
+            color={
+              post.likedByMe
+                ? "#ef4444"
+                : "#64748b"
+            }
           />
 
-          <Text style={styles.actionText}>{post.likeCount}</Text>
+          <Text
+            style={[
+              styles.actionText,
+              post.likedByMe &&
+                styles.likedActionText,
+            ]}
+          >
+            {post.likeCount}
+          </Text>
         </Pressable>
 
-        <Pressable style={styles.actionButton} onPress={onOpenComments}>
-          <Ionicons name="chatbubble-outline" size={18} color="#64748b" />
+        <Pressable
+          style={styles.actionButton}
+          onPress={onOpenComments}
+        >
+          <Ionicons
+            name="chatbubble-outline"
+            size={18}
+            color="#64748b"
+          />
 
-          <Text style={styles.actionText}>{post.commentCount}</Text>
+          <Text style={styles.actionText}>
+            {post.commentCount}
+          </Text>
+
+          <Text style={styles.actionLabel}>
+            Comments
+          </Text>
         </Pressable>
       </View>
     </View>
@@ -139,7 +233,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderWidth: 1,
     borderColor: "#e2e8f0",
-    borderRadius: 18,
+    borderRadius: 20,
     backgroundColor: "#ffffff",
   },
 
@@ -149,12 +243,12 @@ const styles = StyleSheet.create({
   },
 
   pinnedBadge: {
-    marginBottom: 10,
+    marginBottom: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
     flexDirection: "row",
     alignSelf: "flex-start",
     alignItems: "center",
-    paddingHorizontal: 10,
-    paddingVertical: 4,
     borderRadius: 999,
     backgroundColor: "#fef3c7",
   },
@@ -162,7 +256,7 @@ const styles = StyleSheet.create({
   pinnedBadgeText: {
     marginLeft: 5,
     fontSize: 11,
-    fontWeight: "700",
+    fontWeight: "800",
     color: "#b45309",
   },
 
@@ -172,15 +266,16 @@ const styles = StyleSheet.create({
   },
 
   avatar: {
-    width: 40,
-    height: 40,
+    width: 42,
+    height: 42,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 20,
+    borderRadius: 21,
     backgroundColor: "#eef2ff",
   },
 
   avatarText: {
+    fontSize: 13,
     fontWeight: "800",
     color: "#4f46e5",
   },
@@ -191,41 +286,69 @@ const styles = StyleSheet.create({
   },
 
   authorName: {
-    fontWeight: "700",
+    fontSize: 14,
+    fontWeight: "800",
     color: "#0f172a",
   },
 
   timestamp: {
-    marginTop: 2,
+    marginTop: 3,
     fontSize: 11,
     color: "#94a3b8",
   },
 
+  headerActions: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+
+  headerIconButton: {
+    marginLeft: 12,
+  },
+
   content: {
-    marginTop: 12,
+    marginTop: 14,
     fontSize: 14,
     lineHeight: 21,
     color: "#334155",
   },
 
   footer: {
-    marginTop: 12,
+    marginTop: 15,
     paddingTop: 12,
     flexDirection: "row",
+    alignItems: "center",
     borderTopWidth: 1,
     borderTopColor: "#f1f5f9",
   },
 
   actionButton: {
+    marginRight: 24,
+    paddingVertical: 5,
+    paddingHorizontal: 4,
     flexDirection: "row",
     alignItems: "center",
-    marginRight: 24,
+    borderRadius: 10,
+  },
+
+  likedActionButton: {
+    backgroundColor: "#fff1f2",
   },
 
   actionText: {
     marginLeft: 5,
     fontSize: 13,
-    fontWeight: "600",
+    fontWeight: "700",
     color: "#64748b",
+  },
+
+  likedActionText: {
+    color: "#ef4444",
+  },
+
+  actionLabel: {
+    marginLeft: 5,
+    fontSize: 12,
+    color: "#94a3b8",
   },
 });
