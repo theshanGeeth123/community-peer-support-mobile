@@ -85,6 +85,12 @@ export const postApi = {
     return response.data;
   },
 
+  /*
+  |--------------------------------------------------------------------------
+  | COMMENTS
+  |--------------------------------------------------------------------------
+  */
+
   async listComments(
     postId: string
   ): Promise<ApiResponse<CommentsResponseData>> {
@@ -94,6 +100,12 @@ export const postApi = {
 
     return response.data;
   },
+
+  /*
+  |--------------------------------------------------------------------------
+  | CREATE COMMENT
+  |--------------------------------------------------------------------------
+  */
 
   async createComment(
     postId: string,
@@ -106,10 +118,74 @@ export const postApi = {
     return response.data;
   },
 
+  /*
+  |--------------------------------------------------------------------------
+  | UPDATE COMMENT
+  |--------------------------------------------------------------------------
+  */
+
+  async updateComment(
+    commentId: string,
+    payload: CreateCommentPayload
+  ): Promise<ApiResponse<{ comment: PostComment }>> {
+    const response = await apiClient.patch<
+      ApiResponse<{ comment: PostComment }>
+    >(`/comments/${commentId}`, payload);
+
+    return response.data;
+  },
+
+  /*
+  |--------------------------------------------------------------------------
+  | DELETE COMMENT
+  |--------------------------------------------------------------------------
+  */
+
   async deleteComment(commentId: string): Promise<ApiResponse<null>> {
     const response = await apiClient.delete<ApiResponse<null>>(
       `/comments/${commentId}`
     );
+
+    return response.data;
+  },
+
+  /*
+  |--------------------------------------------------------------------------
+  | REPLY TO COMMENT
+  |--------------------------------------------------------------------------
+  */
+
+  async createReply(
+    commentId: string,
+    payload: CreateCommentPayload
+  ): Promise<ApiResponse<{ comment: PostComment }>> {
+    const response = await apiClient.post<
+      ApiResponse<{ comment: PostComment }>
+    >(`/comments/${commentId}/replies`, payload);
+
+    return response.data;
+  },
+
+  /*
+  |--------------------------------------------------------------------------
+  | HEART / UNHEART COMMENT
+  |--------------------------------------------------------------------------
+  */
+
+  async toggleCommentHeart(
+    commentId: string
+  ): Promise<
+    ApiResponse<{
+      hearted: boolean;
+      heartCount: number;
+    }>
+  > {
+    const response = await apiClient.post<
+      ApiResponse<{
+        hearted: boolean;
+        heartCount: number;
+      }>
+    >(`/comments/${commentId}/heart`);
 
     return response.data;
   },
