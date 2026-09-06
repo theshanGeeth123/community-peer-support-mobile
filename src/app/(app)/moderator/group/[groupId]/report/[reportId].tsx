@@ -1,4 +1,4 @@
-﻿import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -50,6 +50,12 @@ const ACTION_OPTIONS = [
   },
 ];
 
+const ACTION_LABELS: Record<string, { label: string; color: string; bg: string }> = {
+  NO_ACTION: { label: "No Action Taken",  color: "#16a34a", bg: "#f0fdf4" },
+  WARN:      { label: "Warning Issued",   color: "#d97706", bg: "#fffbeb" },
+  REMOVE:    { label: "Content Removed",  color: "#e11d48", bg: "#fff1f2" },
+};
+
 function formatDate(iso: string) {
   return new Date(iso).toLocaleString("en-US", {
     month: "long",
@@ -71,7 +77,7 @@ export default function ModeratorReportDetailScreen() {
     ? params.groupId[0]
     : params.groupId;
 
-  const { report, loading, error, reviewing, reviewError, reviewReport, refetch } =
+  const { report, moderationAction, loading, error, reviewing, reviewError, reviewReport, refetch } =
     useReportDetail(reportId);
 
   const [selectedAction, setSelectedAction] = useState<ModerationActionType | null>(null);
@@ -277,6 +283,8 @@ export default function ModeratorReportDetailScreen() {
                 <Ionicons name="checkmark-circle" size={20} color="#10b981" />
                 <Text style={styles.reviewedTitle}>Already Reviewed</Text>
               </View>
+
+              {/* Who reviewed it */}
               <View style={styles.personRow}>
                 <View style={[styles.avatarCircle, styles.avatarGreen]}>
                   <Text style={[styles.avatarLetter, { color: "#065f46" }]}>{report.reviewedBy.fullName.charAt(0).toUpperCase()}</Text>
@@ -286,6 +294,26 @@ export default function ModeratorReportDetailScreen() {
                   <Text style={styles.personEmail}>{report.reviewedAt ? formatDate(report.reviewedAt) : "—"}</Text>
                 </View>
               </View>
+
+              {/* Action taken */}
+              {moderationAction ? (() => {
+                const meta = ACTION_LABELS[moderationAction.action] ?? { label: moderationAction.action, color: "#64748b", bg: "#f1f5f9" };
+                return (
+                  <>
+                    <View style={styles.actionDecisionRow}>
+                      <Text style={styles.infoKey}>Decision</Text>
+                      <View style={[styles.actionDecisionBadge, { backgroundColor: meta.bg }]}>
+                        <Text style={[styles.actionDecisionLabel, { color: meta.color }]}>{meta.label}</Text>
+                      </View>
+                    </View>
+
+                    <View style={styles.reviewReasonBox}>
+                      <Text style={styles.reviewReasonTitle}>Moderator's Reason</Text>
+                      <Text style={styles.reviewReasonText}>{moderationAction.reason}</Text>
+                    </View>
+                  </>
+                );
+              })() : null}
             </View>
           ) : null}
 
@@ -415,4 +443,12 @@ const styles = StyleSheet.create({
   errorSub: { fontSize: 14, color: "#64748b", textAlign: "center", marginBottom: 20 },
   retryBtn: { paddingHorizontal: 24, paddingVertical: 12, borderRadius: 12, backgroundColor: "#4f46e5" },
   retryLabel: { fontSize: 14, fontWeight: "700", color: "#ffffff" },
+  // Decision badge row inside Already Reviewed card
+  actionDecisionRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: 14 },
+  actionDecisionBadge: { borderRadius: 99, paddingHorizontal: 12, paddingVertical: 4 },
+  actionDecisionLabel: { fontSize: 12, fontWeight: "700", letterSpacing: 0.3 },
+  // Moderator reason box
+  reviewReasonBox: { backgroundColor: "#ffffff", borderRadius: 12, padding: 12, marginTop: 10, borderWidth: 1, borderColor: "#a7f3d0" },
+  reviewReasonTitle: { fontSize: 11, fontWeight: "600", color: "#6ee7b7", textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 6 },
+  reviewReasonText: { fontSize: 14, color: "#065f46", lineHeight: 20 },
 });

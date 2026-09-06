@@ -1,4 +1,4 @@
-﻿import {
+import {
   useCallback,
   useEffect,
   useState,
@@ -9,12 +9,15 @@ import { getApiErrorMessage } from "@/services/api/apiError";
 import { moderationApi } from "../api/moderation.api";
 
 import type {
+  ModerationActionSummary,
   ModerationActionType,
   Report,
 } from "../types/moderation.types";
 
 export function useReportDetail(reportId: string) {
   const [report, setReport] = useState<Report | null>(null);
+  const [moderationAction, setModerationAction] =
+    useState<ModerationActionSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [reviewing, setReviewing] = useState(false);
@@ -26,6 +29,7 @@ export function useReportDetail(reportId: string) {
       setError(null);
       const res = await moderationApi.getReportById(reportId);
       setReport(res.data.report);
+      setModerationAction(res.data.moderationAction ?? null);
     } catch (err) {
       setError(getApiErrorMessage(err));
     } finally {
@@ -46,8 +50,11 @@ export function useReportDetail(reportId: string) {
           action,
           reason,
         });
-        // Replace local state with reviewed report from server
         setReport(res.data.report);
+        // The review response also returns the new moderation action
+        if (res.data.moderationAction) {
+          setModerationAction(res.data.moderationAction);
+        }
         return true;
       } catch (err) {
         setReviewError(getApiErrorMessage(err));
@@ -61,6 +68,7 @@ export function useReportDetail(reportId: string) {
 
   return {
     report,
+    moderationAction,
     loading,
     error,
     reviewing,

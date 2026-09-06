@@ -35,6 +35,13 @@ export interface GroupSummary {
   name: string;
 }
 
+export interface ModerationActionSummary {
+  id: string;
+  action: ModerationActionType;
+  reason: string;
+  createdAt: string;
+}
+
 // --- Report ------------------------------------------------------------------
 
 export interface Report {

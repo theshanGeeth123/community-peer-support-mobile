@@ -3,6 +3,7 @@ import apiClient from "@/services/api/apiClient";
 import type { ApiResponse } from "@/features/auth/types/auth.types";
 
 import type {
+  ModerationActionSummary,
   Report,
   ReportListParams,
   ReportsResponseData,
@@ -81,13 +82,20 @@ export const moderationApi = {
 
   async getReportById(
     reportId: string
-  ): Promise<ApiResponse<{ report: Report }>> {
+  ): Promise<ApiResponse<{ report: Report; moderationAction: ModerationActionSummary | null }>> {
     const response = await apiClient.get<
-      ApiResponse<{ report: Report }>
+      ApiResponse<{ report: Report; moderationAction: ModerationActionSummary | null }>
     >(`/reports/${reportId}`);
 
     const data = response.data;
-    return { ...data, data: { report: normalizeReport(data.data.report as Record<string, unknown>) } };
+    const rawAction = data.data.moderationAction as Record<string, unknown> | null;
+    return {
+      ...data,
+      data: {
+        report: normalizeReport(data.data.report as Record<string, unknown>),
+        moderationAction: rawAction ? (coerceId(rawAction) as unknown as ModerationActionSummary) : null,
+      },
+    };
   },
 
   // --- Moderation: review a report (MODERATOR) -----------------------------
@@ -96,13 +104,20 @@ export const moderationApi = {
   async reviewReport(
     reportId: string,
     payload: ReviewReportPayload
-  ): Promise<ApiResponse<{ report: Report }>> {
+  ): Promise<ApiResponse<{ report: Report; moderationAction: ModerationActionSummary | null }>> {
     const response = await apiClient.post<
-      ApiResponse<{ report: Report }>
+      ApiResponse<{ report: Report; moderationAction: ModerationActionSummary | null }>
     >(`/reports/${reportId}/review`, payload);
 
     const data = response.data;
-    return { ...data, data: { report: normalizeReport(data.data.report as Record<string, unknown>) } };
+    const rawAction = data.data.moderationAction as Record<string, unknown> | null;
+    return {
+      ...data,
+      data: {
+        report: normalizeReport(data.data.report as Record<string, unknown>),
+        moderationAction: rawAction ? (coerceId(rawAction) as unknown as ModerationActionSummary) : null,
+      },
+    };
   },
 
 };
