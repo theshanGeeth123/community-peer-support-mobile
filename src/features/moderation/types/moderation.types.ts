@@ -68,14 +68,14 @@ export interface ModerationAction {
 // --- Payloads ----------------------------------------------------------------
 
 export interface SubmitReportPayload {
-  groupId: string;
+  group: string;          // backend field name is "group", not "groupId"
   targetType: ReportTargetType;
   targetId: string;
   reason: ReportReason;
   additionalDetails?: string;
 }
 
-export interface TakeActionPayload {
+export interface ReviewReportPayload {
   action: ModerationActionType;
   reason: string;
 }
