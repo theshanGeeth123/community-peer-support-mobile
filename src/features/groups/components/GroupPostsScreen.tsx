@@ -28,6 +28,8 @@ import type { Post } from "@/features/groups/types/post.types";
 
 import { getApiErrorMessage } from "@/services/api/apiError";
 
+import SubmitReportSheet from "@/features/moderation/components/SubmitReportSheet";
+
 import CreatePostComposer from "./CreatePostComposer";
 import PostCard from "./PostCard";
 import PostCommentsModal from "./PostCommentsModal";
@@ -80,6 +82,8 @@ export default function GroupPostsScreen() {
   const [activeCommentsPostId, setActiveCommentsPostId] = useState<
     string | null
   >(null);
+
+  const [reportingPostId, setReportingPostId] = useState<string | null>(null);
 
   const loadEverything = useCallback(
     async (showLoading = true) => {
@@ -323,6 +327,7 @@ export default function GroupPostsScreen() {
               onOpenComments={() => setActiveCommentsPostId(post.id)}
               onDelete={() => handleDeletePost(post.id)}
               onTogglePin={() => void handleTogglePin(post.id)}
+              onReport={() => setReportingPostId(post.id)}
             />
           ))
         )}
@@ -335,6 +340,16 @@ export default function GroupPostsScreen() {
         canModerate={canModerateAll}
         onClose={() => setActiveCommentsPostId(null)}
       />
+
+      {groupId && reportingPostId ? (
+        <SubmitReportSheet
+          visible={reportingPostId !== null}
+          onClose={() => setReportingPostId(null)}
+          group={groupId}
+          targetType="POST"
+          targetId={reportingPostId}
+        />
+      ) : null}
     </SafeAreaView>
   );
 }

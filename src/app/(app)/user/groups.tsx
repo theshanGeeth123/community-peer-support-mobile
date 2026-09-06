@@ -28,6 +28,7 @@ import CreatePostComposer, {
 } from "@/features/groups/components/CreatePostComposer";
 import PostCard from "@/features/groups/components/PostCard";
 import PostCommentsModal from "@/features/groups/components/PostCommentsModal";
+import SubmitReportSheet from "@/features/moderation/components/SubmitReportSheet";
 
 import type { GroupReference } from "@/features/groups/types/groupMembership.types";
 import type { Post } from "@/features/groups/types/post.types";
@@ -57,6 +58,9 @@ export default function UserGroupsFeedScreen() {
   const [activeCommentsPostId, setActiveCommentsPostId] = useState<
     string | null
   >(null);
+
+  // The post currently being reported (holds id + group)
+  const [reportingPost, setReportingPost] = useState<Post | null>(null);
 
   const loadData = useCallback(async (showLoading = true) => {
     try {
@@ -367,6 +371,7 @@ export default function UserGroupsFeedScreen() {
               onToggleLike={() => void handleToggleLike(post.id)}
               onOpenComments={() => setActiveCommentsPostId(post.id)}
               onDelete={() => handleDeletePost(post.id)}
+              onReport={() => setReportingPost(post)}
             />
           ))
         )}
@@ -379,6 +384,16 @@ export default function UserGroupsFeedScreen() {
         canModerate={false}
         onClose={() => setActiveCommentsPostId(null)}
       />
+
+      {reportingPost ? (
+        <SubmitReportSheet
+          visible={reportingPost !== null}
+          onClose={() => setReportingPost(null)}
+          group={reportingPost.group}
+          targetType="POST"
+          targetId={reportingPost.id}
+        />
+      ) : null}
     </SafeAreaView>
   );
 }
