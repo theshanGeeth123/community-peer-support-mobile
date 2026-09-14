@@ -3,15 +3,47 @@ import apiClient from "@/services/api/apiClient";
 import type { ApiResponse } from "@/features/auth/types/auth.types";
 
 import type {
-  HistoryListParams,
-  HistoryResponseData,
-  ModerationAction,
+  ModerationActionSummary,
   Report,
   ReportListParams,
   ReportsResponseData,
+  ReviewReportPayload,
   SubmitReportPayload,
-  TakeActionPayload,
 } from "../types/moderation.types";
+
+// ── Helper ─────────────────────────────────────────────────────────────────
+// The backend Report model has no toSafeObject(), so Mongoose serialises
+// documents with _id instead of id. We normalise here so the rest of the
+// frontend can safely use report.id.
+
+type RawWithId = { _id?: string; id?: string; [key: string]: unknown };
+
+function coerceId<T extends RawWithId>(obj: T): T {
+  if (obj && obj._id && !obj.id) {
+    return { ...obj, id: String(obj._id) } as T;
+  }
+  return obj;
+}
+
+function normalizeReport(raw: Record<string, unknown>): Report {
+  const r = coerceId(raw as RawWithId);
+
+  if (r.reporter && typeof r.reporter === "object") {
+    r.reporter = coerceId(r.reporter as RawWithId);
+  }
+  if (r.reviewedBy && typeof r.reviewedBy === "object") {
+    r.reviewedBy = coerceId(r.reviewedBy as RawWithId);
+  }
+  if (r.group && typeof r.group === "object") {
+    r.group = coerceId(r.group as RawWithId);
+  }
+  // Ensure targetId is a plain string (Mongoose ObjectId → string)
+  if (r.targetId && typeof r.targetId !== "string") {
+    r.targetId = String(r.targetId);
+  }
+
+  return r as unknown as Report;
+}
 
 export const moderationApi = {
   // --- Report: submit (USER / PEER_SUPPORTER / MODERATOR) -------------------
@@ -23,7 +55,8 @@ export const moderationApi = {
       ApiResponse<{ report: Report }>
     >("/reports", payload);
 
-    return response.data;
+    const data = response.data;
+    return { ...data, data: { report: normalizeReport(data.data.report as Record<string, unknown>) } };
   },
 
   // --- Moderation: list reports for assigned groups (MODERATOR) -------------
@@ -35,43 +68,56 @@ export const moderationApi = {
       ApiResponse<ReportsResponseData>
     >("/reports", { params });
 
-    return response.data;
+    const data = response.data;
+    return {
+      ...data,
+      data: {
+        ...data.data,
+        reports: (data.data.reports as unknown as Record<string, unknown>[]).map(normalizeReport),
+      },
+    };
   },
 
   // --- Moderation: get single report detail (MODERATOR) --------------------
 
   async getReportById(
     reportId: string
-  ): Promise<ApiResponse<{ report: Report }>> {
+  ): Promise<ApiResponse<{ report: Report; moderationAction: ModerationActionSummary | null }>> {
     const response = await apiClient.get<
-      ApiResponse<{ report: Report }>
+      ApiResponse<{ report: Report; moderationAction: ModerationActionSummary | null }>
     >(`/reports/${reportId}`);
 
-    return response.data;
+    const data = response.data;
+    const rawAction = data.data.moderationAction as Record<string, unknown> | null;
+    return {
+      ...data,
+      data: {
+        report: normalizeReport(data.data.report as Record<string, unknown>),
+        moderationAction: rawAction ? (coerceId(rawAction) as unknown as ModerationActionSummary) : null,
+      },
+    };
   },
 
-  // --- Moderation: take action on a report (MODERATOR) ---------------------
+  // --- Moderation: review a report (MODERATOR) -----------------------------
+  // Backend route: POST /reports/:id/review
 
-  async takeAction(
+  async reviewReport(
     reportId: string,
-    payload: TakeActionPayload
-  ): Promise<ApiResponse<{ action: ModerationAction }>> {
+    payload: ReviewReportPayload
+  ): Promise<ApiResponse<{ report: Report; moderationAction: ModerationActionSummary | null }>> {
     const response = await apiClient.post<
-      ApiResponse<{ action: ModerationAction }>
-    >(`/reports/${reportId}/action`, payload);
+      ApiResponse<{ report: Report; moderationAction: ModerationActionSummary | null }>
+    >(`/reports/${reportId}/review`, payload);
 
-    return response.data;
+    const data = response.data;
+    const rawAction = data.data.moderationAction as Record<string, unknown> | null;
+    return {
+      ...data,
+      data: {
+        report: normalizeReport(data.data.report as Record<string, unknown>),
+        moderationAction: rawAction ? (coerceId(rawAction) as unknown as ModerationActionSummary) : null,
+      },
+    };
   },
 
-  // --- Moderation: get action history (MODERATOR) --------------------------
-
-  async getModerationHistory(
-    params: HistoryListParams = {}
-  ): Promise<ApiResponse<HistoryResponseData>> {
-    const response = await apiClient.get<
-      ApiResponse<HistoryResponseData>
-    >("/moderation/history", { params });
-
-    return response.data;
-  },
 };

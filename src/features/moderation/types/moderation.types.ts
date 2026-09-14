@@ -35,6 +35,13 @@ export interface GroupSummary {
   name: string;
 }
 
+export interface ModerationActionSummary {
+  id: string;
+  action: ModerationActionType;
+  reason: string;
+  createdAt: string;
+}
+
 // --- Report ------------------------------------------------------------------
 
 export interface Report {
@@ -68,14 +75,14 @@ export interface ModerationAction {
 // --- Payloads ----------------------------------------------------------------
 
 export interface SubmitReportPayload {
-  groupId: string;
+  group: string;          // backend field name is "group", not "groupId"
   targetType: ReportTargetType;
   targetId: string;
   reason: ReportReason;
   additionalDetails?: string;
 }
 
-export interface TakeActionPayload {
+export interface ReviewReportPayload {
   action: ModerationActionType;
   reason: string;
 }

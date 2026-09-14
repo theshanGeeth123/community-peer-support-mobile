@@ -183,6 +183,17 @@ export default function ModeratorLayout() {
             },
           }}
         />
+
+        <Tabs.Screen
+          name="group/[groupId]/report/[reportId]"
+          options={{
+            href: null,
+
+            tabBarStyle: {
+              display: "none",
+            },
+          }}
+        />
       </Tabs>
     </RoleAreaGuard>
   );

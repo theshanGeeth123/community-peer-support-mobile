@@ -49,6 +49,7 @@ export default function PostCard({
   onOpenComments,
   onDelete,
   onTogglePin,
+  onReport,
 }: {
   post: Post;
 
@@ -59,6 +60,7 @@ export default function PostCard({
   onOpenComments: () => void;
   onDelete: () => void;
   onTogglePin?: () => void;
+  onReport?: () => void;
 }) {
   const canDelete =
     canModerate ||
@@ -159,6 +161,23 @@ export default function PostCard({
               />
             </Pressable>
           )}
+
+          {/* Report button — shown to non-moderators for others' posts */}
+          {!canModerate &&
+            onReport &&
+            post.author.id !== currentUserId && (
+              <Pressable
+                hitSlop={12}
+                onPress={onReport}
+                style={styles.headerIconButton}
+              >
+                <Ionicons
+                  name="flag-outline"
+                  size={19}
+                  color="#94a3b8"
+                />
+              </Pressable>
+            )}
         </View>
       </View>
 
