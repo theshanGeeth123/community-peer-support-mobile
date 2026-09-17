@@ -1,21 +1,27 @@
 import apiClient from "@/services/api/apiClient";
 
 import type {
-    ApiResponse,
-    AuthUser,
-    ChangePasswordPayload,
-    ForgotPasswordPayload,
-    GoogleLoginPayload,
-    GoogleLoginResponseData,
-    LoginPayload,
-    LoginResponseData,
-    MessageResponse,
-    RegisterPayload,
-    RegisterResponseData,
-    ResetPasswordPayload,
-    UpdateProfilePayload,
-    VerifyEmailPayload,
+  ApiResponse,
+  AuthUser,
+  ChangePasswordPayload,
+  ForgotPasswordPayload,
+  GoogleLoginPayload,
+  GoogleLoginResponseData,
+  LoginPayload,
+  LoginResponseData,
+  MessageResponse,
+  RegisterPayload,
+  RegisterResponseData,
+  ResetPasswordPayload,
+  UpdateProfilePayload,
+  VerifyEmailPayload,
 } from "../types/auth.types";
+
+interface ProfileImageUploadFile {
+  uri: string;
+  fileName: string;
+  mimeType: string;
+}
 
 export const authApi = {
   async register(
@@ -114,6 +120,48 @@ export const authApi = {
     const response = await apiClient.patch<
       ApiResponse<{ user: AuthUser }>
     >("/auth/me", payload);
+
+    return response.data;
+  },
+
+  async uploadProfileImage(
+    file: ProfileImageUploadFile
+  ): Promise<ApiResponse<{ user: AuthUser }>> {
+    const formData = new FormData();
+
+    formData.append(
+      "avatar",
+      {
+        uri: file.uri,
+        name: file.fileName,
+        type: file.mimeType,
+      } as unknown as Blob
+    );
+
+    const response = await apiClient.post<
+      ApiResponse<{ user: AuthUser }>
+    >(
+      "/auth/me/avatar",
+      formData,
+      {
+        headers: {
+          "Content-Type":
+            "multipart/form-data",
+        },
+
+        timeout: 30000,
+      }
+    );
+
+    return response.data;
+  },
+
+  async removeProfileImage(): Promise<
+    ApiResponse<{ user: AuthUser }>
+  > {
+    const response = await apiClient.delete<
+      ApiResponse<{ user: AuthUser }>
+    >("/auth/me/avatar");
 
     return response.data;
   },
