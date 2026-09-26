@@ -22,6 +22,8 @@ import {
     useAuth,
 } from "@/features/auth/hooks/useAuth";
 
+import NotificationBell from "@/features/notifications/components/NotificationBell";
+
 import NeedsResponseQuickAction from "@/features/groups/components/NeedsResponseQuickAction";
 
 export default function PeerSupporterHomeScreen() {
@@ -53,14 +55,18 @@ export default function PeerSupporterHomeScreen() {
           false
         }
       >
-        <View className="mb-6">
-          <Text className="text-sm font-medium text-slate-500">
-            Welcome back
-          </Text>
+        <View className="mb-6 flex-row items-start justify-between">
+          <View className="flex-1 pr-4">
+            <Text className="text-sm font-medium text-slate-500">
+              Welcome back
+            </Text>
 
-          <Text className="mt-1 text-3xl font-bold text-slate-900">
-            Hi, {firstName}
-          </Text>
+            <Text className="mt-1 text-3xl font-bold text-slate-900">
+              Hi, {firstName}
+            </Text>
+          </View>
+
+          <NotificationBell />
         </View>
 
         <View className="overflow-hidden rounded-3xl bg-indigo-600 p-6">
