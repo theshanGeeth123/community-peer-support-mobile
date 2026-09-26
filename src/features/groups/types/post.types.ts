@@ -108,6 +108,15 @@ export interface CreatePostResponseData {
 
 export type CrisisAlertStatus = "open" | "handled" | "all";
 
+/*
+ * Mirrors backend post.constants.js POST_SORT
+ */
+export type PostSort =
+  | "newest"
+  | "most_supported"
+  | "most_discussed"
+  | "unanswered";
+
 export interface CreateCommentPayload {
   content: string;
 }

@@ -11,6 +11,7 @@ import type {
   CrisisFlag,
   Post,
   PostComment,
+  PostSort,
   PostsResponseData,
   ToggleLikeResponseData,
   TogglePinResponseData,
@@ -30,7 +31,12 @@ export const postApi = {
 
   async listPosts(
     groupId: string,
-    filters: { page?: number; limit?: number; q?: string } = {}
+    filters: {
+      page?: number;
+      limit?: number;
+      q?: string;
+      sort?: PostSort;
+    } = {}
   ): Promise<ApiResponse<PostsResponseData>> {
     const response = await apiClient.get<ApiResponse<PostsResponseData>>(
       `/groups/${groupId}/posts`,

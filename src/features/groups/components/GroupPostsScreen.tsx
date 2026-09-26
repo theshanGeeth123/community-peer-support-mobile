@@ -28,6 +28,7 @@ import type { SupportGroup } from "@/features/groups/types/group.types";
 import type {
   CreatePostPayload,
   Post,
+  PostSort,
 } from "@/features/groups/types/post.types";
 
 import { getApiErrorMessage } from "@/services/api/apiError";
@@ -56,6 +57,26 @@ function getReferenceId(
 }
 
 const SEARCH_DEBOUNCE_MS = 400;
+
+interface PostListFilters {
+  q: string;
+  sort: PostSort;
+}
+
+const SORT_OPTIONS: {
+  value: PostSort;
+  label: string;
+  icon: keyof typeof Ionicons.glyphMap;
+}[] = [
+  { value: "newest", label: "Newest", icon: "time-outline" },
+  { value: "most_supported", label: "Most supported", icon: "heart-outline" },
+  {
+    value: "most_discussed",
+    label: "Most discussed",
+    icon: "chatbubbles-outline",
+  },
+  { value: "unanswered", label: "Unanswered", icon: "help-circle-outline" },
+];
 
 function sortPosts(posts: Post[]) {
   return [...posts].sort((a, b) => {
@@ -100,45 +121,57 @@ export default function GroupPostsScreen() {
    */
   const [searchText, setSearchText] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const [searching, setSearching] = useState(false);
   const [searchResultCount, setSearchResultCount] = useState<number | null>(
     null
   );
 
+  const [sortOption, setSortOption] = useState<PostSort>("newest");
+
+  /*
+   * True while search/sort results are being fetched
+   * (not the first load, which shows the full-screen spinner).
+   */
+  const [refetching, setRefetching] = useState(false);
+
   const isSearchActive = searchQuery.length > 0;
 
-  const searchQueryRef = useRef("");
+  /*
+   * The normal feed keeps pinned posts on top. Search results and
+   * other sort orders show posts exactly as the server orders them.
+   */
+  const isDefaultFeed = !isSearchActive && sortOption === "newest";
+
+  const filtersRef = useRef<PostListFilters>({ q: "", sort: "newest" });
   const latestPostsRequestRef = useRef(0);
   const hasLoadedRef = useRef(false);
 
   /*
-   * Fetches posts for the current search (or the normal feed).
+   * Fetches posts for the current search/sort.
    * Responses from older requests are ignored, so fast typing
-   * cannot show stale results.
+   * or quick sort changes cannot show stale results.
    */
   const fetchPosts = useCallback(
-    async (query: string) => {
+    async ({ q, sort }: PostListFilters) => {
       if (!groupId) {
         return;
       }
 
       const requestId = ++latestPostsRequestRef.current;
 
-      const response = await postApi.listPosts(
-        groupId,
-        query ? { q: query } : {}
-      );
+      const response = await postApi.listPosts(groupId, {
+        ...(q ? { q } : {}),
+        ...(sort !== "newest" ? { sort } : {}),
+      });
 
       if (requestId !== latestPostsRequestRef.current) {
         return;
       }
 
       const fetchedPosts = response.data.posts ?? [];
+      const isDefault = !q && sort === "newest";
 
-      setPosts(query ? fetchedPosts : sortPosts(fetchedPosts));
-      setSearchResultCount(
-        query ? response.data.pagination.totalPosts : null
-      );
+      setPosts(isDefault ? sortPosts(fetchedPosts) : fetchedPosts);
+      setSearchResultCount(q ? response.data.pagination.totalPosts : null);
     },
     [groupId]
   );
@@ -192,7 +225,7 @@ export default function GroupPostsScreen() {
 
         setCanPost(canModerate || hasActiveMembership);
 
-        await fetchPosts(searchQueryRef.current);
+        await fetchPosts(filtersRef.current);
 
         hasLoadedRef.current = true;
       } catch (requestError) {
@@ -214,7 +247,9 @@ export default function GroupPostsScreen() {
   }, [searchText]);
 
   useEffect(() => {
-    searchQueryRef.current = searchQuery;
+    const filters = { q: searchQuery, sort: sortOption };
+
+    filtersRef.current = filters;
 
     /*
      * The first load is done by loadEverything.
@@ -223,21 +258,21 @@ export default function GroupPostsScreen() {
       return;
     }
 
-    const runSearch = async () => {
+    const refetch = async () => {
       try {
-        setSearching(true);
+        setRefetching(true);
         setError(null);
 
-        await fetchPosts(searchQuery);
+        await fetchPosts(filters);
       } catch (requestError) {
         setError(getApiErrorMessage(requestError));
       } finally {
-        setSearching(false);
+        setRefetching(false);
       }
     };
 
-    void runSearch();
-  }, [searchQuery, fetchPosts]);
+    void refetch();
+  }, [searchQuery, sortOption, fetchPosts]);
 
   const clearSearch = () => {
     setSearchText("");
@@ -267,7 +302,16 @@ export default function GroupPostsScreen() {
 
       const response = await postApi.createPost(groupId, payload);
 
-      setPosts((previous) => [response.data.post, ...previous]);
+      /*
+       * A brand-new post belongs at the top of "Newest" and
+       * "Unanswered". In the other sorts it would be out of place,
+       * so switch back to Newest where the author can see it.
+       */
+      if (sortOption === "newest" || sortOption === "unanswered") {
+        setPosts((previous) => [response.data.post, ...previous]);
+      } else {
+        setSortOption("newest");
+      }
 
       if (response.data.safety?.crisisDetected) {
         setShowCrisisSupport(true);
@@ -337,15 +381,15 @@ export default function GroupPostsScreen() {
     try {
       const response = await postApi.togglePin(postId);
 
-      setPosts((previous) =>
-        sortPosts(
-          previous.map((post) =>
-            post.id === postId
-              ? { ...post, isPinned: response.data.isPinned }
-              : post
-          )
-        )
-      );
+      setPosts((previous) => {
+        const updated = previous.map((post) =>
+          post.id === postId
+            ? { ...post, isPinned: response.data.isPinned }
+            : post
+        );
+
+        return isDefaultFeed ? sortPosts(updated) : updated;
+      });
     } catch (requestError) {
       Alert.alert("Unable to update pin", getApiErrorMessage(requestError));
     }
@@ -411,13 +455,57 @@ export default function GroupPostsScreen() {
             style={styles.searchInput}
           />
 
-          {searching ? (
-            <ActivityIndicator size="small" color="#4f46e5" />
-          ) : searchText.length > 0 ? (
+          {searchText.length > 0 && (
             <Pressable hitSlop={10} onPress={clearSearch}>
               <Ionicons name="close-circle" size={18} color="#94a3b8" />
             </Pressable>
-          ) : null}
+          )}
+        </View>
+
+        {/* SORT */}
+
+        <View style={styles.sortRow}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.sortChips}
+            keyboardShouldPersistTaps="handled"
+          >
+            {SORT_OPTIONS.map((option) => {
+              const active = option.value === sortOption;
+
+              return (
+                <Pressable
+                  key={option.value}
+                  onPress={() => setSortOption(option.value)}
+                  style={[styles.sortChip, active && styles.sortChipActive]}
+                >
+                  <Ionicons
+                    name={option.icon}
+                    size={14}
+                    color={active ? "#ffffff" : "#64748b"}
+                  />
+
+                  <Text
+                    style={[
+                      styles.sortChipText,
+                      active && styles.sortChipTextActive,
+                    ]}
+                  >
+                    {option.label}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </ScrollView>
+
+          {refetching && (
+            <ActivityIndicator
+              size="small"
+              color="#4f46e5"
+              style={styles.sortSpinner}
+            />
+          )}
         </View>
 
         {isSearchActive &&
@@ -469,6 +557,22 @@ export default function GroupPostsScreen() {
             <Pressable onPress={clearSearch} style={styles.clearSearchButton}>
               <Text style={styles.clearSearchButtonText}>Clear search</Text>
             </Pressable>
+          </View>
+        ) : posts.length === 0 && sortOption === "unanswered" ? (
+          <View style={styles.emptyCard}>
+            <View style={styles.emptyIcon}>
+              <Ionicons
+                name="checkmark-done-outline"
+                size={28}
+                color="#16a34a"
+              />
+            </View>
+
+            <Text style={styles.emptyTitle}>Everyone has a reply</Text>
+
+            <Text style={styles.emptyDescription}>
+              Every post in this group has at least one comment.
+            </Text>
           </View>
         ) : posts.length === 0 ? (
           <View style={styles.emptyCard}>
@@ -572,7 +676,7 @@ const styles = StyleSheet.create({
   },
 
   searchBox: {
-    marginBottom: 14,
+    marginBottom: 10,
     height: 46,
     paddingHorizontal: 14,
     flexDirection: "row",
@@ -588,6 +692,47 @@ const styles = StyleSheet.create({
     marginHorizontal: 9,
     fontSize: 14,
     color: "#0f172a",
+  },
+
+  sortRow: {
+    marginBottom: 14,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+
+  sortChips: {
+    gap: 8,
+  },
+
+  sortChip: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+    borderWidth: 1,
+    borderColor: "#e2e8f0",
+    borderRadius: 999,
+    backgroundColor: "#ffffff",
+  },
+
+  sortChipActive: {
+    borderColor: "#4f46e5",
+    backgroundColor: "#4f46e5",
+  },
+
+  sortChipText: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: "#64748b",
+  },
+
+  sortChipTextActive: {
+    color: "#ffffff",
+  },
+
+  sortSpinner: {
+    marginLeft: 8,
   },
 
   searchSummary: {
