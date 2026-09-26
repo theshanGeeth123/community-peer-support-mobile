@@ -13,6 +13,8 @@ import {
   useAuth,
 } from "@/features/auth/hooks/useAuth";
 
+import ShakeQuickActions from "@/features/safety/components/ShakeQuickActions";
+
 export default function AppLayout() {
   const {
     isAuthenticated,
@@ -54,6 +56,13 @@ export default function AppLayout() {
           },
         }}
       />
+
+      {/*
+       * Shake the phone anywhere in the
+       * signed-in app to write a post or
+       * call emergency services.
+       */}
+      <ShakeQuickActions />
     </View>
   );
 }

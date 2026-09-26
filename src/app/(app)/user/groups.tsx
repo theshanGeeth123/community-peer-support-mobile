@@ -16,7 +16,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Ionicons } from "@expo/vector-icons";
 
-import { router, useFocusEffect, type Href } from "expo-router";
+import {
+  router,
+  useFocusEffect,
+  useLocalSearchParams,
+  type Href,
+} from "expo-router";
 
 import { useAuth } from "@/features/auth/hooks/useAuth";
 
@@ -49,6 +54,11 @@ function getGroupReferenceId(reference: GroupReference): string | null {
 
 export default function UserGroupsFeedScreen() {
   const { user } = useAuth();
+
+  /*
+   * Set by "shake → Write a post" to open the post box straight away.
+   */
+  const { compose } = useLocalSearchParams<{ compose?: string }>();
 
   const [joinedGroups, setJoinedGroups] = useState<ComposerGroupOption[]>([]);
 
@@ -315,6 +325,7 @@ export default function UserGroupsFeedScreen() {
             submitting={submittingPost}
             groupOptions={joinedGroups}
             onSubmit={handleCreatePost}
+            autoExpandKey={compose}
           />
         )}
 

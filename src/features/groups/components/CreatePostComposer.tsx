@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import {
   ActivityIndicator,
@@ -72,6 +72,7 @@ export default function CreatePostComposer({
   submitting,
   onSubmit,
   groupOptions,
+  autoExpandKey,
 }: {
   currentUserName?: string;
   submitting: boolean;
@@ -84,6 +85,12 @@ export default function CreatePostComposer({
     groupId?: string
   ) => Promise<boolean>;
   groupOptions?: ComposerGroupOption[];
+
+  /*
+   * Whenever this changes to a new value, the composer opens and
+   * focuses the text box (used by "shake → Write a post").
+   */
+  autoExpandKey?: string;
 }) {
   const [expanded, setExpanded] = useState(false);
   const [content, setContent] = useState("");
@@ -112,6 +119,21 @@ export default function CreatePostComposer({
 
     setTimeout(() => inputRef.current?.focus(), 50);
   };
+
+  useEffect(() => {
+    if (autoExpandKey) {
+      setExpanded(true);
+
+      /*
+       * Slightly longer delay: the screen may still be animating in.
+       */
+      const timeout = setTimeout(() => inputRef.current?.focus(), 350);
+
+      return () => clearTimeout(timeout);
+    }
+
+    return undefined;
+  }, [autoExpandKey]);
 
   const resetForm = () => {
     setContent("");
