@@ -16,7 +16,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Ionicons } from "@expo/vector-icons";
 
-import { router, useFocusEffect, type Href } from "expo-router";
+import {
+  router,
+  useFocusEffect,
+  useLocalSearchParams,
+  type Href,
+} from "expo-router";
 
 import { useAuth } from "@/features/auth/hooks/useAuth";
 
@@ -26,12 +31,16 @@ import { postApi } from "@/features/groups/api/post.api";
 import CreatePostComposer, {
   type ComposerGroupOption,
 } from "@/features/groups/components/CreatePostComposer";
+import CrisisSupportModal from "@/features/groups/components/CrisisSupportModal";
 import PostCard from "@/features/groups/components/PostCard";
 import PostCommentsModal from "@/features/groups/components/PostCommentsModal";
 import SubmitReportSheet from "@/features/moderation/components/SubmitReportSheet";
 
 import type { GroupReference } from "@/features/groups/types/groupMembership.types";
-import type { Post } from "@/features/groups/types/post.types";
+import type {
+  CreatePostPayload,
+  Post,
+} from "@/features/groups/types/post.types";
 
 import { getApiErrorMessage } from "@/services/api/apiError";
 
@@ -45,6 +54,11 @@ function getGroupReferenceId(reference: GroupReference): string | null {
 
 export default function UserGroupsFeedScreen() {
   const { user } = useAuth();
+
+  /*
+   * Set by "shake → Write a post" to open the post box straight away.
+   */
+  const { compose } = useLocalSearchParams<{ compose?: string }>();
 
   const [joinedGroups, setJoinedGroups] = useState<ComposerGroupOption[]>([]);
 
@@ -61,6 +75,8 @@ export default function UserGroupsFeedScreen() {
 
   // The post currently being reported (holds id + group)
   const [reportingPost, setReportingPost] = useState<Post | null>(null);
+
+  const [showCrisisSupport, setShowCrisisSupport] = useState(false);
 
   const loadData = useCallback(async (showLoading = true) => {
     try {
@@ -141,21 +157,17 @@ export default function UserGroupsFeedScreen() {
   };
 
   const handleCreatePost = async (
-    content: string,
-    isAnonymous: boolean,
+    payload: CreatePostPayload,
     groupId?: string
-  ) => {
+  ): Promise<boolean> => {
     if (!groupId) {
-      return;
+      return false;
     }
 
     try {
       setSubmittingPost(true);
 
-      const response = await postApi.createPost(groupId, {
-        content,
-        isAnonymous,
-      });
+      const response = await postApi.createPost(groupId, payload);
 
       const groupName = joinedGroups.find(
         (group) => group.id === groupId
@@ -165,8 +177,16 @@ export default function UserGroupsFeedScreen() {
         { ...response.data.post, groupName },
         ...previous,
       ]);
+
+      if (response.data.safety?.crisisDetected) {
+        setShowCrisisSupport(true);
+      }
+
+      return true;
     } catch (requestError) {
       Alert.alert("Unable to post", getApiErrorMessage(requestError));
+
+      return false;
     } finally {
       setSubmittingPost(false);
     }
@@ -304,9 +324,8 @@ export default function UserGroupsFeedScreen() {
             currentUserName={user?.fullName}
             submitting={submittingPost}
             groupOptions={joinedGroups}
-            onSubmit={(content, isAnonymous, groupId) =>
-              void handleCreatePost(content, isAnonymous, groupId)
-            }
+            onSubmit={handleCreatePost}
+            autoExpandKey={compose}
           />
         )}
 
@@ -394,6 +413,11 @@ export default function UserGroupsFeedScreen() {
           targetId={reportingPost.id}
         />
       ) : null}
+
+      <CrisisSupportModal
+        visible={showCrisisSupport}
+        onClose={() => setShowCrisisSupport(false)}
+      />
     </SafeAreaView>
   );
 }

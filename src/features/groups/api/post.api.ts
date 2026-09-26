@@ -6,8 +6,13 @@ import type {
   CommentsResponseData,
   CreateCommentPayload,
   CreatePostPayload,
+  CreatePostResponseData,
+  CrisisAlertStatus,
+  CrisisFlag,
+  NeedsResponseData,
   Post,
   PostComment,
+  PostSort,
   PostsResponseData,
   ToggleLikeResponseData,
   TogglePinResponseData,
@@ -27,7 +32,12 @@ export const postApi = {
 
   async listPosts(
     groupId: string,
-    filters: { page?: number; limit?: number } = {}
+    filters: {
+      page?: number;
+      limit?: number;
+      q?: string;
+      sort?: PostSort;
+    } = {}
   ): Promise<ApiResponse<PostsResponseData>> {
     const response = await apiClient.get<ApiResponse<PostsResponseData>>(
       `/groups/${groupId}/posts`,
@@ -40,11 +50,88 @@ export const postApi = {
   async createPost(
     groupId: string,
     payload: CreatePostPayload
-  ): Promise<ApiResponse<{ post: Post }>> {
-    const response = await apiClient.post<ApiResponse<{ post: Post }>>(
-      `/groups/${groupId}/posts`,
-      payload
+  ): Promise<ApiResponse<CreatePostResponseData>> {
+    const { image, ...fields } = payload;
+
+    if (!image) {
+      const response = await apiClient.post<
+        ApiResponse<CreatePostResponseData>
+      >(`/groups/${groupId}/posts`, fields);
+
+      return response.data;
+    }
+
+    /*
+     * With a photo: multipart/form-data. Every field is text here,
+     * so contentWarnings is sent as a JSON string.
+     */
+    const formData = new FormData();
+
+    formData.append("content", fields.content);
+    formData.append("isAnonymous", String(Boolean(fields.isAnonymous)));
+    formData.append(
+      "contentWarnings",
+      JSON.stringify(fields.contentWarnings ?? [])
     );
+
+    formData.append("image", {
+      uri: image.uri,
+      name: image.fileName,
+      type: image.mimeType,
+    } as unknown as Blob);
+
+    const response = await apiClient.post<
+      ApiResponse<CreatePostResponseData>
+    >(`/groups/${groupId}/posts`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+
+      timeout: 30000,
+    });
+
+    return response.data;
+  },
+
+  /*
+  |--------------------------------------------------------------------------
+  | CRISIS ALERTS (group staff)
+  |--------------------------------------------------------------------------
+  */
+
+  async listCrisisAlerts(
+    filters: {
+      status?: CrisisAlertStatus;
+      groupId?: string;
+      page?: number;
+      limit?: number;
+    } = {}
+  ): Promise<ApiResponse<PostsResponseData>> {
+    const response = await apiClient.get<ApiResponse<PostsResponseData>>(
+      "/posts/crisis-alerts",
+      { params: filters }
+    );
+
+    return response.data;
+  },
+
+  async getNeedsResponseQueue(
+    filters: { groupId?: string; page?: number; limit?: number } = {}
+  ): Promise<ApiResponse<NeedsResponseData>> {
+    const response = await apiClient.get<ApiResponse<NeedsResponseData>>(
+      "/posts/needs-response",
+      { params: filters }
+    );
+
+    return response.data;
+  },
+
+  async markCrisisHandled(
+    postId: string
+  ): Promise<ApiResponse<{ crisisFlag: CrisisFlag }>> {
+    const response = await apiClient.patch<
+      ApiResponse<{ crisisFlag: CrisisFlag }>
+    >(`/posts/${postId}/crisis-flag/handle`);
 
     return response.data;
   },

@@ -1,8 +1,15 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { useState } from "react";
+
+import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
+
+import { Image } from "expo-image";
 
 import { Ionicons } from "@expo/vector-icons";
 
+import { formatContentWarnings } from "@/features/groups/constants/contentWarnings";
 import type { Post } from "@/features/groups/types/post.types";
+
+import StaffBadge from "./StaffBadge";
 
 function getInitials(name: string) {
   const parts = name.trim().split(/\s+/);
@@ -50,6 +57,7 @@ export default function PostCard({
   onDelete,
   onTogglePin,
   onReport,
+  onMarkCrisisHandled,
 }: {
   post: Post;
 
@@ -61,19 +69,95 @@ export default function PostCard({
   onDelete: () => void;
   onTogglePin?: () => void;
   onReport?: () => void;
+  onMarkCrisisHandled?: () => void;
 }) {
   const canDelete =
     canModerate ||
     (currentUserId &&
       post.author.id === currentUserId);
 
+  /*
+   * crisisFlag is only sent to group staff,
+   * so members never see this banner.
+   */
+  const crisisFlag = post.crisisFlag;
+  const hasOpenCrisisAlert =
+    crisisFlag?.isFlagged === true && !crisisFlag.isHandled;
+
+  /*
+   * Posts with content warnings stay covered until the viewer
+   * chooses to read them. Authors always see their own post.
+   */
+  const contentWarnings = post.contentWarnings ?? [];
+  const hasContentWarnings = contentWarnings.length > 0;
+  const isOwnPost =
+    Boolean(currentUserId) && post.author.id === currentUserId;
+
+  const [revealed, setRevealed] = useState(false);
+  const [imageViewerOpen, setImageViewerOpen] = useState(false);
+
+  const isContentHidden = hasContentWarnings && !isOwnPost && !revealed;
+
   return (
     <View
       style={[
         styles.card,
         post.isPinned && styles.cardPinned,
+        hasOpenCrisisAlert && styles.cardCrisis,
       ]}
     >
+      {/* CRISIS ALERT (staff only) */}
+
+      {crisisFlag?.isFlagged && (
+        <View
+          style={[
+            styles.crisisBanner,
+            crisisFlag.isHandled && styles.crisisBannerHandled,
+          ]}
+        >
+          <Ionicons
+            name={
+              crisisFlag.isHandled
+                ? "checkmark-circle"
+                : "warning"
+            }
+            size={16}
+            color={crisisFlag.isHandled ? "#15803d" : "#be123c"}
+          />
+
+          <View style={styles.crisisBannerText}>
+            <Text
+              style={[
+                styles.crisisTitle,
+                crisisFlag.isHandled && styles.crisisTitleHandled,
+              ]}
+            >
+              {crisisFlag.isHandled
+                ? "Crisis alert handled"
+                : "Possible crisis — please reach out"}
+            </Text>
+
+            {!crisisFlag.isHandled &&
+              crisisFlag.matchedTerms.length > 0 && (
+                <Text style={styles.crisisTerms}>
+                  Detected: {crisisFlag.matchedTerms.join(", ")}
+                </Text>
+              )}
+          </View>
+
+          {!crisisFlag.isHandled && onMarkCrisisHandled && (
+            <Pressable
+              hitSlop={8}
+              onPress={onMarkCrisisHandled}
+              style={styles.crisisHandleButton}
+            >
+              <Text style={styles.crisisHandleButtonText}>
+                Mark handled
+              </Text>
+            </Pressable>
+          )}
+        </View>
+      )}
       {/* PINNED BADGE */}
 
       {post.isPinned && (
@@ -110,9 +194,16 @@ export default function PostCard({
         </View>
 
         <View style={styles.headerText}>
-          <Text style={styles.authorName}>
-            {post.author.fullName}
-          </Text>
+          <View style={styles.authorRow}>
+            <Text
+              numberOfLines={1}
+              style={styles.authorName}
+            >
+              {post.author.fullName}
+            </Text>
+
+            <StaffBadge badge={post.author.staffBadge} />
+          </View>
 
           <Text style={styles.timestamp}>
             {post.groupName
@@ -183,9 +274,110 @@ export default function PostCard({
 
       {/* POST CONTENT */}
 
-      <Text style={styles.content}>
-        {post.content}
-      </Text>
+      {isContentHidden ? (
+        <View style={styles.warningCover}>
+          <Ionicons
+            name="eye-off-outline"
+            size={22}
+            color="#b45309"
+          />
+
+          <Text style={styles.warningCoverTitle}>
+            Content warning
+          </Text>
+
+          <Text style={styles.warningCoverLabels}>
+            {formatContentWarnings(contentWarnings)}
+          </Text>
+
+          <Text style={styles.warningCoverHint}>
+            This post may be difficult to read. Take care of yourself —
+            you can skip it.
+          </Text>
+
+          <Pressable
+            onPress={() => setRevealed(true)}
+            style={styles.warningCoverButton}
+          >
+            <Text style={styles.warningCoverButtonText}>
+              Show post
+            </Text>
+          </Pressable>
+        </View>
+      ) : (
+        <>
+          {hasContentWarnings && (
+            <View style={styles.warningTagRow}>
+              <View style={styles.warningTag}>
+                <Ionicons
+                  name="warning-outline"
+                  size={12}
+                  color="#b45309"
+                />
+
+                <Text style={styles.warningTagText}>
+                  {formatContentWarnings(contentWarnings)}
+                </Text>
+              </View>
+
+              {revealed && (
+                <Pressable
+                  hitSlop={8}
+                  onPress={() => setRevealed(false)}
+                >
+                  <Text style={styles.warningHideText}>Hide</Text>
+                </Pressable>
+              )}
+            </View>
+          )}
+
+          <Text style={styles.content}>
+            {post.content}
+          </Text>
+
+          {post.imageUrl && (
+            <Pressable
+              onPress={() => setImageViewerOpen(true)}
+              accessibilityRole="imagebutton"
+              accessibilityLabel="Open photo"
+              style={styles.postImageWrapper}
+            >
+              <Image
+                source={{ uri: post.imageUrl }}
+                style={styles.postImage}
+                contentFit="cover"
+                transition={150}
+              />
+            </Pressable>
+          )}
+        </>
+      )}
+
+      {/* FULL-SCREEN PHOTO */}
+
+      {post.imageUrl && (
+        <Modal
+          visible={imageViewerOpen}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setImageViewerOpen(false)}
+        >
+          <Pressable
+            style={styles.viewerBackdrop}
+            onPress={() => setImageViewerOpen(false)}
+          >
+            <Image
+              source={{ uri: post.imageUrl }}
+              style={styles.viewerImage}
+              contentFit="contain"
+            />
+
+            <View style={styles.viewerClose}>
+              <Ionicons name="close" size={22} color="#ffffff" />
+            </View>
+          </Pressable>
+        </Modal>
+      )}
 
       {/* POST ACTIONS */}
 
@@ -261,6 +453,58 @@ const styles = StyleSheet.create({
     backgroundColor: "#fffbeb",
   },
 
+  cardCrisis: {
+    borderColor: "#fda4af",
+  },
+
+  crisisBanner: {
+    marginBottom: 12,
+    padding: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 14,
+    backgroundColor: "#fff1f2",
+  },
+
+  crisisBannerHandled: {
+    backgroundColor: "#f0fdf4",
+  },
+
+  crisisBannerText: {
+    flex: 1,
+    marginLeft: 8,
+  },
+
+  crisisTitle: {
+    fontSize: 12,
+    fontWeight: "800",
+    color: "#be123c",
+  },
+
+  crisisTitleHandled: {
+    color: "#15803d",
+  },
+
+  crisisTerms: {
+    marginTop: 2,
+    fontSize: 11,
+    color: "#9f1239",
+  },
+
+  crisisHandleButton: {
+    marginLeft: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 999,
+    backgroundColor: "#be123c",
+  },
+
+  crisisHandleButtonText: {
+    fontSize: 11,
+    fontWeight: "800",
+    color: "#ffffff",
+  },
+
   pinnedBadge: {
     marginBottom: 12,
     paddingHorizontal: 10,
@@ -304,7 +548,13 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
 
+  authorRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+
   authorName: {
+    flexShrink: 1,
     fontSize: 14,
     fontWeight: "800",
     color: "#0f172a",
@@ -330,6 +580,122 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 21,
     color: "#334155",
+  },
+
+  postImageWrapper: {
+    marginTop: 12,
+    overflow: "hidden",
+    borderRadius: 16,
+    backgroundColor: "#f1f5f9",
+  },
+
+  postImage: {
+    width: "100%",
+    aspectRatio: 4 / 3,
+  },
+
+  viewerBackdrop: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(2, 6, 23, 0.94)",
+  },
+
+  viewerImage: {
+    width: "100%",
+    height: "80%",
+  },
+
+  viewerClose: {
+    position: "absolute",
+    top: 54,
+    right: 20,
+    width: 40,
+    height: 40,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 20,
+    backgroundColor: "rgba(255, 255, 255, 0.15)",
+  },
+
+  warningCover: {
+    marginTop: 14,
+    paddingVertical: 20,
+    paddingHorizontal: 16,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#fde68a",
+    borderRadius: 16,
+    backgroundColor: "#fffbeb",
+  },
+
+  warningCoverTitle: {
+    marginTop: 6,
+    fontSize: 14,
+    fontWeight: "800",
+    color: "#92400e",
+  },
+
+  warningCoverLabels: {
+    marginTop: 3,
+    textAlign: "center",
+    fontSize: 13,
+    fontWeight: "700",
+    color: "#b45309",
+  },
+
+  warningCoverHint: {
+    marginTop: 8,
+    maxWidth: 260,
+    textAlign: "center",
+    fontSize: 12,
+    lineHeight: 17,
+    color: "#a16207",
+  },
+
+  warningCoverButton: {
+    marginTop: 12,
+    paddingHorizontal: 18,
+    paddingVertical: 9,
+    borderRadius: 999,
+    backgroundColor: "#d97706",
+  },
+
+  warningCoverButtonText: {
+    fontSize: 13,
+    fontWeight: "800",
+    color: "#ffffff",
+  },
+
+  warningTagRow: {
+    marginTop: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+
+  warningTag: {
+    flexShrink: 1,
+    paddingHorizontal: 9,
+    paddingVertical: 4,
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 999,
+    backgroundColor: "#fef3c7",
+  },
+
+  warningTagText: {
+    marginLeft: 4,
+    fontSize: 11,
+    fontWeight: "700",
+    color: "#b45309",
+  },
+
+  warningHideText: {
+    marginLeft: 10,
+    fontSize: 12,
+    fontWeight: "700",
+    color: "#94a3b8",
   },
 
   footer: {
