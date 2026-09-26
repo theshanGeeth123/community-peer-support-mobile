@@ -31,6 +31,7 @@ import { getApiErrorMessage } from "@/services/api/apiError";
 import SubmitReportSheet from "@/features/moderation/components/SubmitReportSheet";
 
 import CreatePostComposer from "./CreatePostComposer";
+import CrisisSupportModal from "./CrisisSupportModal";
 import PostCard from "./PostCard";
 import PostCommentsModal from "./PostCommentsModal";
 
@@ -84,6 +85,8 @@ export default function GroupPostsScreen() {
   >(null);
 
   const [reportingPostId, setReportingPostId] = useState<string | null>(null);
+
+  const [showCrisisSupport, setShowCrisisSupport] = useState(false);
 
   const loadEverything = useCallback(
     async (showLoading = true) => {
@@ -174,10 +177,33 @@ export default function GroupPostsScreen() {
       });
 
       setPosts((previous) => [response.data.post, ...previous]);
+
+      if (response.data.safety?.crisisDetected) {
+        setShowCrisisSupport(true);
+      }
     } catch (requestError) {
       Alert.alert("Unable to post", getApiErrorMessage(requestError));
     } finally {
       setSubmittingPost(false);
+    }
+  };
+
+  const handleMarkCrisisHandled = async (postId: string) => {
+    try {
+      const response = await postApi.markCrisisHandled(postId);
+
+      setPosts((previous) =>
+        previous.map((post) =>
+          post.id === postId
+            ? { ...post, crisisFlag: response.data.crisisFlag }
+            : post
+        )
+      );
+    } catch (requestError) {
+      Alert.alert(
+        "Unable to update crisis alert",
+        getApiErrorMessage(requestError)
+      );
     }
   };
 
@@ -328,10 +354,16 @@ export default function GroupPostsScreen() {
               onDelete={() => handleDeletePost(post.id)}
               onTogglePin={() => void handleTogglePin(post.id)}
               onReport={() => setReportingPostId(post.id)}
+              onMarkCrisisHandled={() => void handleMarkCrisisHandled(post.id)}
             />
           ))
         )}
       </ScrollView>
+
+      <CrisisSupportModal
+        visible={showCrisisSupport}
+        onClose={() => setShowCrisisSupport(false)}
+      />
 
       <PostCommentsModal
         postId={activeCommentsPostId}

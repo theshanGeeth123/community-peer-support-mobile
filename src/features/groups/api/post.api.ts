@@ -6,6 +6,9 @@ import type {
   CommentsResponseData,
   CreateCommentPayload,
   CreatePostPayload,
+  CreatePostResponseData,
+  CrisisAlertStatus,
+  CrisisFlag,
   Post,
   PostComment,
   PostsResponseData,
@@ -40,11 +43,42 @@ export const postApi = {
   async createPost(
     groupId: string,
     payload: CreatePostPayload
-  ): Promise<ApiResponse<{ post: Post }>> {
-    const response = await apiClient.post<ApiResponse<{ post: Post }>>(
-      `/groups/${groupId}/posts`,
-      payload
+  ): Promise<ApiResponse<CreatePostResponseData>> {
+    const response = await apiClient.post<
+      ApiResponse<CreatePostResponseData>
+    >(`/groups/${groupId}/posts`, payload);
+
+    return response.data;
+  },
+
+  /*
+  |--------------------------------------------------------------------------
+  | CRISIS ALERTS (group staff)
+  |--------------------------------------------------------------------------
+  */
+
+  async listCrisisAlerts(
+    filters: {
+      status?: CrisisAlertStatus;
+      groupId?: string;
+      page?: number;
+      limit?: number;
+    } = {}
+  ): Promise<ApiResponse<PostsResponseData>> {
+    const response = await apiClient.get<ApiResponse<PostsResponseData>>(
+      "/posts/crisis-alerts",
+      { params: filters }
     );
+
+    return response.data;
+  },
+
+  async markCrisisHandled(
+    postId: string
+  ): Promise<ApiResponse<{ crisisFlag: CrisisFlag }>> {
+    const response = await apiClient.patch<
+      ApiResponse<{ crisisFlag: CrisisFlag }>
+    >(`/posts/${postId}/crisis-flag/handle`);
 
     return response.data;
   },

@@ -26,6 +26,7 @@ import { postApi } from "@/features/groups/api/post.api";
 import CreatePostComposer, {
   type ComposerGroupOption,
 } from "@/features/groups/components/CreatePostComposer";
+import CrisisSupportModal from "@/features/groups/components/CrisisSupportModal";
 import PostCard from "@/features/groups/components/PostCard";
 import PostCommentsModal from "@/features/groups/components/PostCommentsModal";
 import SubmitReportSheet from "@/features/moderation/components/SubmitReportSheet";
@@ -61,6 +62,8 @@ export default function UserGroupsFeedScreen() {
 
   // The post currently being reported (holds id + group)
   const [reportingPost, setReportingPost] = useState<Post | null>(null);
+
+  const [showCrisisSupport, setShowCrisisSupport] = useState(false);
 
   const loadData = useCallback(async (showLoading = true) => {
     try {
@@ -165,6 +168,10 @@ export default function UserGroupsFeedScreen() {
         { ...response.data.post, groupName },
         ...previous,
       ]);
+
+      if (response.data.safety?.crisisDetected) {
+        setShowCrisisSupport(true);
+      }
     } catch (requestError) {
       Alert.alert("Unable to post", getApiErrorMessage(requestError));
     } finally {
@@ -394,6 +401,11 @@ export default function UserGroupsFeedScreen() {
           targetId={reportingPost.id}
         />
       ) : null}
+
+      <CrisisSupportModal
+        visible={showCrisisSupport}
+        onClose={() => setShowCrisisSupport(false)}
+      />
     </SafeAreaView>
   );
 }

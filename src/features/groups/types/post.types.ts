@@ -8,6 +8,19 @@ export interface PostAuthorSummary {
   isAnonymized: boolean;
 }
 
+/*
+ * Only returned to group staff. For everyone else it is null.
+ */
+export interface CrisisFlag {
+  isFlagged: boolean;
+  matchedTerms: string[];
+  flaggedAt: string | null;
+
+  isHandled: boolean;
+  handledBy: string | null;
+  handledAt: string | null;
+}
+
 export interface Post {
   id: string;
 
@@ -23,6 +36,8 @@ export interface Post {
   likeCount: number;
   commentCount: number;
   likedByMe: boolean;
+
+  crisisFlag?: CrisisFlag | null;
 
   createdAt: string;
   updatedAt: string;
@@ -68,6 +83,16 @@ export interface CreatePostPayload {
   content: string;
   isAnonymous?: boolean;
 }
+
+export interface CreatePostResponseData {
+  post: Post;
+
+  safety?: {
+    crisisDetected: boolean;
+  };
+}
+
+export type CrisisAlertStatus = "open" | "handled" | "all";
 
 export interface CreateCommentPayload {
   content: string;

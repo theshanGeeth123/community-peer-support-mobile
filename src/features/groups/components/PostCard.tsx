@@ -50,6 +50,7 @@ export default function PostCard({
   onDelete,
   onTogglePin,
   onReport,
+  onMarkCrisisHandled,
 }: {
   post: Post;
 
@@ -61,19 +62,81 @@ export default function PostCard({
   onDelete: () => void;
   onTogglePin?: () => void;
   onReport?: () => void;
+  onMarkCrisisHandled?: () => void;
 }) {
   const canDelete =
     canModerate ||
     (currentUserId &&
       post.author.id === currentUserId);
 
+  /*
+   * crisisFlag is only sent to group staff,
+   * so members never see this banner.
+   */
+  const crisisFlag = post.crisisFlag;
+  const hasOpenCrisisAlert =
+    crisisFlag?.isFlagged === true && !crisisFlag.isHandled;
+
   return (
     <View
       style={[
         styles.card,
         post.isPinned && styles.cardPinned,
+        hasOpenCrisisAlert && styles.cardCrisis,
       ]}
     >
+      {/* CRISIS ALERT (staff only) */}
+
+      {crisisFlag?.isFlagged && (
+        <View
+          style={[
+            styles.crisisBanner,
+            crisisFlag.isHandled && styles.crisisBannerHandled,
+          ]}
+        >
+          <Ionicons
+            name={
+              crisisFlag.isHandled
+                ? "checkmark-circle"
+                : "warning"
+            }
+            size={16}
+            color={crisisFlag.isHandled ? "#15803d" : "#be123c"}
+          />
+
+          <View style={styles.crisisBannerText}>
+            <Text
+              style={[
+                styles.crisisTitle,
+                crisisFlag.isHandled && styles.crisisTitleHandled,
+              ]}
+            >
+              {crisisFlag.isHandled
+                ? "Crisis alert handled"
+                : "Possible crisis — please reach out"}
+            </Text>
+
+            {!crisisFlag.isHandled &&
+              crisisFlag.matchedTerms.length > 0 && (
+                <Text style={styles.crisisTerms}>
+                  Detected: {crisisFlag.matchedTerms.join(", ")}
+                </Text>
+              )}
+          </View>
+
+          {!crisisFlag.isHandled && onMarkCrisisHandled && (
+            <Pressable
+              hitSlop={8}
+              onPress={onMarkCrisisHandled}
+              style={styles.crisisHandleButton}
+            >
+              <Text style={styles.crisisHandleButtonText}>
+                Mark handled
+              </Text>
+            </Pressable>
+          )}
+        </View>
+      )}
       {/* PINNED BADGE */}
 
       {post.isPinned && (
@@ -259,6 +322,58 @@ const styles = StyleSheet.create({
   cardPinned: {
     borderColor: "#fbbf24",
     backgroundColor: "#fffbeb",
+  },
+
+  cardCrisis: {
+    borderColor: "#fda4af",
+  },
+
+  crisisBanner: {
+    marginBottom: 12,
+    padding: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 14,
+    backgroundColor: "#fff1f2",
+  },
+
+  crisisBannerHandled: {
+    backgroundColor: "#f0fdf4",
+  },
+
+  crisisBannerText: {
+    flex: 1,
+    marginLeft: 8,
+  },
+
+  crisisTitle: {
+    fontSize: 12,
+    fontWeight: "800",
+    color: "#be123c",
+  },
+
+  crisisTitleHandled: {
+    color: "#15803d",
+  },
+
+  crisisTerms: {
+    marginTop: 2,
+    fontSize: 11,
+    color: "#9f1239",
+  },
+
+  crisisHandleButton: {
+    marginLeft: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 999,
+    backgroundColor: "#be123c",
+  },
+
+  crisisHandleButtonText: {
+    fontSize: 11,
+    fontWeight: "800",
+    color: "#ffffff",
   },
 
   pinnedBadge: {
