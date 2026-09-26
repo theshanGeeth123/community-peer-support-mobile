@@ -356,7 +356,16 @@ export default function ModeratorReportDetailScreen() {
                 value={reason}
                 onChangeText={setReason}
                 textAlignVertical="top"
+                maxLength={500}
               />
+              <Text
+                style={[
+                  styles.charCounter,
+                  reason.length > 450 && { color: "#e11d48" },
+                ]}
+              >
+                {reason.length} / 500
+              </Text>
 
               {reviewError ? (
                 <View style={styles.errorBox}>
@@ -436,6 +445,7 @@ const styles = StyleSheet.create({
   submitPressed: { opacity: 0.85 },
   submitDisabled: { opacity: 0.6 },
   submitLabel: { fontSize: 15, fontWeight: "700", color: "#ffffff" },
+  charCounter: { fontSize: 11, color: "#94a3b8", textAlign: "right", marginTop: 5 },
   centered: { flex: 1, alignItems: "center", justifyContent: "center", padding: 24 },
   loadingText: { marginTop: 12, fontSize: 14, color: "#94a3b8" },
   errorIconWrap: { width: 72, height: 72, borderRadius: 36, backgroundColor: "#fff1f2", alignItems: "center", justifyContent: "center", marginBottom: 16 },
