@@ -30,7 +30,7 @@ export const postApi = {
 
   async listPosts(
     groupId: string,
-    filters: { page?: number; limit?: number } = {}
+    filters: { page?: number; limit?: number; q?: string } = {}
   ): Promise<ApiResponse<PostsResponseData>> {
     const response = await apiClient.get<ApiResponse<PostsResponseData>>(
       `/groups/${groupId}/posts`,

@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import {
   ActivityIndicator,
@@ -8,6 +8,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   View,
 } from "react-native";
 
@@ -54,6 +55,8 @@ function getReferenceId(
   return reference.id ?? reference._id ?? null;
 }
 
+const SEARCH_DEBOUNCE_MS = 400;
+
 function sortPosts(posts: Post[]) {
   return [...posts].sort((a, b) => {
     if (a.isPinned !== b.isPinned) {
@@ -90,6 +93,55 @@ export default function GroupPostsScreen() {
   const [reportingPostId, setReportingPostId] = useState<string | null>(null);
 
   const [showCrisisSupport, setShowCrisisSupport] = useState(false);
+
+  /*
+   * searchText  → what is typed in the box
+   * searchQuery → trimmed text, updated after the user stops typing
+   */
+  const [searchText, setSearchText] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searching, setSearching] = useState(false);
+  const [searchResultCount, setSearchResultCount] = useState<number | null>(
+    null
+  );
+
+  const isSearchActive = searchQuery.length > 0;
+
+  const searchQueryRef = useRef("");
+  const latestPostsRequestRef = useRef(0);
+  const hasLoadedRef = useRef(false);
+
+  /*
+   * Fetches posts for the current search (or the normal feed).
+   * Responses from older requests are ignored, so fast typing
+   * cannot show stale results.
+   */
+  const fetchPosts = useCallback(
+    async (query: string) => {
+      if (!groupId) {
+        return;
+      }
+
+      const requestId = ++latestPostsRequestRef.current;
+
+      const response = await postApi.listPosts(
+        groupId,
+        query ? { q: query } : {}
+      );
+
+      if (requestId !== latestPostsRequestRef.current) {
+        return;
+      }
+
+      const fetchedPosts = response.data.posts ?? [];
+
+      setPosts(query ? fetchedPosts : sortPosts(fetchedPosts));
+      setSearchResultCount(
+        query ? response.data.pagination.totalPosts : null
+      );
+    },
+    [groupId]
+  );
 
   const loadEverything = useCallback(
     async (showLoading = true) => {
@@ -140,9 +192,9 @@ export default function GroupPostsScreen() {
 
         setCanPost(canModerate || hasActiveMembership);
 
-        const postsResponse = await postApi.listPosts(groupId);
+        await fetchPosts(searchQueryRef.current);
 
-        setPosts(sortPosts(postsResponse.data.posts ?? []));
+        hasLoadedRef.current = true;
       } catch (requestError) {
         setError(getApiErrorMessage(requestError));
       } finally {
@@ -150,8 +202,47 @@ export default function GroupPostsScreen() {
         setRefreshing(false);
       }
     },
-    [groupId, user]
+    [groupId, user, fetchPosts]
   );
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setSearchQuery(searchText.trim());
+    }, SEARCH_DEBOUNCE_MS);
+
+    return () => clearTimeout(timeout);
+  }, [searchText]);
+
+  useEffect(() => {
+    searchQueryRef.current = searchQuery;
+
+    /*
+     * The first load is done by loadEverything.
+     */
+    if (!hasLoadedRef.current) {
+      return;
+    }
+
+    const runSearch = async () => {
+      try {
+        setSearching(true);
+        setError(null);
+
+        await fetchPosts(searchQuery);
+      } catch (requestError) {
+        setError(getApiErrorMessage(requestError));
+      } finally {
+        setSearching(false);
+      }
+    };
+
+    void runSearch();
+  }, [searchQuery, fetchPosts]);
+
+  const clearSearch = () => {
+    setSearchText("");
+    setSearchQuery("");
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -298,11 +389,52 @@ export default function GroupPostsScreen() {
       <ScrollView
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }
       >
-        {canPost && (
+        {/* SEARCH */}
+
+        <View style={styles.searchBox}>
+          <Ionicons name="search" size={17} color="#94a3b8" />
+
+          <TextInput
+            value={searchText}
+            onChangeText={setSearchText}
+            placeholder="Search posts in this group"
+            placeholderTextColor="#94a3b8"
+            autoCapitalize="none"
+            autoCorrect={false}
+            returnKeyType="search"
+            maxLength={100}
+            style={styles.searchInput}
+          />
+
+          {searching ? (
+            <ActivityIndicator size="small" color="#4f46e5" />
+          ) : searchText.length > 0 ? (
+            <Pressable hitSlop={10} onPress={clearSearch}>
+              <Ionicons name="close-circle" size={18} color="#94a3b8" />
+            </Pressable>
+          ) : null}
+        </View>
+
+        {isSearchActive &&
+          searchResultCount !== null &&
+          searchResultCount > 0 && (
+            <Text style={styles.searchSummary}>
+              {`${searchResultCount} ${
+                searchResultCount === 1 ? "post" : "posts"
+              } found for "${searchQuery}"${
+                searchResultCount > posts.length
+                  ? ` · showing latest ${posts.length}`
+                  : ""
+              }`}
+            </Text>
+          )}
+
+        {canPost && !isSearchActive && (
           <CreatePostComposer
             currentUserName={user?.fullName}
             submitting={submittingPost}
@@ -321,6 +453,22 @@ export default function GroupPostsScreen() {
             <ActivityIndicator size="large" color="#4f46e5" />
 
             <Text style={styles.loadingText}>Loading posts...</Text>
+          </View>
+        ) : posts.length === 0 && isSearchActive ? (
+          <View style={styles.emptyCard}>
+            <View style={styles.emptyIcon}>
+              <Ionicons name="search-outline" size={27} color="#4f46e5" />
+            </View>
+
+            <Text style={styles.emptyTitle}>No matching posts</Text>
+
+            <Text style={styles.emptyDescription}>
+              Try a different word, or check the spelling.
+            </Text>
+
+            <Pressable onPress={clearSearch} style={styles.clearSearchButton}>
+              <Text style={styles.clearSearchButtonText}>Clear search</Text>
+            </Pressable>
           </View>
         ) : posts.length === 0 ? (
           <View style={styles.emptyCard}>
@@ -421,6 +569,46 @@ const styles = StyleSheet.create({
   content: {
     padding: 20,
     paddingBottom: 70,
+  },
+
+  searchBox: {
+    marginBottom: 14,
+    height: 46,
+    paddingHorizontal: 14,
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#e2e8f0",
+    borderRadius: 16,
+    backgroundColor: "#ffffff",
+  },
+
+  searchInput: {
+    flex: 1,
+    marginHorizontal: 9,
+    fontSize: 14,
+    color: "#0f172a",
+  },
+
+  searchSummary: {
+    marginBottom: 4,
+    fontSize: 12,
+    fontWeight: "600",
+    color: "#64748b",
+  },
+
+  clearSearchButton: {
+    marginTop: 14,
+    paddingHorizontal: 16,
+    paddingVertical: 9,
+    borderRadius: 999,
+    backgroundColor: "#eef2ff",
+  },
+
+  clearSearchButtonText: {
+    fontSize: 13,
+    fontWeight: "700",
+    color: "#4f46e5",
   },
 
   errorBox: {
