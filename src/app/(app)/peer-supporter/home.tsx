@@ -22,6 +22,8 @@ import {
     useAuth,
 } from "@/features/auth/hooks/useAuth";
 
+import NeedsResponseQuickAction from "@/features/groups/components/NeedsResponseQuickAction";
+
 export default function PeerSupporterHomeScreen() {
   const { user } = useAuth();
 
@@ -92,6 +94,11 @@ export default function PeerSupporterHomeScreen() {
         <Text className="mb-4 mt-8 text-xl font-bold text-slate-900">
           Quick Actions
         </Text>
+
+        <NeedsResponseQuickAction
+          href={"/(app)/peer-supporter/needs-response" as Href}
+          className="mb-3"
+        />
 
         <Pressable
           onPress={() =>

@@ -87,6 +87,19 @@ export interface PostsResponseData {
   pagination: PostsPagination;
 }
 
+export interface NeedsResponseData {
+  crisisAlerts: Post[];
+  unanswered: Post[];
+
+  counts: {
+    crisisAlerts: number;
+    unanswered: number;
+  };
+
+  maxAgeDays: number;
+  pagination: PostsPagination;
+}
+
 export interface CommentsResponseData {
   comments: PostComment[];
   totalComments: number;

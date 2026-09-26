@@ -9,6 +9,7 @@ import type {
   CreatePostResponseData,
   CrisisAlertStatus,
   CrisisFlag,
+  NeedsResponseData,
   Post,
   PostComment,
   PostSort,
@@ -73,6 +74,17 @@ export const postApi = {
   ): Promise<ApiResponse<PostsResponseData>> {
     const response = await apiClient.get<ApiResponse<PostsResponseData>>(
       "/posts/crisis-alerts",
+      { params: filters }
+    );
+
+    return response.data;
+  },
+
+  async getNeedsResponseQueue(
+    filters: { groupId?: string; page?: number; limit?: number } = {}
+  ): Promise<ApiResponse<NeedsResponseData>> {
+    const response = await apiClient.get<ApiResponse<NeedsResponseData>>(
+      "/posts/needs-response",
       { params: filters }
     );
 
