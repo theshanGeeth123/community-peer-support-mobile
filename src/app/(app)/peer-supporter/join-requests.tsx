@@ -27,6 +27,7 @@ import {
 } from "@expo/vector-icons";
 
 import {
+  router,
   useFocusEffect,
   useLocalSearchParams,
 } from "expo-router";
@@ -412,6 +413,21 @@ export default function PeerSupporterJoinRequestsScreen() {
         "right",
       ]}
     >
+      {/* ── Header ── */}
+      <View style={styles.header}>
+        <Pressable
+          onPress={() => router.back()}
+          style={styles.backBtn}
+          hitSlop={10}
+        >
+          <Ionicons name="arrow-back" size={22} color="#0f172a" />
+        </Pressable>
+        <View style={{ flex: 1, alignItems: "center" }}>
+          <Text style={styles.heading}>Join Requests</Text>
+        </View>
+        <View style={{ width: 40 }} />
+      </View>
+
       <ScrollView
         style={{
           flex: 1,
@@ -440,21 +456,10 @@ export default function PeerSupporterJoinRequestsScreen() {
         >
           <Text
             style={
-              styles.heading
-            }
-          >
-            Join Requests
-          </Text>
-
-          <Text
-            style={
               styles.headingDescription
             }
           >
-            Review membership
-            requests only for
-            groups assigned to
-            you.
+            Review membership requests only for groups assigned to you.
           </Text>
         </View>
 
@@ -1401,6 +1406,25 @@ const styles =
 
       backgroundColor:
         "#f8fafc",
+    },
+
+    header: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 16,
+      paddingVertical: 14,
+      borderBottomWidth: 1,
+      borderBottomColor: "#e2e8f0",
+      backgroundColor: "#ffffff",
+    },
+
+    backBtn: {
+      width: 40,
+      height: 40,
+      borderRadius: 12,
+      backgroundColor: "#f1f5f9",
+      alignItems: "center",
+      justifyContent: "center",
     },
 
     content: {
