@@ -1,11 +1,18 @@
 import type { UserRole } from "@/features/auth/types/auth.types";
 
+/*
+ * Set when the author is staff of the post's group (or an admin).
+ * Never set on anonymous posts.
+ */
+export type StaffBadge = "PEER_SUPPORTER" | "MODERATOR" | "ADMIN";
+
 export interface PostAuthorSummary {
   id: string | null;
   fullName: string;
   role: UserRole | null;
   avatarUrl: string | null;
   isAnonymized: boolean;
+  staffBadge?: StaffBadge | null;
 }
 
 /*

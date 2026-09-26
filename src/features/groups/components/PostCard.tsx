@@ -7,6 +7,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { formatContentWarnings } from "@/features/groups/constants/contentWarnings";
 import type { Post } from "@/features/groups/types/post.types";
 
+import StaffBadge from "./StaffBadge";
+
 function getInitials(name: string) {
   const parts = name.trim().split(/\s+/);
 
@@ -189,9 +191,16 @@ export default function PostCard({
         </View>
 
         <View style={styles.headerText}>
-          <Text style={styles.authorName}>
-            {post.author.fullName}
-          </Text>
+          <View style={styles.authorRow}>
+            <Text
+              numberOfLines={1}
+              style={styles.authorName}
+            >
+              {post.author.fullName}
+            </Text>
+
+            <StaffBadge badge={post.author.staffBadge} />
+          </View>
 
           <Text style={styles.timestamp}>
             {post.groupName
@@ -494,7 +503,13 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
 
+  authorRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+
   authorName: {
+    flexShrink: 1,
     fontSize: 14,
     fontWeight: "800",
     color: "#0f172a",
