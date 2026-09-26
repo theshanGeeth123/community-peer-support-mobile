@@ -149,9 +149,9 @@ export default function UserGroupsFeedScreen() {
   const handleCreatePost = async (
     payload: CreatePostPayload,
     groupId?: string
-  ) => {
+  ): Promise<boolean> => {
     if (!groupId) {
-      return;
+      return false;
     }
 
     try {
@@ -171,8 +171,12 @@ export default function UserGroupsFeedScreen() {
       if (response.data.safety?.crisisDetected) {
         setShowCrisisSupport(true);
       }
+
+      return true;
     } catch (requestError) {
       Alert.alert("Unable to post", getApiErrorMessage(requestError));
+
+      return false;
     } finally {
       setSubmittingPost(false);
     }
@@ -310,9 +314,7 @@ export default function UserGroupsFeedScreen() {
             currentUserName={user?.fullName}
             submitting={submittingPost}
             groupOptions={joinedGroups}
-            onSubmit={(payload, groupId) =>
-              void handleCreatePost(payload, groupId)
-            }
+            onSubmit={handleCreatePost}
           />
         )}
 

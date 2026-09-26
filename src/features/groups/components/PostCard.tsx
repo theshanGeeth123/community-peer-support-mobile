@@ -1,6 +1,8 @@
 import { useState } from "react";
 
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
+
+import { Image } from "expo-image";
 
 import { Ionicons } from "@expo/vector-icons";
 
@@ -92,6 +94,7 @@ export default function PostCard({
     Boolean(currentUserId) && post.author.id === currentUserId;
 
   const [revealed, setRevealed] = useState(false);
+  const [imageViewerOpen, setImageViewerOpen] = useState(false);
 
   const isContentHidden = hasContentWarnings && !isOwnPost && !revealed;
 
@@ -331,7 +334,49 @@ export default function PostCard({
           <Text style={styles.content}>
             {post.content}
           </Text>
+
+          {post.imageUrl && (
+            <Pressable
+              onPress={() => setImageViewerOpen(true)}
+              accessibilityRole="imagebutton"
+              accessibilityLabel="Open photo"
+              style={styles.postImageWrapper}
+            >
+              <Image
+                source={{ uri: post.imageUrl }}
+                style={styles.postImage}
+                contentFit="cover"
+                transition={150}
+              />
+            </Pressable>
+          )}
         </>
+      )}
+
+      {/* FULL-SCREEN PHOTO */}
+
+      {post.imageUrl && (
+        <Modal
+          visible={imageViewerOpen}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setImageViewerOpen(false)}
+        >
+          <Pressable
+            style={styles.viewerBackdrop}
+            onPress={() => setImageViewerOpen(false)}
+          >
+            <Image
+              source={{ uri: post.imageUrl }}
+              style={styles.viewerImage}
+              contentFit="contain"
+            />
+
+            <View style={styles.viewerClose}>
+              <Ionicons name="close" size={22} color="#ffffff" />
+            </View>
+          </Pressable>
+        </Modal>
       )}
 
       {/* POST ACTIONS */}
@@ -535,6 +580,42 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 21,
     color: "#334155",
+  },
+
+  postImageWrapper: {
+    marginTop: 12,
+    overflow: "hidden",
+    borderRadius: 16,
+    backgroundColor: "#f1f5f9",
+  },
+
+  postImage: {
+    width: "100%",
+    aspectRatio: 4 / 3,
+  },
+
+  viewerBackdrop: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(2, 6, 23, 0.94)",
+  },
+
+  viewerImage: {
+    width: "100%",
+    height: "80%",
+  },
+
+  viewerClose: {
+    position: "absolute",
+    top: 54,
+    right: 20,
+    width: 40,
+    height: 40,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 20,
+    backgroundColor: "rgba(255, 255, 255, 0.15)",
   },
 
   warningCover: {

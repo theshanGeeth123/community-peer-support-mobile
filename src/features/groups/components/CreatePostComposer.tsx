@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 
 import {
   ActivityIndicator,
+  Alert,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -9,6 +10,9 @@ import {
   TextInput,
   View,
 } from "react-native";
+
+import { Image } from "expo-image";
+import * as ImagePicker from "expo-image-picker";
 
 import { Ionicons } from "@expo/vector-icons";
 
@@ -20,9 +24,29 @@ import {
 import type {
   ContentWarning,
   CreatePostPayload,
+  PostImageFile,
 } from "../types/post.types";
 
 const MAX_CONTENT_LENGTH = 3000;
+
+/*
+ * Same limits as the backend upload middleware.
+ */
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
+
+const ALLOWED_IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
+
+function getDefaultImageFileName(mimeType?: string | null) {
+  if (mimeType === "image/png") {
+    return `post-${Date.now()}.png`;
+  }
+
+  if (mimeType === "image/webp") {
+    return `post-${Date.now()}.webp`;
+  }
+
+  return `post-${Date.now()}.jpg`;
+}
 
 function getInitials(name: string) {
   const parts = name.trim().split(/\s+/);
@@ -51,12 +75,21 @@ export default function CreatePostComposer({
 }: {
   currentUserName?: string;
   submitting: boolean;
-  onSubmit: (payload: CreatePostPayload, groupId?: string) => void;
+  /*
+   * Resolve to true when the post was created. The form is cleared
+   * only then, so a failed upload never loses the text or photo.
+   */
+  onSubmit: (
+    payload: CreatePostPayload,
+    groupId?: string
+  ) => Promise<boolean>;
   groupOptions?: ComposerGroupOption[];
 }) {
   const [expanded, setExpanded] = useState(false);
   const [content, setContent] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);
+
+  const [image, setImage] = useState<PostImageFile | null>(null);
 
   const [showWarningPicker, setShowWarningPicker] = useState(false);
   const [contentWarnings, setContentWarnings] = useState<ContentWarning[]>(
@@ -83,9 +116,58 @@ export default function CreatePostComposer({
   const resetForm = () => {
     setContent("");
     setIsAnonymous(false);
+    setImage(null);
     setContentWarnings([]);
     setShowWarningPicker(false);
     setExpanded(false);
+  };
+
+  const handlePickImage = async () => {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (!permission.granted) {
+      Alert.alert(
+        "Photo permission required",
+        "Please allow photo access so you can add a photo to your post."
+      );
+
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      quality: 0.8,
+    });
+
+    if (result.canceled || result.assets.length === 0) {
+      return;
+    }
+
+    const asset = result.assets[0];
+
+    if (!asset.uri) {
+      Alert.alert("Unable to use photo", "Please choose another image.");
+      return;
+    }
+
+    if (asset.fileSize && asset.fileSize > MAX_IMAGE_SIZE) {
+      Alert.alert("Photo too large", "Please choose an image under 5 MB.");
+      return;
+    }
+
+    if (asset.mimeType && !ALLOWED_IMAGE_TYPES.has(asset.mimeType)) {
+      Alert.alert(
+        "Unsupported photo",
+        "Please choose a JPEG, PNG, or WebP image."
+      );
+      return;
+    }
+
+    setImage({
+      uri: asset.uri,
+      fileName: asset.fileName ?? getDefaultImageFileName(asset.mimeType),
+      mimeType: asset.mimeType ?? "image/jpeg",
+    });
   };
 
   const toggleContentWarning = (warning: ContentWarning) => {
@@ -96,21 +178,24 @@ export default function CreatePostComposer({
     );
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!canSubmit) {
       return;
     }
 
-    onSubmit(
+    const created = await onSubmit(
       {
         content: content.trim(),
         isAnonymous,
         contentWarnings,
+        image,
       },
       selectedGroupId
     );
 
-    resetForm();
+    if (created) {
+      resetForm();
+    }
   };
 
   const selectedGroupName = groupOptions?.find(
@@ -194,37 +279,84 @@ export default function CreatePostComposer({
             </View>
           )}
 
-          {/* CONTENT WARNINGS */}
+          {/* PHOTO */}
 
-          <Pressable
-            style={styles.warningToggle}
-            onPress={() => setShowWarningPicker((previous) => !previous)}
-          >
-            <Ionicons
-              name={
-                contentWarnings.length > 0 ? "warning" : "warning-outline"
-              }
-              size={16}
-              color={contentWarnings.length > 0 ? "#b45309" : "#64748b"}
-            />
+          {image && (
+            <View style={styles.imagePreviewWrapper}>
+              <Image
+                source={{ uri: image.uri }}
+                style={styles.imagePreview}
+                contentFit="cover"
+              />
 
-            <Text
-              style={[
-                styles.warningToggleText,
-                contentWarnings.length > 0 && styles.warningToggleTextActive,
-              ]}
+              {!submitting && (
+                <Pressable
+                  hitSlop={8}
+                  onPress={() => setImage(null)}
+                  accessibilityLabel="Remove photo"
+                  style={styles.imageRemoveButton}
+                >
+                  <Ionicons name="close" size={16} color="#ffffff" />
+                </Pressable>
+              )}
+            </View>
+          )}
+
+          <View style={styles.optionsRow}>
+            <Pressable
+              disabled={submitting}
+              style={styles.warningToggle}
+              onPress={() => void handlePickImage()}
             >
-              {contentWarnings.length > 0
-                ? `Content warning (${contentWarnings.length})`
-                : "Add content warning"}
-            </Text>
+              <Ionicons
+                name={image ? "image" : "image-outline"}
+                size={16}
+                color={image ? "#4f46e5" : "#64748b"}
+              />
 
-            <Ionicons
-              name={showWarningPicker ? "chevron-up" : "chevron-down"}
-              size={14}
-              color="#94a3b8"
-            />
-          </Pressable>
+              <Text
+                style={[
+                  styles.warningToggleText,
+                  image && styles.photoToggleTextActive,
+                ]}
+              >
+                {image ? "Change photo" : "Add photo"}
+              </Text>
+            </Pressable>
+
+            {/* CONTENT WARNINGS */}
+
+            <Pressable
+              style={styles.warningToggle}
+              onPress={() => setShowWarningPicker((previous) => !previous)}
+            >
+              <Ionicons
+                name={
+                  contentWarnings.length > 0 ? "warning" : "warning-outline"
+                }
+                size={16}
+                color={contentWarnings.length > 0 ? "#b45309" : "#64748b"}
+              />
+
+              <Text
+                style={[
+                  styles.warningToggleText,
+                  contentWarnings.length > 0 &&
+                    styles.warningToggleTextActive,
+                ]}
+              >
+                {contentWarnings.length > 0
+                  ? `Content warning (${contentWarnings.length})`
+                  : "Add content warning"}
+              </Text>
+
+              <Ionicons
+                name={showWarningPicker ? "chevron-up" : "chevron-down"}
+                size={14}
+                color="#94a3b8"
+              />
+            </Pressable>
+          </View>
 
           {showWarningPicker && (
             <View style={styles.warningPicker}>
@@ -286,7 +418,7 @@ export default function CreatePostComposer({
 
               <Pressable
                 disabled={!canSubmit}
-                onPress={handleSubmit}
+                onPress={() => void handleSubmit()}
                 style={[
                   styles.submitButton,
                   !canSubmit && styles.submitDisabled,
@@ -434,12 +566,46 @@ const styles = StyleSheet.create({
     color: "#4f46e5",
   },
 
-  warningToggle: {
+  imagePreviewWrapper: {
     marginTop: 14,
-    alignSelf: "flex-start",
+    overflow: "hidden",
+    borderRadius: 16,
+  },
+
+  imagePreview: {
+    width: "100%",
+    height: 190,
+    backgroundColor: "#f1f5f9",
+  },
+
+  imageRemoveButton: {
+    position: "absolute",
+    top: 8,
+    right: 8,
+    width: 28,
+    height: 28,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 14,
+    backgroundColor: "rgba(15, 23, 42, 0.65)",
+  },
+
+  optionsRow: {
+    marginTop: 14,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "center",
+    gap: 18,
+  },
+
+  warningToggle: {
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
+  },
+
+  photoToggleTextActive: {
+    color: "#4f46e5",
   },
 
   warningToggleText: {

@@ -51,9 +51,44 @@ export const postApi = {
     groupId: string,
     payload: CreatePostPayload
   ): Promise<ApiResponse<CreatePostResponseData>> {
+    const { image, ...fields } = payload;
+
+    if (!image) {
+      const response = await apiClient.post<
+        ApiResponse<CreatePostResponseData>
+      >(`/groups/${groupId}/posts`, fields);
+
+      return response.data;
+    }
+
+    /*
+     * With a photo: multipart/form-data. Every field is text here,
+     * so contentWarnings is sent as a JSON string.
+     */
+    const formData = new FormData();
+
+    formData.append("content", fields.content);
+    formData.append("isAnonymous", String(Boolean(fields.isAnonymous)));
+    formData.append(
+      "contentWarnings",
+      JSON.stringify(fields.contentWarnings ?? [])
+    );
+
+    formData.append("image", {
+      uri: image.uri,
+      name: image.fileName,
+      type: image.mimeType,
+    } as unknown as Blob);
+
     const response = await apiClient.post<
       ApiResponse<CreatePostResponseData>
-    >(`/groups/${groupId}/posts`, payload);
+    >(`/groups/${groupId}/posts`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+
+      timeout: 30000,
+    });
 
     return response.data;
   },

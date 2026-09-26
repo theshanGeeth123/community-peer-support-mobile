@@ -59,6 +59,15 @@ export interface Post {
 
   crisisFlag?: CrisisFlag | null;
 
+  /*
+   * True when a moderator removed the post through a report.
+   * Only staff ever receive removed posts (opening one by ID);
+   * removedAt / removalReason are included in that case.
+   */
+  isRemoved?: boolean;
+  removedAt?: string | null;
+  removalReason?: string | null;
+
   createdAt: string;
   updatedAt: string;
 
@@ -112,10 +121,21 @@ export interface CommentsResponseData {
   totalComments: number;
 }
 
+export interface PostImageFile {
+  uri: string;
+  fileName: string;
+  mimeType: string;
+}
+
 export interface CreatePostPayload {
   content: string;
   isAnonymous?: boolean;
   contentWarnings?: ContentWarning[];
+
+  /*
+   * Optional photo. When set, the post is sent as multipart/form-data.
+   */
+  image?: PostImageFile | null;
 }
 
 export interface CreatePostResponseData {
