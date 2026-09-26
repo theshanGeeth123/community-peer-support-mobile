@@ -12,6 +12,16 @@ import {
 
 import { Ionicons } from "@expo/vector-icons";
 
+import {
+  CONTENT_WARNING_LABELS,
+  CONTENT_WARNING_OPTIONS,
+} from "../constants/contentWarnings";
+
+import type {
+  ContentWarning,
+  CreatePostPayload,
+} from "../types/post.types";
+
 const MAX_CONTENT_LENGTH = 3000;
 
 function getInitials(name: string) {
@@ -41,12 +51,17 @@ export default function CreatePostComposer({
 }: {
   currentUserName?: string;
   submitting: boolean;
-  onSubmit: (content: string, isAnonymous: boolean, groupId?: string) => void;
+  onSubmit: (payload: CreatePostPayload, groupId?: string) => void;
   groupOptions?: ComposerGroupOption[];
 }) {
   const [expanded, setExpanded] = useState(false);
   const [content, setContent] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);
+
+  const [showWarningPicker, setShowWarningPicker] = useState(false);
+  const [contentWarnings, setContentWarnings] = useState<ContentWarning[]>(
+    []
+  );
 
   const [selectedGroupId, setSelectedGroupId] = useState<string | undefined>(
     groupOptions?.[0]?.id
@@ -65,10 +80,20 @@ export default function CreatePostComposer({
     setTimeout(() => inputRef.current?.focus(), 50);
   };
 
-  const handleCancel = () => {
-    setExpanded(false);
+  const resetForm = () => {
     setContent("");
     setIsAnonymous(false);
+    setContentWarnings([]);
+    setShowWarningPicker(false);
+    setExpanded(false);
+  };
+
+  const toggleContentWarning = (warning: ContentWarning) => {
+    setContentWarnings((previous) =>
+      previous.includes(warning)
+        ? previous.filter((item) => item !== warning)
+        : [...previous, warning]
+    );
   };
 
   const handleSubmit = () => {
@@ -76,11 +101,16 @@ export default function CreatePostComposer({
       return;
     }
 
-    onSubmit(content.trim(), isAnonymous, selectedGroupId);
+    onSubmit(
+      {
+        content: content.trim(),
+        isAnonymous,
+        contentWarnings,
+      },
+      selectedGroupId
+    );
 
-    setContent("");
-    setIsAnonymous(false);
-    setExpanded(false);
+    resetForm();
   };
 
   const selectedGroupName = groupOptions?.find(
@@ -164,6 +194,73 @@ export default function CreatePostComposer({
             </View>
           )}
 
+          {/* CONTENT WARNINGS */}
+
+          <Pressable
+            style={styles.warningToggle}
+            onPress={() => setShowWarningPicker((previous) => !previous)}
+          >
+            <Ionicons
+              name={
+                contentWarnings.length > 0 ? "warning" : "warning-outline"
+              }
+              size={16}
+              color={contentWarnings.length > 0 ? "#b45309" : "#64748b"}
+            />
+
+            <Text
+              style={[
+                styles.warningToggleText,
+                contentWarnings.length > 0 && styles.warningToggleTextActive,
+              ]}
+            >
+              {contentWarnings.length > 0
+                ? `Content warning (${contentWarnings.length})`
+                : "Add content warning"}
+            </Text>
+
+            <Ionicons
+              name={showWarningPicker ? "chevron-up" : "chevron-down"}
+              size={14}
+              color="#94a3b8"
+            />
+          </Pressable>
+
+          {showWarningPicker && (
+            <View style={styles.warningPicker}>
+              <Text style={styles.warningHint}>
+                Members will see a warning and choose whether to view your
+                post.
+              </Text>
+
+              <View style={styles.warningChipRow}>
+                {CONTENT_WARNING_OPTIONS.map((warning) => {
+                  const active = contentWarnings.includes(warning);
+
+                  return (
+                    <Pressable
+                      key={warning}
+                      onPress={() => toggleContentWarning(warning)}
+                      style={[
+                        styles.warningChip,
+                        active && styles.warningChipActive,
+                      ]}
+                    >
+                      <Text
+                        style={[
+                          styles.warningChipText,
+                          active && styles.warningChipTextActive,
+                        ]}
+                      >
+                        {CONTENT_WARNING_LABELS[warning]}
+                      </Text>
+                    </Pressable>
+                  );
+                })}
+              </View>
+            </View>
+          )}
+
           <View style={styles.footer}>
             <Pressable
               style={styles.anonymousToggle}
@@ -181,7 +278,7 @@ export default function CreatePostComposer({
             <View style={styles.footerButtons}>
               <Pressable
                 disabled={submitting}
-                onPress={handleCancel}
+                onPress={resetForm}
                 style={styles.cancelButton}
               >
                 <Text style={styles.cancelButtonText}>Cancel</Text>
@@ -335,6 +432,69 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: "700",
     color: "#4f46e5",
+  },
+
+  warningToggle: {
+    marginTop: 14,
+    alignSelf: "flex-start",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+
+  warningToggleText: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: "#64748b",
+  },
+
+  warningToggleTextActive: {
+    color: "#b45309",
+  },
+
+  warningPicker: {
+    marginTop: 10,
+    padding: 12,
+    borderRadius: 14,
+    backgroundColor: "#fffbeb",
+  },
+
+  warningHint: {
+    marginBottom: 10,
+    fontSize: 11,
+    lineHeight: 16,
+    color: "#92400e",
+  },
+
+  warningChipRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+  },
+
+  warningChip: {
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: "#fde68a",
+    backgroundColor: "#ffffff",
+  },
+
+  warningChipActive: {
+    borderColor: "#d97706",
+    backgroundColor: "#fef3c7",
+  },
+
+  warningChipText: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: "#92400e",
+  },
+
+  warningChipTextActive: {
+    fontWeight: "800",
+    color: "#b45309",
   },
 
   footer: {

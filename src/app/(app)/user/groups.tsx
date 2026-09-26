@@ -32,7 +32,10 @@ import PostCommentsModal from "@/features/groups/components/PostCommentsModal";
 import SubmitReportSheet from "@/features/moderation/components/SubmitReportSheet";
 
 import type { GroupReference } from "@/features/groups/types/groupMembership.types";
-import type { Post } from "@/features/groups/types/post.types";
+import type {
+  CreatePostPayload,
+  Post,
+} from "@/features/groups/types/post.types";
 
 import { getApiErrorMessage } from "@/services/api/apiError";
 
@@ -144,8 +147,7 @@ export default function UserGroupsFeedScreen() {
   };
 
   const handleCreatePost = async (
-    content: string,
-    isAnonymous: boolean,
+    payload: CreatePostPayload,
     groupId?: string
   ) => {
     if (!groupId) {
@@ -155,10 +157,7 @@ export default function UserGroupsFeedScreen() {
     try {
       setSubmittingPost(true);
 
-      const response = await postApi.createPost(groupId, {
-        content,
-        isAnonymous,
-      });
+      const response = await postApi.createPost(groupId, payload);
 
       const groupName = joinedGroups.find(
         (group) => group.id === groupId
@@ -311,8 +310,8 @@ export default function UserGroupsFeedScreen() {
             currentUserName={user?.fullName}
             submitting={submittingPost}
             groupOptions={joinedGroups}
-            onSubmit={(content, isAnonymous, groupId) =>
-              void handleCreatePost(content, isAnonymous, groupId)
+            onSubmit={(payload, groupId) =>
+              void handleCreatePost(payload, groupId)
             }
           />
         )}

@@ -9,6 +9,17 @@ export interface PostAuthorSummary {
 }
 
 /*
+ * Mirrors backend post.constants.js CONTENT_WARNING
+ */
+export type ContentWarning =
+  | "SUICIDE_SELF_HARM"
+  | "EATING_DISORDERS"
+  | "ABUSE"
+  | "GRIEF"
+  | "SUBSTANCE_USE"
+  | "VIOLENCE";
+
+/*
  * Only returned to group staff. For everyone else it is null.
  */
 export interface CrisisFlag {
@@ -30,6 +41,8 @@ export interface Post {
   imageUrl: string | null;
   isAnonymous: boolean;
   isPinned: boolean;
+
+  contentWarnings: ContentWarning[];
 
   author: PostAuthorSummary;
 
@@ -82,6 +95,7 @@ export interface CommentsResponseData {
 export interface CreatePostPayload {
   content: string;
   isAnonymous?: boolean;
+  contentWarnings?: ContentWarning[];
 }
 
 export interface CreatePostResponseData {

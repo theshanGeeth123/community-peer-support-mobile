@@ -24,7 +24,10 @@ import { groupMembershipApi } from "@/features/groups/api/groupMembership.api";
 import { postApi } from "@/features/groups/api/post.api";
 
 import type { SupportGroup } from "@/features/groups/types/group.types";
-import type { Post } from "@/features/groups/types/post.types";
+import type {
+  CreatePostPayload,
+  Post,
+} from "@/features/groups/types/post.types";
 
 import { getApiErrorMessage } from "@/services/api/apiError";
 
@@ -163,7 +166,7 @@ export default function GroupPostsScreen() {
     void loadEverything(false);
   };
 
-  const handleCreatePost = async (content: string, isAnonymous: boolean) => {
+  const handleCreatePost = async (payload: CreatePostPayload) => {
     if (!groupId) {
       return;
     }
@@ -171,10 +174,7 @@ export default function GroupPostsScreen() {
     try {
       setSubmittingPost(true);
 
-      const response = await postApi.createPost(groupId, {
-        content,
-        isAnonymous,
-      });
+      const response = await postApi.createPost(groupId, payload);
 
       setPosts((previous) => [response.data.post, ...previous]);
 
@@ -306,9 +306,7 @@ export default function GroupPostsScreen() {
           <CreatePostComposer
             currentUserName={user?.fullName}
             submitting={submittingPost}
-            onSubmit={(content, isAnonymous) =>
-              void handleCreatePost(content, isAnonymous)
-            }
+            onSubmit={(payload) => void handleCreatePost(payload)}
           />
         )}
 

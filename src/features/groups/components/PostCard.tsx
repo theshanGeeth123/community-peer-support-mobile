@@ -1,7 +1,10 @@
+import { useState } from "react";
+
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { Ionicons } from "@expo/vector-icons";
 
+import { formatContentWarnings } from "@/features/groups/constants/contentWarnings";
 import type { Post } from "@/features/groups/types/post.types";
 
 function getInitials(name: string) {
@@ -76,6 +79,19 @@ export default function PostCard({
   const crisisFlag = post.crisisFlag;
   const hasOpenCrisisAlert =
     crisisFlag?.isFlagged === true && !crisisFlag.isHandled;
+
+  /*
+   * Posts with content warnings stay covered until the viewer
+   * chooses to read them. Authors always see their own post.
+   */
+  const contentWarnings = post.contentWarnings ?? [];
+  const hasContentWarnings = contentWarnings.length > 0;
+  const isOwnPost =
+    Boolean(currentUserId) && post.author.id === currentUserId;
+
+  const [revealed, setRevealed] = useState(false);
+
+  const isContentHidden = hasContentWarnings && !isOwnPost && !revealed;
 
   return (
     <View
@@ -246,9 +262,68 @@ export default function PostCard({
 
       {/* POST CONTENT */}
 
-      <Text style={styles.content}>
-        {post.content}
-      </Text>
+      {isContentHidden ? (
+        <View style={styles.warningCover}>
+          <Ionicons
+            name="eye-off-outline"
+            size={22}
+            color="#b45309"
+          />
+
+          <Text style={styles.warningCoverTitle}>
+            Content warning
+          </Text>
+
+          <Text style={styles.warningCoverLabels}>
+            {formatContentWarnings(contentWarnings)}
+          </Text>
+
+          <Text style={styles.warningCoverHint}>
+            This post may be difficult to read. Take care of yourself —
+            you can skip it.
+          </Text>
+
+          <Pressable
+            onPress={() => setRevealed(true)}
+            style={styles.warningCoverButton}
+          >
+            <Text style={styles.warningCoverButtonText}>
+              Show post
+            </Text>
+          </Pressable>
+        </View>
+      ) : (
+        <>
+          {hasContentWarnings && (
+            <View style={styles.warningTagRow}>
+              <View style={styles.warningTag}>
+                <Ionicons
+                  name="warning-outline"
+                  size={12}
+                  color="#b45309"
+                />
+
+                <Text style={styles.warningTagText}>
+                  {formatContentWarnings(contentWarnings)}
+                </Text>
+              </View>
+
+              {revealed && (
+                <Pressable
+                  hitSlop={8}
+                  onPress={() => setRevealed(false)}
+                >
+                  <Text style={styles.warningHideText}>Hide</Text>
+                </Pressable>
+              )}
+            </View>
+          )}
+
+          <Text style={styles.content}>
+            {post.content}
+          </Text>
+        </>
+      )}
 
       {/* POST ACTIONS */}
 
@@ -445,6 +520,86 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 21,
     color: "#334155",
+  },
+
+  warningCover: {
+    marginTop: 14,
+    paddingVertical: 20,
+    paddingHorizontal: 16,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#fde68a",
+    borderRadius: 16,
+    backgroundColor: "#fffbeb",
+  },
+
+  warningCoverTitle: {
+    marginTop: 6,
+    fontSize: 14,
+    fontWeight: "800",
+    color: "#92400e",
+  },
+
+  warningCoverLabels: {
+    marginTop: 3,
+    textAlign: "center",
+    fontSize: 13,
+    fontWeight: "700",
+    color: "#b45309",
+  },
+
+  warningCoverHint: {
+    marginTop: 8,
+    maxWidth: 260,
+    textAlign: "center",
+    fontSize: 12,
+    lineHeight: 17,
+    color: "#a16207",
+  },
+
+  warningCoverButton: {
+    marginTop: 12,
+    paddingHorizontal: 18,
+    paddingVertical: 9,
+    borderRadius: 999,
+    backgroundColor: "#d97706",
+  },
+
+  warningCoverButtonText: {
+    fontSize: 13,
+    fontWeight: "800",
+    color: "#ffffff",
+  },
+
+  warningTagRow: {
+    marginTop: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+
+  warningTag: {
+    flexShrink: 1,
+    paddingHorizontal: 9,
+    paddingVertical: 4,
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 999,
+    backgroundColor: "#fef3c7",
+  },
+
+  warningTagText: {
+    marginLeft: 4,
+    fontSize: 11,
+    fontWeight: "700",
+    color: "#b45309",
+  },
+
+  warningHideText: {
+    marginLeft: 10,
+    fontSize: 12,
+    fontWeight: "700",
+    color: "#94a3b8",
   },
 
   footer: {
