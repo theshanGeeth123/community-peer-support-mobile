@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import {
   ActivityIndicator,
@@ -8,6 +8,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   View,
 } from "react-native";
 
@@ -24,11 +25,19 @@ import { groupMembershipApi } from "@/features/groups/api/groupMembership.api";
 import { postApi } from "@/features/groups/api/post.api";
 
 import type { SupportGroup } from "@/features/groups/types/group.types";
-import type { Post } from "@/features/groups/types/post.types";
+import type {
+  CreatePostPayload,
+  Post,
+  PostReactionType,
+  PostSort,
+} from "@/features/groups/types/post.types";
 
 import { getApiErrorMessage } from "@/services/api/apiError";
 
+import SubmitReportSheet from "@/features/moderation/components/SubmitReportSheet";
+
 import CreatePostComposer from "./CreatePostComposer";
+import CrisisSupportModal from "./CrisisSupportModal";
 import PostCard from "./PostCard";
 import PostCommentsModal from "./PostCommentsModal";
 
@@ -47,6 +56,28 @@ function getReferenceId(
 
   return reference.id ?? reference._id ?? null;
 }
+
+const SEARCH_DEBOUNCE_MS = 400;
+
+interface PostListFilters {
+  q: string;
+  sort: PostSort;
+}
+
+const SORT_OPTIONS: {
+  value: PostSort;
+  label: string;
+  icon: keyof typeof Ionicons.glyphMap;
+}[] = [
+  { value: "newest", label: "Newest", icon: "time-outline" },
+  { value: "most_supported", label: "Most supported", icon: "heart-outline" },
+  {
+    value: "most_discussed",
+    label: "Most discussed",
+    icon: "chatbubbles-outline",
+  },
+  { value: "unanswered", label: "Unanswered", icon: "help-circle-outline" },
+];
 
 function sortPosts(posts: Post[]) {
   return [...posts].sort((a, b) => {
@@ -80,6 +111,71 @@ export default function GroupPostsScreen() {
   const [activeCommentsPostId, setActiveCommentsPostId] = useState<
     string | null
   >(null);
+
+  const [reportingPostId, setReportingPostId] = useState<string | null>(null);
+
+  const [showCrisisSupport, setShowCrisisSupport] = useState(false);
+
+  /*
+   * searchText  → what is typed in the box
+   * searchQuery → trimmed text, updated after the user stops typing
+   */
+  const [searchText, setSearchText] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResultCount, setSearchResultCount] = useState<number | null>(
+    null
+  );
+
+  const [sortOption, setSortOption] = useState<PostSort>("newest");
+
+  /*
+   * True while search/sort results are being fetched
+   * (not the first load, which shows the full-screen spinner).
+   */
+  const [refetching, setRefetching] = useState(false);
+
+  const isSearchActive = searchQuery.length > 0;
+
+  /*
+   * The normal feed keeps pinned posts on top. Search results and
+   * other sort orders show posts exactly as the server orders them.
+   */
+  const isDefaultFeed = !isSearchActive && sortOption === "newest";
+
+  const filtersRef = useRef<PostListFilters>({ q: "", sort: "newest" });
+  const latestPostsRequestRef = useRef(0);
+  const hasLoadedRef = useRef(false);
+
+  /*
+   * Fetches posts for the current search/sort.
+   * Responses from older requests are ignored, so fast typing
+   * or quick sort changes cannot show stale results.
+   */
+  const fetchPosts = useCallback(
+    async ({ q, sort }: PostListFilters) => {
+      if (!groupId) {
+        return;
+      }
+
+      const requestId = ++latestPostsRequestRef.current;
+
+      const response = await postApi.listPosts(groupId, {
+        ...(q ? { q } : {}),
+        ...(sort !== "newest" ? { sort } : {}),
+      });
+
+      if (requestId !== latestPostsRequestRef.current) {
+        return;
+      }
+
+      const fetchedPosts = response.data.posts ?? [];
+      const isDefault = !q && sort === "newest";
+
+      setPosts(isDefault ? sortPosts(fetchedPosts) : fetchedPosts);
+      setSearchResultCount(q ? response.data.pagination.totalPosts : null);
+    },
+    [groupId]
+  );
 
   const loadEverything = useCallback(
     async (showLoading = true) => {
@@ -130,9 +226,9 @@ export default function GroupPostsScreen() {
 
         setCanPost(canModerate || hasActiveMembership);
 
-        const postsResponse = await postApi.listPosts(groupId);
+        await fetchPosts(filtersRef.current);
 
-        setPosts(sortPosts(postsResponse.data.posts ?? []));
+        hasLoadedRef.current = true;
       } catch (requestError) {
         setError(getApiErrorMessage(requestError));
       } finally {
@@ -140,8 +236,49 @@ export default function GroupPostsScreen() {
         setRefreshing(false);
       }
     },
-    [groupId, user]
+    [groupId, user, fetchPosts]
   );
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setSearchQuery(searchText.trim());
+    }, SEARCH_DEBOUNCE_MS);
+
+    return () => clearTimeout(timeout);
+  }, [searchText]);
+
+  useEffect(() => {
+    const filters = { q: searchQuery, sort: sortOption };
+
+    filtersRef.current = filters;
+
+    /*
+     * The first load is done by loadEverything.
+     */
+    if (!hasLoadedRef.current) {
+      return;
+    }
+
+    const refetch = async () => {
+      try {
+        setRefetching(true);
+        setError(null);
+
+        await fetchPosts(filters);
+      } catch (requestError) {
+        setError(getApiErrorMessage(requestError));
+      } finally {
+        setRefetching(false);
+      }
+    };
+
+    void refetch();
+  }, [searchQuery, sortOption, fetchPosts]);
+
+  const clearSearch = () => {
+    setSearchText("");
+    setSearchQuery("");
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -156,58 +293,160 @@ export default function GroupPostsScreen() {
     void loadEverything(false);
   };
 
-  const handleCreatePost = async (content: string, isAnonymous: boolean) => {
+  const handleCreatePost = async (
+    payload: CreatePostPayload
+  ): Promise<boolean> => {
     if (!groupId) {
-      return;
+      return false;
     }
 
     try {
       setSubmittingPost(true);
 
-      const response = await postApi.createPost(groupId, {
-        content,
-        isAnonymous,
-      });
+      const response = await postApi.createPost(groupId, payload);
 
-      setPosts((previous) => [response.data.post, ...previous]);
+      /*
+       * A brand-new post belongs at the top of "Newest" and
+       * "Unanswered". In the other sorts it would be out of place,
+       * so switch back to Newest where the author can see it.
+       */
+      if (sortOption === "newest" || sortOption === "unanswered") {
+        setPosts((previous) => [response.data.post, ...previous]);
+      } else {
+        setSortOption("newest");
+      }
+
+      if (response.data.safety?.crisisDetected) {
+        setShowCrisisSupport(true);
+      }
+
+      return true;
     } catch (requestError) {
       Alert.alert("Unable to post", getApiErrorMessage(requestError));
+
+      return false;
     } finally {
       setSubmittingPost(false);
     }
   };
 
-  const handleToggleLike = async (postId: string) => {
+  const handleMarkCrisisHandled = async (postId: string) => {
+    try {
+      const response = await postApi.markCrisisHandled(postId);
+
+      setPosts((previous) =>
+        previous.map((post) =>
+          post.id === postId
+            ? { ...post, crisisFlag: response.data.crisisFlag }
+            : post
+        )
+      );
+    } catch (requestError) {
+      Alert.alert(
+        "Unable to update crisis alert",
+        getApiErrorMessage(requestError)
+      );
+    }
+  };
+
+  /*
+   * POST REACTIONS
+   *
+   * Selecting the same reaction removes it.
+   * Selecting a different reaction changes the existing reaction.
+   */
+  const handleToggleReaction = async (
+    postId: string,
+    reactionType: PostReactionType
+  ) => {
+    /*
+     * Optimistic UI update.
+     */
     setPosts((previous) =>
-      previous.map((post) =>
-        post.id === postId
-          ? {
-              ...post,
-              likedByMe: !post.likedByMe,
-              likeCount: post.likedByMe
-                ? post.likeCount - 1
-                : post.likeCount + 1,
-            }
-          : post
-      )
+      previous.map((post) => {
+        if (post.id !== postId) {
+          return post;
+        }
+
+        const currentReaction = post.myReaction;
+
+        const updatedCounts = {
+          ...(post.reactionCounts ?? {
+            like: 0,
+            love: 0,
+            haha: 0,
+            wow: 0,
+            sad: 0,
+            angry: 0,
+          }),
+        };
+
+        /*
+         * Same reaction = remove reaction.
+         */
+        if (currentReaction === reactionType) {
+          updatedCounts[reactionType] = Math.max(
+            0,
+            updatedCounts[reactionType] - 1
+          );
+
+          return {
+            ...post,
+            myReaction: null,
+            reactionCounts: updatedCounts,
+          };
+        }
+
+        /*
+         * Changing from one reaction to another.
+         */
+        if (currentReaction) {
+          updatedCounts[currentReaction] = Math.max(
+            0,
+            updatedCounts[currentReaction] - 1
+          );
+        }
+
+        updatedCounts[reactionType] =
+          updatedCounts[reactionType] + 1;
+
+        return {
+          ...post,
+          myReaction: reactionType,
+          reactionCounts: updatedCounts,
+        };
+      })
     );
 
     try {
-      const response = await postApi.toggleLike(postId);
+      const response = await postApi.toggleReaction(
+        postId,
+        reactionType
+      );
 
+      /*
+       * Backend response is authoritative.
+       */
       setPosts((previous) =>
         previous.map((post) =>
           post.id === postId
             ? {
                 ...post,
-                likedByMe: response.data.liked,
-                likeCount: response.data.likeCount,
+                myReaction: response.data.myReaction,
+                reactionCounts: response.data.reactionCounts,
               }
             : post
         )
       );
     } catch (requestError) {
-      Alert.alert("Unable to update like", getApiErrorMessage(requestError));
+      Alert.alert(
+        "Unable to update reaction",
+        getApiErrorMessage(requestError)
+      );
+
+      /*
+       * Restore the actual server state if the request failed.
+       */
       void loadEverything(false);
     }
   };
@@ -216,15 +455,15 @@ export default function GroupPostsScreen() {
     try {
       const response = await postApi.togglePin(postId);
 
-      setPosts((previous) =>
-        sortPosts(
-          previous.map((post) =>
-            post.id === postId
-              ? { ...post, isPinned: response.data.isPinned }
-              : post
-          )
-        )
-      );
+      setPosts((previous) => {
+        const updated = previous.map((post) =>
+          post.id === postId
+            ? { ...post, isPinned: response.data.isPinned }
+            : post
+        );
+
+        return isDefaultFeed ? sortPosts(updated) : updated;
+      });
     } catch (requestError) {
       Alert.alert("Unable to update pin", getApiErrorMessage(requestError));
     }
@@ -268,17 +507,100 @@ export default function GroupPostsScreen() {
       <ScrollView
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }
       >
-        {canPost && (
+        {/* SEARCH */}
+
+        <View style={styles.searchBox}>
+          <Ionicons name="search" size={17} color="#94a3b8" />
+
+          <TextInput
+            value={searchText}
+            onChangeText={setSearchText}
+            placeholder="Search posts in this group"
+            placeholderTextColor="#94a3b8"
+            autoCapitalize="none"
+            autoCorrect={false}
+            returnKeyType="search"
+            maxLength={100}
+            style={styles.searchInput}
+          />
+
+          {searchText.length > 0 && (
+            <Pressable hitSlop={10} onPress={clearSearch}>
+              <Ionicons name="close-circle" size={18} color="#94a3b8" />
+            </Pressable>
+          )}
+        </View>
+
+        {/* SORT */}
+
+        <View style={styles.sortRow}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.sortChips}
+            keyboardShouldPersistTaps="handled"
+          >
+            {SORT_OPTIONS.map((option) => {
+              const active = option.value === sortOption;
+
+              return (
+                <Pressable
+                  key={option.value}
+                  onPress={() => setSortOption(option.value)}
+                  style={[styles.sortChip, active && styles.sortChipActive]}
+                >
+                  <Ionicons
+                    name={option.icon}
+                    size={14}
+                    color={active ? "#ffffff" : "#64748b"}
+                  />
+
+                  <Text
+                    style={[
+                      styles.sortChipText,
+                      active && styles.sortChipTextActive,
+                    ]}
+                  >
+                    {option.label}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </ScrollView>
+
+          {refetching && (
+            <ActivityIndicator
+              size="small"
+              color="#4f46e5"
+              style={styles.sortSpinner}
+            />
+          )}
+        </View>
+
+        {isSearchActive &&
+          searchResultCount !== null &&
+          searchResultCount > 0 && (
+            <Text style={styles.searchSummary}>
+              {`${searchResultCount} ${
+                searchResultCount === 1 ? "post" : "posts"
+              } found for "${searchQuery}"${
+                searchResultCount > posts.length
+                  ? ` · showing latest ${posts.length}`
+                  : ""
+              }`}
+            </Text>
+          )}
+
+        {canPost && !isSearchActive && (
           <CreatePostComposer
             currentUserName={user?.fullName}
             submitting={submittingPost}
-            onSubmit={(content, isAnonymous) =>
-              void handleCreatePost(content, isAnonymous)
-            }
+            onSubmit={handleCreatePost}
           />
         )}
 
@@ -293,6 +615,38 @@ export default function GroupPostsScreen() {
             <ActivityIndicator size="large" color="#4f46e5" />
 
             <Text style={styles.loadingText}>Loading posts...</Text>
+          </View>
+        ) : posts.length === 0 && isSearchActive ? (
+          <View style={styles.emptyCard}>
+            <View style={styles.emptyIcon}>
+              <Ionicons name="search-outline" size={27} color="#4f46e5" />
+            </View>
+
+            <Text style={styles.emptyTitle}>No matching posts</Text>
+
+            <Text style={styles.emptyDescription}>
+              Try a different word, or check the spelling.
+            </Text>
+
+            <Pressable onPress={clearSearch} style={styles.clearSearchButton}>
+              <Text style={styles.clearSearchButtonText}>Clear search</Text>
+            </Pressable>
+          </View>
+        ) : posts.length === 0 && sortOption === "unanswered" ? (
+          <View style={styles.emptyCard}>
+            <View style={styles.emptyIcon}>
+              <Ionicons
+                name="checkmark-done-outline"
+                size={28}
+                color="#16a34a"
+              />
+            </View>
+
+            <Text style={styles.emptyTitle}>Everyone has a reply</Text>
+
+            <Text style={styles.emptyDescription}>
+              Every post in this group has at least one comment.
+            </Text>
           </View>
         ) : posts.length === 0 ? (
           <View style={styles.emptyCard}>
@@ -319,14 +673,25 @@ export default function GroupPostsScreen() {
               post={post}
               currentUserId={user?.id}
               canModerate={canModerateAll}
-              onToggleLike={() => void handleToggleLike(post.id)}
+              onToggleReaction={(reactionType) =>
+                void handleToggleReaction(post.id, reactionType)
+              }
               onOpenComments={() => setActiveCommentsPostId(post.id)}
               onDelete={() => handleDeletePost(post.id)}
               onTogglePin={() => void handleTogglePin(post.id)}
+              onReport={() => setReportingPostId(post.id)}
+              onMarkCrisisHandled={() =>
+                void handleMarkCrisisHandled(post.id)
+              }
             />
           ))
         )}
       </ScrollView>
+
+      <CrisisSupportModal
+        visible={showCrisisSupport}
+        onClose={() => setShowCrisisSupport(false)}
+      />
 
       <PostCommentsModal
         postId={activeCommentsPostId}
@@ -335,6 +700,16 @@ export default function GroupPostsScreen() {
         canModerate={canModerateAll}
         onClose={() => setActiveCommentsPostId(null)}
       />
+
+      {groupId && reportingPostId ? (
+        <SubmitReportSheet
+          visible={reportingPostId !== null}
+          onClose={() => setReportingPostId(null)}
+          group={groupId}
+          targetType="POST"
+          targetId={reportingPostId}
+        />
+      ) : null}
     </SafeAreaView>
   );
 }
@@ -376,6 +751,87 @@ const styles = StyleSheet.create({
   content: {
     padding: 20,
     paddingBottom: 70,
+  },
+
+  searchBox: {
+    marginBottom: 10,
+    height: 46,
+    paddingHorizontal: 14,
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#e2e8f0",
+    borderRadius: 16,
+    backgroundColor: "#ffffff",
+  },
+
+  searchInput: {
+    flex: 1,
+    marginHorizontal: 9,
+    fontSize: 14,
+    color: "#0f172a",
+  },
+
+  sortRow: {
+    marginBottom: 14,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+
+  sortChips: {
+    gap: 8,
+  },
+
+  sortChip: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+    borderWidth: 1,
+    borderColor: "#e2e8f0",
+    borderRadius: 999,
+    backgroundColor: "#ffffff",
+  },
+
+  sortChipActive: {
+    borderColor: "#4f46e5",
+    backgroundColor: "#4f46e5",
+  },
+
+  sortChipText: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: "#64748b",
+  },
+
+  sortChipTextActive: {
+    color: "#ffffff",
+  },
+
+  sortSpinner: {
+    marginLeft: 8,
+  },
+
+  searchSummary: {
+    marginBottom: 4,
+    fontSize: 12,
+    fontWeight: "600",
+    color: "#64748b",
+  },
+
+  clearSearchButton: {
+    marginTop: 14,
+    paddingHorizontal: 16,
+    paddingVertical: 9,
+    borderRadius: 999,
+    backgroundColor: "#eef2ff",
+  },
+
+  clearSearchButtonText: {
+    fontSize: 13,
+    fontWeight: "700",
+    color: "#4f46e5",
   },
 
   errorBox: {

@@ -16,7 +16,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Ionicons } from "@expo/vector-icons";
 
-import { router, useFocusEffect, type Href } from "expo-router";
+import {
+  router,
+  useFocusEffect,
+  useLocalSearchParams,
+  type Href,
+} from "expo-router";
 
 import { useAuth } from "@/features/auth/hooks/useAuth";
 
@@ -26,11 +31,17 @@ import { postApi } from "@/features/groups/api/post.api";
 import CreatePostComposer, {
   type ComposerGroupOption,
 } from "@/features/groups/components/CreatePostComposer";
+import CrisisSupportModal from "@/features/groups/components/CrisisSupportModal";
 import PostCard from "@/features/groups/components/PostCard";
 import PostCommentsModal from "@/features/groups/components/PostCommentsModal";
+import SubmitReportSheet from "@/features/moderation/components/SubmitReportSheet";
 
 import type { GroupReference } from "@/features/groups/types/groupMembership.types";
-import type { Post } from "@/features/groups/types/post.types";
+import type {
+  CreatePostPayload,
+  Post,
+  PostReactionType,
+} from "@/features/groups/types/post.types";
 
 import { getApiErrorMessage } from "@/services/api/apiError";
 
@@ -45,6 +56,11 @@ function getGroupReferenceId(reference: GroupReference): string | null {
 export default function UserGroupsFeedScreen() {
   const { user } = useAuth();
 
+  /*
+   * Set by "shake → Write a post" to open the post box straight away.
+   */
+  const { compose } = useLocalSearchParams<{ compose?: string }>();
+
   const [joinedGroups, setJoinedGroups] = useState<ComposerGroupOption[]>([]);
 
   const [posts, setPosts] = useState<Post[]>([]);
@@ -57,6 +73,11 @@ export default function UserGroupsFeedScreen() {
   const [activeCommentsPostId, setActiveCommentsPostId] = useState<
     string | null
   >(null);
+
+  // The post currently being reported (holds id + group)
+  const [reportingPost, setReportingPost] = useState<Post | null>(null);
+
+  const [showCrisisSupport, setShowCrisisSupport] = useState(false);
 
   const loadData = useCallback(async (showLoading = true) => {
     try {
@@ -128,30 +149,25 @@ export default function UserGroupsFeedScreen() {
   }, [joinedGroups, normalizedSearch]);
 
   const visitGroup = (groupId: string) => {
-    setSearch("");
+  setSearch("");
 
-    router.push({
-      pathname: "/(app)/user/group/[groupId]/posts" as Href,
-      params: { groupId },
-    });
-  };
+  router.push(
+    `/(app)/user/group/${groupId}/posts` as Href
+  );
+};
 
   const handleCreatePost = async (
-    content: string,
-    isAnonymous: boolean,
+    payload: CreatePostPayload,
     groupId?: string
-  ) => {
+  ): Promise<boolean> => {
     if (!groupId) {
-      return;
+      return false;
     }
 
     try {
       setSubmittingPost(true);
 
-      const response = await postApi.createPost(groupId, {
-        content,
-        isAnonymous,
-      });
+      const response = await postApi.createPost(groupId, payload);
 
       const groupName = joinedGroups.find(
         (group) => group.id === groupId
@@ -161,44 +177,119 @@ export default function UserGroupsFeedScreen() {
         { ...response.data.post, groupName },
         ...previous,
       ]);
+
+      if (response.data.safety?.crisisDetected) {
+        setShowCrisisSupport(true);
+      }
+
+      return true;
     } catch (requestError) {
       Alert.alert("Unable to post", getApiErrorMessage(requestError));
+
+      return false;
     } finally {
       setSubmittingPost(false);
     }
   };
 
-  const handleToggleLike = async (postId: string) => {
+  /*
+   * POST REACTIONS
+   *
+   * Selecting the same reaction removes it.
+   * Selecting a different reaction changes the existing reaction.
+   */
+  const handleToggleReaction = async (
+    postId: string,
+    reactionType: PostReactionType
+  ) => {
+    /*
+     * Optimistic UI update.
+     */
     setPosts((previous) =>
-      previous.map((post) =>
-        post.id === postId
-          ? {
-              ...post,
-              likedByMe: !post.likedByMe,
-              likeCount: post.likedByMe
-                ? post.likeCount - 1
-                : post.likeCount + 1,
-            }
-          : post
-      )
+      previous.map((post) => {
+        if (post.id !== postId) {
+          return post;
+        }
+
+        const currentReaction = post.myReaction;
+
+        const updatedCounts = {
+          ...(post.reactionCounts ?? {
+            like: 0,
+            love: 0,
+            haha: 0,
+            wow: 0,
+            sad: 0,
+            angry: 0,
+          }),
+        };
+
+        /*
+         * Same reaction = remove reaction.
+         */
+        if (currentReaction === reactionType) {
+          updatedCounts[reactionType] = Math.max(
+            0,
+            updatedCounts[reactionType] - 1
+          );
+
+          return {
+            ...post,
+            myReaction: null,
+            reactionCounts: updatedCounts,
+          };
+        }
+
+        /*
+         * Changing from one reaction to another.
+         */
+        if (currentReaction) {
+          updatedCounts[currentReaction] = Math.max(
+            0,
+            updatedCounts[currentReaction] - 1
+          );
+        }
+
+        updatedCounts[reactionType] =
+          updatedCounts[reactionType] + 1;
+
+        return {
+          ...post,
+          myReaction: reactionType,
+          reactionCounts: updatedCounts,
+        };
+      })
     );
 
     try {
-      const response = await postApi.toggleLike(postId);
+      const response = await postApi.toggleReaction(
+        postId,
+        reactionType
+      );
 
+      /*
+       * Backend response is authoritative.
+       */
       setPosts((previous) =>
         previous.map((post) =>
           post.id === postId
             ? {
                 ...post,
-                likedByMe: response.data.liked,
-                likeCount: response.data.likeCount,
+                myReaction: response.data.myReaction,
+                reactionCounts: response.data.reactionCounts,
               }
             : post
         )
       );
     } catch (requestError) {
-      Alert.alert("Unable to update like", getApiErrorMessage(requestError));
+      Alert.alert(
+        "Unable to update reaction",
+        getApiErrorMessage(requestError)
+      );
+
+      /*
+       * Restore the actual server state if the request failed.
+       */
       void loadData(false);
     }
   };
@@ -300,9 +391,8 @@ export default function UserGroupsFeedScreen() {
             currentUserName={user?.fullName}
             submitting={submittingPost}
             groupOptions={joinedGroups}
-            onSubmit={(content, isAnonymous, groupId) =>
-              void handleCreatePost(content, isAnonymous, groupId)
-            }
+            onSubmit={handleCreatePost}
+            autoExpandKey={compose}
           />
         )}
 
@@ -364,9 +454,12 @@ export default function UserGroupsFeedScreen() {
               post={post}
               currentUserId={user?.id}
               canModerate={false}
-              onToggleLike={() => void handleToggleLike(post.id)}
+              onToggleReaction={(reactionType) =>
+                void handleToggleReaction(post.id, reactionType)
+              }
               onOpenComments={() => setActiveCommentsPostId(post.id)}
               onDelete={() => handleDeletePost(post.id)}
+              onReport={() => setReportingPost(post)}
             />
           ))
         )}
@@ -378,6 +471,21 @@ export default function UserGroupsFeedScreen() {
         currentUserId={user?.id}
         canModerate={false}
         onClose={() => setActiveCommentsPostId(null)}
+      />
+
+      {reportingPost ? (
+        <SubmitReportSheet
+          visible={reportingPost !== null}
+          onClose={() => setReportingPost(null)}
+          group={reportingPost.group}
+          targetType="POST"
+          targetId={reportingPost.id}
+        />
+      ) : null}
+
+      <CrisisSupportModal
+        visible={showCrisisSupport}
+        onClose={() => setShowCrisisSupport(false)}
       />
     </SafeAreaView>
   );

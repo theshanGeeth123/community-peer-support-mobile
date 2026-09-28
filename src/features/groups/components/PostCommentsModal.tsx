@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  Image,
   KeyboardAvoidingView,
   Modal,
   Platform,
@@ -15,11 +16,44 @@ import {
 } from "react-native";
 
 import { Ionicons } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
 
 import { commentApi } from "@/features/groups/api/comment.api";
-import type { Comment } from "@/features/groups/types/comment.types";
+import type {
+  Comment,
+} from "@/features/groups/types/comment.types";
+
+import type {
+  CommentMediaFile,
+} from "@/features/groups/api/comment.api";
 
 import { getApiErrorMessage } from "@/services/api/apiError";
+
+type CommentReactionType =
+  | "like"
+  | "love"
+  | "haha"
+  | "wow"
+  | "sad"
+  | "angry";
+
+type CommentMediaItem = {
+  type: "image" | "video";
+  url: string;
+  publicId?: string;
+};
+
+const COMMENT_REACTIONS: {
+  type: CommentReactionType;
+  emoji: string;
+}[] = [
+  { type: "like", emoji: "👍" },
+  { type: "love", emoji: "❤️" },
+  { type: "haha", emoji: "😂" },
+  { type: "wow", emoji: "😮" },
+  { type: "sad", emoji: "😢" },
+  { type: "angry", emoji: "😡" },
+];
 
 function getInitials(name: string) {
   const parts = name.trim().split(/\s+/);
@@ -58,6 +92,20 @@ function formatRelativeTime(isoDate: string) {
   return new Date(isoDate).toLocaleDateString();
 }
 
+function getReactionEmoji(
+  reaction: CommentReactionType | null
+) {
+  if (!reaction) {
+    return null;
+  }
+
+  return (
+    COMMENT_REACTIONS.find(
+      (item) => item.type === reaction
+    )?.emoji ?? null
+  );
+}
+
 export default function PostCommentsModal({
   postId,
   visible,
@@ -88,15 +136,43 @@ export default function PostCommentsModal({
 
   const [editText, setEditText] = useState("");
 
-  const [heartState, setHeartState] = useState<
+  /*
+  |--------------------------------------------------------------------------
+  | COMMENT / REPLY MEDIA
+  |--------------------------------------------------------------------------
+  |
+  | Stores photos/videos selected by the user before submitting.
+  |
+  */
+
+  const [selectedMedia, setSelectedMedia] = useState<
+    CommentMediaFile[]
+  >([]);
+
+  /*
+  |--------------------------------------------------------------------------
+  | COMMENT / REPLY REACTION STATE
+  |--------------------------------------------------------------------------
+  */
+
+  const [reactionState, setReactionState] = useState<
     Record<
       string,
       {
-        liked: boolean;
+        reaction: CommentReactionType | null;
         count: number;
       }
     >
   >({});
+
+  /*
+  |--------------------------------------------------------------------------
+  | OPEN REACTION PICKER
+  |--------------------------------------------------------------------------
+  */
+
+  const [openReactionCommentId, setOpenReactionCommentId] =
+    useState<string | null>(null);
 
   /*
   |--------------------------------------------------------------------------
@@ -113,33 +189,49 @@ export default function PostCommentsModal({
       setLoading(true);
       setError(null);
 
-      /*
-       * We intentionally use the existing post endpoint for
-       * retrieving comments.
-       */
       const response = await fetchComments(postId);
 
       setComments(response);
 
-      /*
-       * Initialize local heart state from backend data if available.
-       */
-      const initialHeartState: Record<
+      const initialReactionState: Record<
         string,
         {
-          liked: boolean;
+          reaction: CommentReactionType | null;
           count: number;
         }
       > = {};
 
       response.forEach((comment) => {
-        initialHeartState[comment.id] = {
-          liked: comment.heartedByMe ?? false,
-          count: comment.heartCount ?? 0,
+        const reactionCounts = (
+          comment as Comment & {
+            reactionCounts?: Partial<
+              Record<CommentReactionType, number>
+            >;
+          }
+        ).reactionCounts;
+
+        const myReaction = (
+          comment as Comment & {
+            myReaction?: CommentReactionType | null;
+          }
+        ).myReaction;
+
+        const totalReactionCount = reactionCounts
+          ? Object.values(reactionCounts).reduce(
+              (total, value) => total + (value ?? 0),
+              0
+            )
+          : comment.heartCount ?? 0;
+
+        initialReactionState[comment.id] = {
+          reaction:
+            myReaction ??
+            (comment.heartedByMe ? "love" : null),
+          count: totalReactionCount,
         };
       });
 
-      setHeartState(initialHeartState);
+      setReactionState(initialReactionState);
     } catch (requestError) {
       setError(getApiErrorMessage(requestError));
     } finally {
@@ -157,10 +249,6 @@ export default function PostCommentsModal({
   |--------------------------------------------------------------------------
   | GET COMMENTS
   |--------------------------------------------------------------------------
-  |
-  | We keep this small helper here because your current backend already
-  | exposes GET /posts/:postId/comments through postApi.
-  |
   */
 
   const fetchComments = async (
@@ -201,12 +289,149 @@ export default function PostCommentsModal({
 
   /*
   |--------------------------------------------------------------------------
+  | SELECT PHOTO / VIDEO
+  |--------------------------------------------------------------------------
+  */
+
+  const handleSelectMedia = async () => {
+    try {
+      setError(null);
+
+      const permission =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+      if (!permission.granted) {
+        Alert.alert(
+          "Permission required",
+          "Please allow photo and video access to attach media."
+        );
+
+        return;
+      }
+
+      const result =
+  await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ["images", "videos"],
+
+    allowsMultipleSelection: true,
+
+    selectionLimit: 5,
+
+    quality: 0.8,
+  });
+
+      if (result.canceled) {
+        return;
+      }
+
+      /*
+      |--------------------------------------------------------------
+      | Convert Expo assets to React Native FormData files.
+      |--------------------------------------------------------------
+      */
+
+      const mediaFiles: CommentMediaFile[] =
+        result.assets.map((asset, index) => {
+          const isVideo =
+            asset.type === "video";
+
+          let mimeType =
+            asset.mimeType;
+
+          if (!mimeType) {
+            mimeType = isVideo
+              ? "video/mp4"
+              : "image/jpeg";
+          }
+
+          let fileName =
+            asset.fileName;
+
+          if (!fileName) {
+            const extension = isVideo
+              ? "mp4"
+              : "jpg";
+
+            fileName =
+              `comment-media-${Date.now()}-${index}.${extension}`;
+          }
+
+          return {
+            uri: asset.uri,
+            name: fileName,
+            type: mimeType,
+          };
+        });
+
+      setSelectedMedia(mediaFiles);
+    } catch (requestError) {
+      setError(
+        getApiErrorMessage(requestError)
+      );
+    }
+  };
+
+  /*
+  |--------------------------------------------------------------------------
+  | REMOVE SELECTED MEDIA
+  |--------------------------------------------------------------------------
+  */
+
+  const handleRemoveMedia = (
+    index: number
+  ) => {
+    setSelectedMedia((previous) =>
+      previous.filter(
+        (_, mediaIndex) =>
+          mediaIndex !== index
+      )
+    );
+  };
+
+  /*
+  |--------------------------------------------------------------------------
+  | PREFETCH SAVED COMMENT / REPLY MEDIA
+  |--------------------------------------------------------------------------
+  */
+
+  const prefetchSavedMedia = async (comment: Comment) => {
+    const media =
+      (
+        comment as Comment & {
+          media?: CommentMediaItem[];
+        }
+      ).media ?? [];
+
+    const imageUrls = media
+      .filter((item) => item.type === "image" && item.url)
+      .map((item) => item.url);
+
+    if (imageUrls.length === 0) {
+      return;
+    }
+
+    await Promise.all(
+      imageUrls.map(async (url) => {
+        try {
+          await Image.prefetch(url);
+        } catch {
+          // Keep the existing comment/reply flow even if prefetch fails.
+        }
+      })
+    );
+  };
+
+  /*
+  |--------------------------------------------------------------------------
   | ADD COMMENT
   |--------------------------------------------------------------------------
   */
 
   const handleAddComment = async () => {
-    if (!postId || newComment.trim().length === 0) {
+    if (
+      !postId ||
+      newComment.trim().length === 0
+    ) {
       return;
     }
 
@@ -214,9 +439,18 @@ export default function PostCommentsModal({
       setSubmitting(true);
       setError(null);
 
-      const response = await commentApi.createComment(postId, {
-        content: newComment.trim(),
-      });
+      const response =
+        await commentApi.createComment(
+          postId,
+          {
+            content: newComment.trim(),
+          },
+          selectedMedia
+        );
+
+      await prefetchSavedMedia(
+        response.data.comment
+      );
 
       setComments((previous) => [
         ...previous,
@@ -224,8 +458,12 @@ export default function PostCommentsModal({
       ]);
 
       setNewComment("");
+
+      setSelectedMedia([]);
     } catch (requestError) {
-      setError(getApiErrorMessage(requestError));
+      setError(
+        getApiErrorMessage(requestError)
+      );
     } finally {
       setSubmitting(false);
     }
@@ -249,11 +487,17 @@ export default function PostCommentsModal({
       setSubmitting(true);
       setError(null);
 
-      const response = await commentApi.createReply(
-        replyingTo.id,
-        {
-          content: newComment.trim(),
-        }
+      const response =
+        await commentApi.createReply(
+          replyingTo.id,
+          {
+            content: newComment.trim(),
+          },
+          selectedMedia
+        );
+
+      await prefetchSavedMedia(
+        response.data.reply
       );
 
       setComments((previous) => [
@@ -262,9 +506,12 @@ export default function PostCommentsModal({
       ]);
 
       setNewComment("");
+      setSelectedMedia([]);
       setReplyingTo(null);
     } catch (requestError) {
-      setError(getApiErrorMessage(requestError));
+      setError(
+        getApiErrorMessage(requestError)
+      );
     } finally {
       setSubmitting(false);
     }
@@ -282,7 +529,9 @@ export default function PostCommentsModal({
     try {
       setError(null);
 
-      await commentApi.deleteComment(commentId);
+      await commentApi.deleteComment(
+        commentId
+      );
 
       setComments((previous) =>
         previous.filter(
@@ -292,13 +541,24 @@ export default function PostCommentsModal({
         )
       );
 
-      setHeartState((previous) => {
+      setReactionState((previous) => {
         const next = { ...previous };
+
         delete next[commentId];
+
         return next;
       });
+
+      if (
+        openReactionCommentId ===
+        commentId
+      ) {
+        setOpenReactionCommentId(null);
+      }
     } catch (requestError) {
-      setError(getApiErrorMessage(requestError));
+      setError(
+        getApiErrorMessage(requestError)
+      );
     }
   };
 
@@ -308,7 +568,9 @@ export default function PostCommentsModal({
   |--------------------------------------------------------------------------
   */
 
-  const confirmDelete = (comment: Comment) => {
+  const confirmDelete = (
+    comment: Comment
+  ) => {
     Alert.alert(
       "Delete comment",
       "Are you sure you want to delete this comment?",
@@ -321,7 +583,9 @@ export default function PostCommentsModal({
           text: "Delete",
           style: "destructive",
           onPress: () =>
-            void handleDeleteComment(comment.id),
+            void handleDeleteComment(
+              comment.id
+            ),
         },
       ]
     );
@@ -333,10 +597,13 @@ export default function PostCommentsModal({
   |--------------------------------------------------------------------------
   */
 
-  const startEdit = (comment: Comment) => {
+  const startEdit = (
+    comment: Comment
+  ) => {
     setEditingComment(comment);
     setEditText(comment.content);
     setError(null);
+    setOpenReactionCommentId(null);
   };
 
   /*
@@ -345,68 +612,107 @@ export default function PostCommentsModal({
   |--------------------------------------------------------------------------
   */
 
-  const handleUpdateComment = async () => {
-    if (
-      !editingComment ||
-      editText.trim().length === 0
-    ) {
-      return;
-    }
+  const handleUpdateComment =
+    async () => {
+      if (
+        !editingComment ||
+        editText.trim().length === 0
+      ) {
+        return;
+      }
 
-    try {
-      setSubmitting(true);
-      setError(null);
+      try {
+        setSubmitting(true);
+        setError(null);
 
-      const response = await commentApi.updateComment(
-        editingComment.id,
-        {
-          content: editText.trim(),
-        }
-      );
+        const response =
+          await commentApi.updateComment(
+            editingComment.id,
+            {
+              content:
+                editText.trim(),
+            }
+          );
 
-      setComments((previous) =>
-        previous.map((comment) =>
-          comment.id === editingComment.id
-            ? response.data.comment
-            : comment
-        )
-      );
+        setComments((previous) =>
+          previous.map((comment) =>
+            comment.id ===
+            editingComment.id
+              ? response.data.comment
+              : comment
+          )
+        );
 
-      setEditingComment(null);
-      setEditText("");
-    } catch (requestError) {
-      setError(getApiErrorMessage(requestError));
-    } finally {
-      setSubmitting(false);
-    }
-  };
+        setEditingComment(null);
+        setEditText("");
+      } catch (requestError) {
+        setError(
+          getApiErrorMessage(
+            requestError
+          )
+        );
+      } finally {
+        setSubmitting(false);
+      }
+    };
 
   /*
   |--------------------------------------------------------------------------
-  | HEART COMMENT
+  | COMMENT / REPLY REACTION
   |--------------------------------------------------------------------------
   */
 
-  const handleToggleHeart = async (
-    comment: Comment
-  ) => {
-    try {
-      setError(null);
+  const handleSelectReaction =
+    async (
+      comment: Comment,
+      reactionType: CommentReactionType
+    ) => {
+      try {
+        setError(null);
+        setOpenReactionCommentId(null);
 
-      const response =
-        await commentApi.toggleHeart(comment.id);
+        const response =
+          await commentApi.toggleReaction(
+            comment.id,
+            reactionType
+          );
 
-      setHeartState((previous) => ({
-        ...previous,
-        [comment.id]: {
-          liked: response.data.liked,
-          count: response.data.heartCount,
-        },
-      }));
-    } catch (requestError) {
-      setError(getApiErrorMessage(requestError));
-    }
-  };
+        const responseData =
+          response.data;
+
+        const reactionCounts =
+          responseData.reactionCounts ??
+          {};
+
+        const totalReactionCount =
+          Object.values(
+            reactionCounts
+          ).reduce(
+            (total, value) =>
+              total + (value ?? 0),
+            0
+          );
+
+        setReactionState(
+          (previous) => ({
+            ...previous,
+            [comment.id]: {
+              reaction:
+                responseData.reaction ??
+                null,
+              count:
+                totalReactionCount,
+            },
+          })
+        );
+      } catch (requestError) {
+        setError(
+          getApiErrorMessage(
+            requestError
+          )
+        );
+      }
+    };
 
   /*
   |--------------------------------------------------------------------------
@@ -414,10 +720,14 @@ export default function PostCommentsModal({
   |--------------------------------------------------------------------------
   */
 
-  const startReply = (comment: Comment) => {
+  const startReply = (
+    comment: Comment
+  ) => {
     setReplyingTo(comment);
     setEditingComment(null);
     setNewComment("");
+    setSelectedMedia([]);
+    setOpenReactionCommentId(null);
   };
 
   /*
@@ -431,6 +741,157 @@ export default function PostCommentsModal({
     setEditingComment(null);
     setNewComment("");
     setEditText("");
+    setSelectedMedia([]);
+  };
+
+  /*
+  |--------------------------------------------------------------------------
+  | MEDIA PREVIEW
+  |--------------------------------------------------------------------------
+  */
+
+  const renderMediaPreview = () => {
+    if (selectedMedia.length === 0) {
+      return null;
+    }
+
+    return (
+      <View style={styles.mediaPreviewContainer}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={
+            styles.mediaPreviewContent
+          }
+        >
+          {selectedMedia.map(
+            (media, index) => {
+              const isVideo =
+                media.type?.startsWith(
+                  "video/"
+                ) ?? false;
+
+              return (
+                <View
+                  key={`${media.uri}-${index}`}
+                  style={styles.mediaPreviewItem}
+                >
+                  {isVideo ? (
+                    <View
+                      style={
+                        styles.videoPreview
+                      }
+                    >
+                      <Ionicons
+                        name="play-circle"
+                        size={34}
+                        color="#ffffff"
+                      />
+
+                      <Text
+                        style={
+                          styles.videoLabel
+                        }
+                      >
+                        Video
+                      </Text>
+                    </View>
+                  ) : (
+                    <Image
+                      source={{
+                        uri: media.uri,
+                      }}
+                      style={
+                        styles.mediaPreviewImage
+                      }
+                    />
+                  )}
+
+                  <Pressable
+                    onPress={() =>
+                      handleRemoveMedia(
+                        index
+                      )
+                    }
+                    style={
+                      styles.removeMediaButton
+                    }
+                  >
+                    <Ionicons
+                      name="close"
+                      size={15}
+                      color="#ffffff"
+                    />
+                  </Pressable>
+                </View>
+              );
+            }
+          )}
+        </ScrollView>
+
+        <Text style={styles.mediaCountText}>
+          {selectedMedia.length}{" "}
+          {selectedMedia.length === 1
+            ? "item"
+            : "items"}{" "}
+          selected
+        </Text>
+      </View>
+    );
+  };
+
+  /*
+  |--------------------------------------------------------------------------
+  | SAVED COMMENT / REPLY MEDIA
+  |--------------------------------------------------------------------------
+  */
+
+  const renderSavedMedia = (comment: Comment) => {
+    const media =
+      (
+        comment as Comment & {
+          media?: CommentMediaItem[];
+        }
+      ).media ?? [];
+
+    if (media.length === 0) {
+      return null;
+    }
+
+    return (
+      <View style={styles.savedMediaContainer}>
+        {media.map((item, index) => {
+          const isVideo = item.type === "video";
+
+          return (
+            <View
+              key={`${item.url}-${index}`}
+              style={styles.savedMediaItem}
+            >
+              {isVideo ? (
+                <View style={styles.savedVideoContainer}>
+                  <Ionicons
+                    name="play-circle"
+                    size={42}
+                    color="#ffffff"
+                  />
+
+                  <Text style={styles.savedVideoLabel}>
+                    Video
+                  </Text>
+                </View>
+              ) : (
+                <Image
+                  source={{ uri: item.url }}
+                  style={styles.savedMediaImage}
+                  resizeMode="cover"
+                />
+              )}
+            </View>
+          );
+        })}
+      </View>
+    );
   };
 
   /*
@@ -445,67 +906,135 @@ export default function PostCommentsModal({
   ) => {
     const canModify =
       canModerate ||
-      comment.author.id === currentUserId;
+      comment.author.id ===
+        currentUserId;
 
-    const currentHeart =
-      heartState[comment.id] ?? {
-        liked: comment.heartedByMe ?? false,
-        count: comment.heartCount ?? 0,
+    const currentReaction =
+      reactionState[
+        comment.id
+      ] ?? {
+        reaction:
+          (
+            comment as Comment & {
+              myReaction?: CommentReactionType | null;
+            }
+          ).myReaction ??
+          (comment.heartedByMe
+            ? "love"
+            : null),
+        count:
+          comment.heartCount ?? 0,
       };
+
+    const reactionEmoji =
+      getReactionEmoji(
+        currentReaction.reaction
+      );
 
     const replies = isReply
       ? []
       : getReplies(comment.id);
+
+    const isReactionPickerOpen =
+      openReactionCommentId ===
+      comment.id;
 
     return (
       <View
         key={comment.id}
         style={[
           styles.commentBlock,
-          isReply && styles.replyBlock,
+          isReply &&
+            styles.replyBlock,
         ]}
       >
         <View style={styles.commentRow}>
           <View style={styles.avatar}>
-            <Text style={styles.avatarText}>
+            <Text
+              style={
+                styles.avatarText
+              }
+            >
               {getInitials(
                 comment.author.fullName
               )}
             </Text>
           </View>
 
-          <View style={styles.commentMain}>
-            <View style={styles.commentBubble}>
-              <View style={styles.commentTopRow}>
-                <Text style={styles.authorName}>
-                  {comment.author.fullName}
+          <View
+            style={styles.commentMain}
+          >
+            <View
+              style={
+                styles.commentBubble
+              }
+            >
+              <View
+                style={
+                  styles.commentTopRow
+                }
+              >
+                <Text
+                  style={
+                    styles.authorName
+                  }
+                >
+                  {
+                    comment.author
+                      .fullName
+                  }
                 </Text>
 
-                <Text style={styles.timeText}>
+                <Text
+                  style={
+                    styles.timeText
+                  }
+                >
                   {formatRelativeTime(
                     comment.createdAt
                   )}
                 </Text>
               </View>
 
-              {editingComment?.id === comment.id ? (
-                <View style={styles.editContainer}>
+              {editingComment?.id ===
+              comment.id ? (
+                <View
+                  style={
+                    styles.editContainer
+                  }
+                >
                   <TextInput
                     value={editText}
-                    onChangeText={setEditText}
+                    onChangeText={
+                      setEditText
+                    }
                     multiline
                     autoFocus
-                    style={styles.editInput}
+                    style={
+                      styles.editInput
+                    }
                     placeholder="Edit your comment..."
                     placeholderTextColor="#94a3b8"
                   />
 
-                  <View style={styles.editActions}>
+                  <View
+                    style={
+                      styles.editActions
+                    }
+                  >
                     <Pressable
-                      onPress={cancelInputMode}
-                      style={styles.cancelButton}
+                      onPress={
+                        cancelInputMode
+                      }
+                      style={
+                        styles.cancelButton
+                      }
                     >
-                      <Text style={styles.cancelText}>
+                      <Text
+                        style={
+                          styles.cancelText
+                        }
+                      >
                         Cancel
                       </Text>
                     </Pressable>
@@ -513,7 +1042,10 @@ export default function PostCommentsModal({
                     <Pressable
                       disabled={
                         submitting ||
-                        editText.trim().length === 0
+                        editText
+                          .trim()
+                          .length ===
+                          0
                       }
                       onPress={() =>
                         void handleUpdateComment()
@@ -521,7 +1053,10 @@ export default function PostCommentsModal({
                       style={[
                         styles.saveButton,
                         (submitting ||
-                          editText.trim().length === 0) &&
+                          editText
+                            .trim()
+                            .length ===
+                            0) &&
                           styles.disabledButton,
                       ]}
                     >
@@ -531,7 +1066,11 @@ export default function PostCommentsModal({
                           color="#ffffff"
                         />
                       ) : (
-                        <Text style={styles.saveText}>
+                        <Text
+                          style={
+                            styles.saveText
+                          }
+                        >
                           Save
                         </Text>
                       )}
@@ -539,107 +1078,208 @@ export default function PostCommentsModal({
                   </View>
                 </View>
               ) : (
-                <Text style={styles.commentContent}>
-                  {comment.content}
-                </Text>
+                <>
+                  <Text
+                    style={
+                      styles.commentContent
+                    }
+                  >
+                    {comment.content}
+                  </Text>
+
+                  {renderSavedMedia(comment)}
+                </>
               )}
             </View>
 
-            {editingComment?.id !== comment.id && (
-              <View style={styles.commentActions}>
-                <Pressable
-                  onPress={() =>
-                    void handleToggleHeart(comment)
-                  }
-                  style={styles.smallAction}
-                >
-                  <Ionicons
-                    name={
-                      currentHeart.liked
-                        ? "heart"
-                        : "heart-outline"
+            {editingComment?.id !==
+              comment.id && (
+              <>
+                {isReactionPickerOpen && (
+                  <View
+                    style={
+                      styles.reactionPicker
                     }
-                    size={17}
-                    color={
-                      currentHeart.liked
-                        ? "#ef4444"
-                        : "#64748b"
-                    }
-                  />
+                  >
+                    {COMMENT_REACTIONS.map(
+                      (reaction) => {
+                        const selected =
+                          currentReaction.reaction ===
+                          reaction.type;
 
-                  <Text
+                        return (
+                          <Pressable
+                            key={
+                              reaction.type
+                            }
+                            onPress={() =>
+                              void handleSelectReaction(
+                                comment,
+                                reaction.type
+                              )
+                            }
+                            style={[
+                              styles.reactionOption,
+                              selected &&
+                                styles.reactionOptionSelected,
+                            ]}
+                          >
+                            <Text
+                              style={
+                                styles.reactionEmoji
+                              }
+                            >
+                              {
+                                reaction.emoji
+                              }
+                            </Text>
+                          </Pressable>
+                        );
+                      }
+                    )}
+                  </View>
+                )}
+
+                <View
+                  style={
+                    styles.commentActions
+                  }
+                >
+                  <Pressable
+                    onPress={() => {
+                      setOpenReactionCommentId(
+                        isReactionPickerOpen
+                          ? null
+                          : comment.id
+                      );
+                    }}
                     style={[
-                      styles.smallActionText,
-                      currentHeart.liked &&
-                        styles.heartText,
+                      styles.smallAction,
+                      currentReaction.reaction &&
+                        styles.reactedAction,
                     ]}
                   >
-                    {currentHeart.count}
-                  </Text>
-                </Pressable>
+                    <Text
+                      style={
+                        styles.selectedReactionEmoji
+                      }
+                    >
+                      {reactionEmoji ??
+                        "♡"}
+                    </Text>
 
-                {!isReply && (
-                  <Pressable
-                    onPress={() => startReply(comment)}
-                    style={styles.smallAction}
-                  >
-                    <Ionicons
-                      name="return-down-forward-outline"
-                      size={16}
-                      color="#64748b"
-                    />
-
-                    <Text style={styles.smallActionText}>
-                      Reply
+                    <Text
+                      style={[
+                        styles.smallActionText,
+                        currentReaction.reaction &&
+                          styles.reactionCountText,
+                      ]}
+                    >
+                      {
+                        currentReaction.count
+                      }
                     </Text>
                   </Pressable>
-                )}
 
-                {canModify && (
-                  <Pressable
-                    onPress={() => startEdit(comment)}
-                    style={styles.smallAction}
-                  >
-                    <Ionicons
-                      name="create-outline"
-                      size={16}
-                      color="#64748b"
-                    />
+                  {!isReply && (
+                    <Pressable
+                      onPress={() =>
+                        startReply(
+                          comment
+                        )
+                      }
+                      style={
+                        styles.smallAction
+                      }
+                    >
+                      <Ionicons
+                        name="return-down-forward-outline"
+                        size={16}
+                        color="#64748b"
+                      />
 
-                    <Text style={styles.smallActionText}>
-                      Edit
-                    </Text>
-                  </Pressable>
-                )}
+                      <Text
+                        style={
+                          styles.smallActionText
+                        }
+                      >
+                        Reply
+                      </Text>
+                    </Pressable>
+                  )}
 
-                {canModify && (
-                  <Pressable
-                    onPress={() =>
-                      confirmDelete(comment)
-                    }
-                    style={styles.smallAction}
-                  >
-                    <Ionicons
-                      name="trash-outline"
-                      size={15}
-                      color="#ef4444"
-                    />
+                  {canModify && (
+                    <Pressable
+                      onPress={() =>
+                        startEdit(
+                          comment
+                        )
+                      }
+                      style={
+                        styles.smallAction
+                      }
+                    >
+                      <Ionicons
+                        name="create-outline"
+                        size={16}
+                        color="#64748b"
+                      />
 
-                    <Text style={styles.deleteText}>
-                      Delete
-                    </Text>
-                  </Pressable>
-                )}
-              </View>
+                      <Text
+                        style={
+                          styles.smallActionText
+                        }
+                      >
+                        Edit
+                      </Text>
+                    </Pressable>
+                  )}
+
+                  {canModify && (
+                    <Pressable
+                      onPress={() =>
+                        confirmDelete(
+                          comment
+                        )
+                      }
+                      style={
+                        styles.smallAction
+                      }
+                    >
+                      <Ionicons
+                        name="trash-outline"
+                        size={15}
+                        color="#ef4444"
+                      />
+
+                      <Text
+                        style={
+                          styles.deleteText
+                        }
+                      >
+                        Delete
+                      </Text>
+                    </Pressable>
+                  )}
+                </View>
+              </>
             )}
           </View>
         </View>
 
         {!isReply &&
           replies.length > 0 && (
-            <View style={styles.repliesContainer}>
-              {replies.map((reply) =>
-                renderComment(reply, true)
+            <View
+              style={
+                styles.repliesContainer
+              }
+            >
+              {replies.map(
+                (reply) =>
+                  renderComment(
+                    reply,
+                    true
+                  )
               )}
             </View>
           )}
@@ -668,25 +1308,36 @@ export default function PostCommentsModal({
             : undefined
         }
       >
-        <View style={styles.overlay}>
+        <View
+          style={styles.overlay}
+        >
           <Pressable
             style={styles.backdrop}
             onPress={onClose}
           />
 
-          <View style={styles.container}>
-            {/* HEADER */}
-
-            <View style={styles.header}>
+          <View
+            style={styles.container}
+          >
+            <View
+              style={styles.header}
+            >
               <View>
-                <Text style={styles.title}>
+                <Text
+                  style={styles.title}
+                >
                   Comments
                 </Text>
 
                 {!loading && (
-                  <Text style={styles.commentCount}>
+                  <Text
+                    style={
+                      styles.commentCount
+                    }
+                  >
                     {comments.length}{" "}
-                    {comments.length === 1
+                    {comments.length ===
+                    1
                       ? "comment"
                       : "comments"}
                   </Text>
@@ -696,7 +1347,9 @@ export default function PostCommentsModal({
               <Pressable
                 hitSlop={10}
                 onPress={onClose}
-                style={styles.closeButton}
+                style={
+                  styles.closeButton
+                }
               >
                 <Ionicons
                   name="close"
@@ -706,30 +1359,47 @@ export default function PostCommentsModal({
               </Pressable>
             </View>
 
-            {/* COMMENTS */}
-
             <ScrollView
               style={styles.list}
               contentContainerStyle={
                 styles.listContent
               }
               keyboardShouldPersistTaps="handled"
-              showsVerticalScrollIndicator={false}
+              showsVerticalScrollIndicator={
+                false
+              }
             >
               {loading ? (
-                <View style={styles.loadingContainer}>
+                <View
+                  style={
+                    styles.loadingContainer
+                  }
+                >
                   <ActivityIndicator
                     size="large"
                     color="#4f46e5"
                   />
 
-                  <Text style={styles.loadingText}>
+                  <Text
+                    style={
+                      styles.loadingText
+                    }
+                  >
                     Loading comments...
                   </Text>
                 </View>
-              ) : rootComments.length === 0 ? (
-                <View style={styles.emptyContainer}>
-                  <View style={styles.emptyIcon}>
+              ) : rootComments.length ===
+                0 ? (
+                <View
+                  style={
+                    styles.emptyContainer
+                  }
+                >
+                  <View
+                    style={
+                      styles.emptyIcon
+                    }
+                  >
                     <Ionicons
                       name="chatbubble-ellipses-outline"
                       size={32}
@@ -737,41 +1407,66 @@ export default function PostCommentsModal({
                     />
                   </View>
 
-                  <Text style={styles.emptyTitle}>
+                  <Text
+                    style={
+                      styles.emptyTitle
+                    }
+                  >
                     No comments yet
                   </Text>
 
-                  <Text style={styles.emptyText}>
+                  <Text
+                    style={
+                      styles.emptyText
+                    }
+                  >
                     Start the conversation and
                     support your community.
                   </Text>
                 </View>
               ) : (
-                rootComments.map((comment) =>
-                  renderComment(comment)
+                rootComments.map(
+                  (comment) =>
+                    renderComment(
+                      comment
+                    )
                 )
               )}
 
               {error && (
-                <View style={styles.errorContainer}>
+                <View
+                  style={
+                    styles.errorContainer
+                  }
+                >
                   <Ionicons
                     name="alert-circle-outline"
                     size={18}
                     color="#b91c1c"
                   />
 
-                  <Text style={styles.errorText}>
+                  <Text
+                    style={
+                      styles.errorText
+                    }
+                  >
                     {error}
                   </Text>
                 </View>
               )}
             </ScrollView>
 
-            {/* INPUT MODE */}
-
             {replyingTo && (
-              <View style={styles.replyingBanner}>
-                <View style={styles.replyingInfo}>
+              <View
+                style={
+                  styles.replyingBanner
+                }
+              >
+                <View
+                  style={
+                    styles.replyingInfo
+                  }
+                >
                   <Ionicons
                     name="return-down-forward-outline"
                     size={17}
@@ -779,18 +1474,30 @@ export default function PostCommentsModal({
                   />
 
                   <Text
-                    style={styles.replyingText}
+                    style={
+                      styles.replyingText
+                    }
                     numberOfLines={1}
                   >
                     Replying to{" "}
-                    <Text style={styles.replyingName}>
-                      {replyingTo.author.fullName}
+                    <Text
+                      style={
+                        styles.replyingName
+                      }
+                    >
+                      {
+                        replyingTo
+                          .author
+                          .fullName
+                      }
                     </Text>
                   </Text>
                 </View>
 
                 <Pressable
-                  onPress={cancelInputMode}
+                  onPress={
+                    cancelInputMode
+                  }
                   hitSlop={10}
                 >
                   <Ionicons
@@ -802,10 +1509,18 @@ export default function PostCommentsModal({
               </View>
             )}
 
-            {/* INPUT */}
+            {renderMediaPreview()}
 
-            <View style={styles.inputContainer}>
-              <View style={styles.inputAvatar}>
+            <View
+              style={
+                styles.inputContainer
+              }
+            >
+              <View
+                style={
+                  styles.inputAvatar
+                }
+              >
                 <Ionicons
                   name="person"
                   size={18}
@@ -815,7 +1530,9 @@ export default function PostCommentsModal({
 
               <TextInput
                 value={newComment}
-                onChangeText={setNewComment}
+                onChangeText={
+                  setNewComment
+                }
                 editable={!submitting}
                 placeholder={
                   replyingTo
@@ -829,9 +1546,29 @@ export default function PostCommentsModal({
               />
 
               <Pressable
+                disabled={submitting}
+                onPress={() =>
+                  void handleSelectMedia()
+                }
+                style={[
+                  styles.mediaButton,
+                  submitting &&
+                    styles.disabledMediaButton,
+                ]}
+              >
+                <Ionicons
+                  name="image-outline"
+                  size={21}
+                  color="#4f46e5"
+                />
+              </Pressable>
+
+              <Pressable
                 disabled={
                   submitting ||
-                  newComment.trim().length === 0
+                  newComment
+                    .trim()
+                    .length === 0
                 }
                 onPress={() =>
                   void (replyingTo
@@ -841,7 +1578,10 @@ export default function PostCommentsModal({
                 style={[
                   styles.sendButton,
                   (submitting ||
-                    newComment.trim().length === 0) &&
+                    newComment
+                      .trim()
+                      .length ===
+                      0) &&
                     styles.disabledSendButton,
                 ]}
               >
@@ -902,7 +1642,8 @@ const styles = StyleSheet.create({
     paddingBottom: 15,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent:
+      "space-between",
     borderBottomWidth: 1,
     borderBottomColor: "#eef2f7",
   },
@@ -1024,7 +1765,8 @@ const styles = StyleSheet.create({
   commentTopRow: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent:
+      "space-between",
   },
 
   authorName: {
@@ -1046,6 +1788,80 @@ const styles = StyleSheet.create({
     color: "#334155",
   },
 
+  savedMediaContainer: {
+    marginTop: 8,
+    flexDirection: "row",
+    flexWrap: "wrap",
+  },
+
+  savedMediaItem: {
+    width: 150,
+    height: 150,
+    marginRight: 8,
+    marginBottom: 8,
+    overflow: "hidden",
+    borderRadius: 12,
+    backgroundColor: "#e2e8f0",
+  },
+
+  savedMediaImage: {
+    width: "100%",
+    height: "100%",
+  },
+
+  savedVideoContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#334155",
+  },
+
+  savedVideoLabel: {
+    marginTop: 4,
+    fontSize: 11,
+    fontWeight: "700",
+    color: "#ffffff",
+  },
+
+  reactionPicker: {
+    alignSelf: "flex-start",
+    marginTop: 7,
+    marginLeft: 2,
+    paddingHorizontal: 7,
+    paddingVertical: 6,
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#e2e8f0",
+    borderRadius: 999,
+    backgroundColor: "#ffffff",
+    shadowColor: "#0f172a",
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.12,
+    shadowRadius: 7,
+    elevation: 4,
+  },
+
+  reactionOption: {
+    width: 34,
+    height: 34,
+    marginHorizontal: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 17,
+  },
+
+  reactionOptionSelected: {
+    backgroundColor: "#eef2ff",
+  },
+
+  reactionEmoji: {
+    fontSize: 21,
+  },
+
   commentActions: {
     marginTop: 7,
     paddingLeft: 4,
@@ -1061,6 +1877,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
+  reactedAction: {
+    paddingHorizontal: 5,
+    paddingVertical: 2,
+    borderRadius: 999,
+    backgroundColor: "#f8fafc",
+  },
+
+  selectedReactionEmoji: {
+    fontSize: 17,
+    minWidth: 17,
+    textAlign: "center",
+  },
+
   smallActionText: {
     marginLeft: 4,
     fontSize: 11,
@@ -1068,8 +1897,8 @@ const styles = StyleSheet.create({
     color: "#64748b",
   },
 
-  heartText: {
-    color: "#ef4444",
+  reactionCountText: {
+    color: "#4f46e5",
   },
 
   deleteText: {
@@ -1163,7 +1992,8 @@ const styles = StyleSheet.create({
     paddingVertical: 9,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent:
+      "space-between",
     borderTopWidth: 1,
     borderTopColor: "#eef2f7",
     backgroundColor: "#f8faff",
@@ -1186,10 +2016,79 @@ const styles = StyleSheet.create({
     color: "#4f46e5",
   },
 
+  mediaPreviewContainer: {
+    paddingTop: 8,
+    paddingBottom: 5,
+    paddingHorizontal: 14,
+    borderTopWidth: 1,
+    borderTopColor: "#eef2f7",
+    backgroundColor: "#ffffff",
+  },
+
+  mediaPreviewContent: {
+    paddingRight: 8,
+  },
+
+  mediaPreviewItem: {
+    width: 72,
+    height: 72,
+    marginRight: 8,
+    position: "relative",
+    overflow: "visible",
+  },
+
+  mediaPreviewImage: {
+    width: 72,
+    height: 72,
+    borderRadius: 12,
+    backgroundColor: "#f1f5f9",
+  },
+
+  videoPreview: {
+    width: 72,
+    height: 72,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 12,
+    backgroundColor: "#334155",
+  },
+
+  videoLabel: {
+    marginTop: 2,
+    fontSize: 9,
+    fontWeight: "700",
+    color: "#ffffff",
+  },
+
+  removeMediaButton: {
+    position: "absolute",
+    top: -7,
+    right: -7,
+    width: 22,
+    height: 22,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 2,
+    borderColor: "#ffffff",
+    borderRadius: 11,
+    backgroundColor: "#ef4444",
+    zIndex: 10,
+  },
+
+  mediaCountText: {
+    marginTop: 5,
+    fontSize: 10,
+    fontWeight: "600",
+    color: "#64748b",
+  },
+
   inputContainer: {
     paddingHorizontal: 14,
     paddingTop: 10,
-    paddingBottom: Platform.OS === "ios" ? 20 : 12,
+    paddingBottom:
+      Platform.OS === "ios"
+        ? 20
+        : 12,
     flexDirection: "row",
     alignItems: "flex-end",
     borderTopWidth: 1,
@@ -1222,10 +2121,25 @@ const styles = StyleSheet.create({
     fontSize: 13,
   },
 
+  mediaButton: {
+    width: 40,
+    height: 40,
+    marginLeft: 7,
+    marginBottom: 3,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 20,
+    backgroundColor: "#eef2ff",
+  },
+
+  disabledMediaButton: {
+    opacity: 0.45,
+  },
+
   sendButton: {
     width: 42,
     height: 42,
-    marginLeft: 8,
+    marginLeft: 7,
     marginBottom: 2,
     alignItems: "center",
     justifyContent: "center",
