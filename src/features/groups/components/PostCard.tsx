@@ -1,13 +1,23 @@
 import { useState } from "react";
 
-import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  Modal,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 import { Image } from "expo-image";
 
 import { Ionicons } from "@expo/vector-icons";
 
 import { formatContentWarnings } from "@/features/groups/constants/contentWarnings";
-import type { Post } from "@/features/groups/types/post.types";
+
+import type {
+  Post,
+  PostReactionType,
+} from "@/features/groups/types/post.types";
 
 import StaffBadge from "./StaffBadge";
 
@@ -48,11 +58,79 @@ function formatRelativeTime(isoDate: string) {
   return new Date(isoDate).toLocaleDateString();
 }
 
+/*
+ * Reaction configuration
+ */
+const POST_REACTIONS: {
+  type: PostReactionType;
+  emoji: string;
+  label: string;
+}[] = [
+  {
+    type: "like",
+    emoji: "👍",
+    label: "Like",
+  },
+  {
+    type: "love",
+    emoji: "❤️",
+    label: "Love",
+  },
+  {
+    type: "haha",
+    emoji: "😂",
+    label: "Haha",
+  },
+  {
+    type: "wow",
+    emoji: "😮",
+    label: "Wow",
+  },
+  {
+    type: "sad",
+    emoji: "😢",
+    label: "Sad",
+  },
+  {
+    type: "angry",
+    emoji: "😡",
+    label: "Angry",
+  },
+];
+
+function getReactionEmoji(
+  reaction: PostReactionType | null
+) {
+  if (!reaction) {
+    return null;
+  }
+
+  return (
+    POST_REACTIONS.find(
+      (item) => item.type === reaction
+    )?.emoji ?? null
+  );
+}
+
+function getReactionLabel(
+  reaction: PostReactionType | null
+) {
+  if (!reaction) {
+    return "";
+  }
+
+  return (
+    POST_REACTIONS.find(
+      (item) => item.type === reaction
+    )?.label ?? ""
+  );
+}
+
 export default function PostCard({
   post,
   currentUserId,
   canModerate,
-  onToggleLike,
+  onToggleReaction,
   onOpenComments,
   onDelete,
   onTogglePin,
@@ -64,7 +142,9 @@ export default function PostCard({
   currentUserId?: string;
   canModerate: boolean;
 
-  onToggleLike: () => void;
+  onToggleReaction: (
+    reactionType: PostReactionType
+  ) => void;
   onOpenComments: () => void;
   onDelete: () => void;
   onTogglePin?: () => void;
@@ -96,7 +176,45 @@ export default function PostCard({
   const [revealed, setRevealed] = useState(false);
   const [imageViewerOpen, setImageViewerOpen] = useState(false);
 
-  const isContentHidden = hasContentWarnings && !isOwnPost && !revealed;
+  /*
+   * Reaction picker state
+   */
+  const [reactionPickerOpen, setReactionPickerOpen] =
+    useState(false);
+
+  const isContentHidden =
+    hasContentWarnings && !isOwnPost && !revealed;
+
+  const currentReaction = post.myReaction ?? null;
+  const currentReactionEmoji =
+    getReactionEmoji(currentReaction);
+  const currentReactionLabel =
+    getReactionLabel(currentReaction);
+
+  const totalReactionCount = Object.values(
+    post.reactionCounts ?? {
+      like: 0,
+      love: 0,
+      haha: 0,
+      wow: 0,
+      sad: 0,
+      angry: 0,
+    }
+  ).reduce(
+    (total, count) => total + count,
+    0
+  );
+
+  const handleReactionPress = () => {
+    setReactionPickerOpen((previous) => !previous);
+  };
+
+  const handleSelectReaction = (
+    reactionType: PostReactionType
+  ) => {
+    setReactionPickerOpen(false);
+    onToggleReaction(reactionType);
+  };
 
   return (
     <View
@@ -112,7 +230,8 @@ export default function PostCard({
         <View
           style={[
             styles.crisisBanner,
-            crisisFlag.isHandled && styles.crisisBannerHandled,
+            crisisFlag.isHandled &&
+              styles.crisisBannerHandled,
           ]}
         >
           <Ionicons
@@ -122,14 +241,19 @@ export default function PostCard({
                 : "warning"
             }
             size={16}
-            color={crisisFlag.isHandled ? "#15803d" : "#be123c"}
+            color={
+              crisisFlag.isHandled
+                ? "#15803d"
+                : "#be123c"
+            }
           />
 
           <View style={styles.crisisBannerText}>
             <Text
               style={[
                 styles.crisisTitle,
-                crisisFlag.isHandled && styles.crisisTitleHandled,
+                crisisFlag.isHandled &&
+                  styles.crisisTitleHandled,
               ]}
             >
               {crisisFlag.isHandled
@@ -140,24 +264,31 @@ export default function PostCard({
             {!crisisFlag.isHandled &&
               crisisFlag.matchedTerms.length > 0 && (
                 <Text style={styles.crisisTerms}>
-                  Detected: {crisisFlag.matchedTerms.join(", ")}
+                  Detected:{" "}
+                  {crisisFlag.matchedTerms.join(", ")}
                 </Text>
               )}
           </View>
 
-          {!crisisFlag.isHandled && onMarkCrisisHandled && (
-            <Pressable
-              hitSlop={8}
-              onPress={onMarkCrisisHandled}
-              style={styles.crisisHandleButton}
-            >
-              <Text style={styles.crisisHandleButtonText}>
-                Mark handled
-              </Text>
-            </Pressable>
-          )}
+          {!crisisFlag.isHandled &&
+            onMarkCrisisHandled && (
+              <Pressable
+                hitSlop={8}
+                onPress={onMarkCrisisHandled}
+                style={styles.crisisHandleButton}
+              >
+                <Text
+                  style={
+                    styles.crisisHandleButtonText
+                  }
+                >
+                  Mark handled
+                </Text>
+              </Pressable>
+            )}
         </View>
       )}
+
       {/* PINNED BADGE */}
 
       {post.isPinned && (
@@ -202,7 +333,9 @@ export default function PostCard({
               {post.author.fullName}
             </Text>
 
-            <StaffBadge badge={post.author.staffBadge} />
+            <StaffBadge
+              badge={post.author.staffBadge}
+            />
           </View>
 
           <Text style={styles.timestamp}>
@@ -287,19 +420,23 @@ export default function PostCard({
           </Text>
 
           <Text style={styles.warningCoverLabels}>
-            {formatContentWarnings(contentWarnings)}
+            {formatContentWarnings(
+              contentWarnings
+            )}
           </Text>
 
           <Text style={styles.warningCoverHint}>
-            This post may be difficult to read. Take care of yourself —
-            you can skip it.
+            This post may be difficult to read. Take care
+            of yourself — you can skip it.
           </Text>
 
           <Pressable
             onPress={() => setRevealed(true)}
             style={styles.warningCoverButton}
           >
-            <Text style={styles.warningCoverButtonText}>
+            <Text
+              style={styles.warningCoverButtonText}
+            >
               Show post
             </Text>
           </Pressable>
@@ -316,16 +453,22 @@ export default function PostCard({
                 />
 
                 <Text style={styles.warningTagText}>
-                  {formatContentWarnings(contentWarnings)}
+                  {formatContentWarnings(
+                    contentWarnings
+                  )}
                 </Text>
               </View>
 
               {revealed && (
                 <Pressable
                   hitSlop={8}
-                  onPress={() => setRevealed(false)}
+                  onPress={() =>
+                    setRevealed(false)
+                  }
                 >
-                  <Text style={styles.warningHideText}>Hide</Text>
+                  <Text style={styles.warningHideText}>
+                    Hide
+                  </Text>
                 </Pressable>
               )}
             </View>
@@ -337,7 +480,9 @@ export default function PostCard({
 
           {post.imageUrl && (
             <Pressable
-              onPress={() => setImageViewerOpen(true)}
+              onPress={() =>
+                setImageViewerOpen(true)
+              }
               accessibilityRole="imagebutton"
               accessibilityLabel="Open photo"
               style={styles.postImageWrapper}
@@ -360,11 +505,15 @@ export default function PostCard({
           visible={imageViewerOpen}
           transparent
           animationType="fade"
-          onRequestClose={() => setImageViewerOpen(false)}
+          onRequestClose={() =>
+            setImageViewerOpen(false)
+          }
         >
           <Pressable
             style={styles.viewerBackdrop}
-            onPress={() => setImageViewerOpen(false)}
+            onPress={() =>
+              setImageViewerOpen(false)
+            }
           >
             <Image
               source={{ uri: post.imageUrl }}
@@ -373,7 +522,11 @@ export default function PostCard({
             />
 
             <View style={styles.viewerClose}>
-              <Ionicons name="close" size={22} color="#ffffff" />
+              <Ionicons
+                name="close"
+                size={22}
+                color="#ffffff"
+              />
             </View>
           </Pressable>
         </Modal>
@@ -382,38 +535,85 @@ export default function PostCard({
       {/* POST ACTIONS */}
 
       <View style={styles.footer}>
-        <Pressable
-          style={[
-            styles.actionButton,
-            post.likedByMe &&
-              styles.likedActionButton,
-          ]}
-          onPress={onToggleLike}
-        >
-          <Ionicons
-            name={
-              post.likedByMe
-                ? "heart"
-                : "heart-outline"
-            }
-            size={19}
-            color={
-              post.likedByMe
-                ? "#ef4444"
-                : "#64748b"
-            }
-          />
+        {/* REACTION BUTTON + POPUP */}
 
-          <Text
+        <View style={styles.reactionContainer}>
+          {reactionPickerOpen && (
+            <View style={styles.reactionPicker}>
+              {POST_REACTIONS.map((reaction) => {
+                const isSelected =
+                  currentReaction === reaction.type;
+
+                return (
+                  <Pressable
+                    key={reaction.type}
+                    onPress={() =>
+                      handleSelectReaction(
+                        reaction.type
+                      )
+                    }
+                    accessibilityRole="button"
+                    accessibilityLabel={
+                      reaction.label
+                    }
+                    style={[
+                      styles.reactionOption,
+                      isSelected &&
+                        styles.reactionOptionSelected,
+                    ]}
+                  >
+                    <Text
+                      style={styles.reactionEmoji}
+                    >
+                      {reaction.emoji}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </View>
+          )}
+
+          <Pressable
             style={[
-              styles.actionText,
-              post.likedByMe &&
-                styles.likedActionText,
+              styles.actionButton,
+              currentReaction &&
+                styles.reactedActionButton,
             ]}
+            onPress={handleReactionPress}
           >
-            {post.likeCount}
-          </Text>
-        </Pressable>
+            {currentReactionEmoji ? (
+              <Text style={styles.selectedReactionEmoji}>
+                {currentReactionEmoji}
+              </Text>
+            ) : (
+              <Ionicons
+                name="heart-outline"
+                size={19}
+                color="#64748b"
+              />
+            )}
+
+            <Text
+              style={[
+                styles.actionText,
+                currentReaction &&
+                  styles.reactedActionText,
+              ]}
+            >
+              {totalReactionCount}
+            </Text>
+
+            {currentReaction && (
+              <Text
+                style={styles.reactionLabel}
+              >
+                {currentReactionLabel}
+              </Text>
+            )}
+          </Pressable>
+        </View>
+
+        {/* COMMENTS */}
 
         <Pressable
           style={styles.actionButton}
@@ -707,6 +907,71 @@ const styles = StyleSheet.create({
     borderTopColor: "#f1f5f9",
   },
 
+  /*
+   * Reaction area
+   */
+  reactionContainer: {
+    position: "relative",
+    marginRight: 12,
+  },
+
+  reactionPicker: {
+    position: "absolute",
+    bottom: 46,
+    left: -4,
+    zIndex: 100,
+    paddingHorizontal: 7,
+    paddingVertical: 7,
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#e2e8f0",
+    borderRadius: 18,
+    backgroundColor: "#ffffff",
+    shadowColor: "#000000",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+
+  reactionOption: {
+    width: 40,
+    height: 40,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 20,
+  },
+
+  reactionOptionSelected: {
+    backgroundColor: "#f1f5f9",
+  },
+
+  reactionEmoji: {
+    fontSize: 23,
+  },
+
+  selectedReactionEmoji: {
+    fontSize: 19,
+  },
+
+  reactedActionButton: {
+    backgroundColor: "#f8fafc",
+  },
+
+  reactedActionText: {
+    color: "#4f46e5",
+  },
+
+  reactionLabel: {
+    marginLeft: 4,
+    fontSize: 12,
+    color: "#64748b",
+  },
+
   actionButton: {
     marginRight: 24,
     paddingVertical: 5,
@@ -716,19 +981,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
 
-  likedActionButton: {
-    backgroundColor: "#fff1f2",
-  },
-
   actionText: {
     marginLeft: 5,
     fontSize: 13,
     fontWeight: "700",
     color: "#64748b",
-  },
-
-  likedActionText: {
-    color: "#ef4444",
   },
 
   actionLabel: {

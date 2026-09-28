@@ -12,6 +12,7 @@ import type {
   NeedsResponseData,
   Post,
   PostComment,
+  PostReactionType,
   PostSort,
   PostsResponseData,
   ToggleLikeResponseData,
@@ -20,12 +21,18 @@ import type {
 
 export const postApi = {
   async listMyFeed(
-    filters: { page?: number; limit?: number } = {}
+    filters: {
+      page?: number;
+      limit?: number;
+    } = {}
   ): Promise<ApiResponse<PostsResponseData>> {
-    const response = await apiClient.get<ApiResponse<PostsResponseData>>(
-      "/posts/my-feed",
-      { params: filters }
-    );
+    const response =
+      await apiClient.get<
+        ApiResponse<PostsResponseData>
+      >(
+        "/posts/my-feed",
+        { params: filters }
+      );
 
     return response.data;
   },
@@ -39,10 +46,13 @@ export const postApi = {
       sort?: PostSort;
     } = {}
   ): Promise<ApiResponse<PostsResponseData>> {
-    const response = await apiClient.get<ApiResponse<PostsResponseData>>(
-      `/groups/${groupId}/posts`,
-      { params: filters }
-    );
+    const response =
+      await apiClient.get<
+        ApiResponse<PostsResponseData>
+      >(
+        `/groups/${groupId}/posts`,
+        { params: filters }
+      );
 
     return response.data;
   },
@@ -50,13 +60,19 @@ export const postApi = {
   async createPost(
     groupId: string,
     payload: CreatePostPayload
-  ): Promise<ApiResponse<CreatePostResponseData>> {
+  ): Promise<
+    ApiResponse<CreatePostResponseData>
+  > {
     const { image, ...fields } = payload;
 
     if (!image) {
-      const response = await apiClient.post<
-        ApiResponse<CreatePostResponseData>
-      >(`/groups/${groupId}/posts`, fields);
+      const response =
+        await apiClient.post<
+          ApiResponse<CreatePostResponseData>
+        >(
+          `/groups/${groupId}/posts`,
+          fields
+        );
 
       return response.data;
     }
@@ -67,28 +83,47 @@ export const postApi = {
      */
     const formData = new FormData();
 
-    formData.append("content", fields.content);
-    formData.append("isAnonymous", String(Boolean(fields.isAnonymous)));
     formData.append(
-      "contentWarnings",
-      JSON.stringify(fields.contentWarnings ?? [])
+      "content",
+      fields.content
     );
 
-    formData.append("image", {
-      uri: image.uri,
-      name: image.fileName,
-      type: image.mimeType,
-    } as unknown as Blob);
+    formData.append(
+      "isAnonymous",
+      String(Boolean(fields.isAnonymous))
+    );
 
-    const response = await apiClient.post<
-      ApiResponse<CreatePostResponseData>
-    >(`/groups/${groupId}/posts`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
+    formData.append(
+      "contentWarnings",
+      JSON.stringify(
+        fields.contentWarnings ?? []
+      )
+    );
 
-      timeout: 30000,
-    });
+    formData.append(
+      "image",
+      {
+        uri: image.uri,
+        name: image.fileName,
+        type: image.mimeType,
+      } as unknown as Blob
+    );
+
+    const response =
+      await apiClient.post<
+        ApiResponse<CreatePostResponseData>
+      >(
+        `/groups/${groupId}/posts`,
+        formData,
+        {
+          headers: {
+            "Content-Type":
+              "multipart/form-data",
+          },
+
+          timeout: 30000,
+        }
+      );
 
     return response.data;
   },
@@ -106,68 +141,164 @@ export const postApi = {
       page?: number;
       limit?: number;
     } = {}
-  ): Promise<ApiResponse<PostsResponseData>> {
-    const response = await apiClient.get<ApiResponse<PostsResponseData>>(
-      "/posts/crisis-alerts",
-      { params: filters }
-    );
+  ): Promise<
+    ApiResponse<PostsResponseData>
+  > {
+    const response =
+      await apiClient.get<
+        ApiResponse<PostsResponseData>
+      >(
+        "/posts/crisis-alerts",
+        { params: filters }
+      );
 
     return response.data;
   },
 
   async getNeedsResponseQueue(
-    filters: { groupId?: string; page?: number; limit?: number } = {}
-  ): Promise<ApiResponse<NeedsResponseData>> {
-    const response = await apiClient.get<ApiResponse<NeedsResponseData>>(
-      "/posts/needs-response",
-      { params: filters }
-    );
+    filters: {
+      groupId?: string;
+      page?: number;
+      limit?: number;
+    } = {}
+  ): Promise<
+    ApiResponse<NeedsResponseData>
+  > {
+    const response =
+      await apiClient.get<
+        ApiResponse<NeedsResponseData>
+      >(
+        "/posts/needs-response",
+        { params: filters }
+      );
 
     return response.data;
   },
 
   async markCrisisHandled(
     postId: string
-  ): Promise<ApiResponse<{ crisisFlag: CrisisFlag }>> {
-    const response = await apiClient.patch<
-      ApiResponse<{ crisisFlag: CrisisFlag }>
-    >(`/posts/${postId}/crisis-flag/handle`);
+  ): Promise<
+    ApiResponse<{
+      crisisFlag: CrisisFlag;
+    }>
+  > {
+    const response =
+      await apiClient.patch<
+        ApiResponse<{
+          crisisFlag: CrisisFlag;
+        }>
+      >(
+        `/posts/${postId}/crisis-flag/handle`
+      );
 
     return response.data;
   },
 
-  async getPost(postId: string): Promise<ApiResponse<{ post: Post }>> {
-    const response = await apiClient.get<ApiResponse<{ post: Post }>>(
-      `/posts/${postId}`
-    );
+  async getPost(
+    postId: string
+  ): Promise<
+    ApiResponse<{
+      post: Post;
+    }>
+  > {
+    const response =
+      await apiClient.get<
+        ApiResponse<{
+          post: Post;
+        }>
+      >(
+        `/posts/${postId}`
+      );
 
     return response.data;
   },
 
-  async deletePost(postId: string): Promise<ApiResponse<null>> {
-    const response = await apiClient.delete<ApiResponse<null>>(
-      `/posts/${postId}`
-    );
+  async deletePost(
+    postId: string
+  ): Promise<ApiResponse<null>> {
+    const response =
+      await apiClient.delete<
+        ApiResponse<null>
+      >(
+        `/posts/${postId}`
+      );
 
     return response.data;
   },
 
   async toggleLike(
     postId: string
-  ): Promise<ApiResponse<ToggleLikeResponseData>> {
-    const response = await apiClient.post<
-      ApiResponse<ToggleLikeResponseData>
-    >(`/posts/${postId}/like`);
+  ): Promise<
+    ApiResponse<ToggleLikeResponseData>
+  > {
+    const response =
+      await apiClient.post<
+        ApiResponse<ToggleLikeResponseData>
+      >(
+        `/posts/${postId}/like`
+      );
+
+    return response.data;
+  },
+
+  /*
+  |--------------------------------------------------------------------------
+  | POST REACTIONS
+  |--------------------------------------------------------------------------
+  */
+
+  async toggleReaction(
+    postId: string,
+    reactionType: PostReactionType
+  ): Promise<
+    ApiResponse<{
+      reaction: PostReactionType | null;
+      myReaction: PostReactionType | null;
+      reactionCounts: {
+        like: number;
+        love: number;
+        haha: number;
+        wow: number;
+        sad: number;
+        angry: number;
+      };
+    }>
+  > {
+    const response =
+      await apiClient.post<
+        ApiResponse<{
+          reaction: PostReactionType | null;
+          myReaction: PostReactionType | null;
+          reactionCounts: {
+            like: number;
+            love: number;
+            haha: number;
+            wow: number;
+            sad: number;
+            angry: number;
+          };
+        }>
+      >(
+        `/posts/${postId}/reaction`,
+        {
+          reactionType,
+        }
+      );
 
     return response.data;
   },
 
   async togglePin(
     postId: string
-  ): Promise<ApiResponse<TogglePinResponseData>> {
-    const response = await apiClient.post<ApiResponse<TogglePinResponseData>>(
-      `/posts/${postId}/pin`
-    );
+  ): Promise<
+    ApiResponse<TogglePinResponseData>
+  > {
+    const response =
+      await apiClient.post<
+        ApiResponse<TogglePinResponseData>
+      >(
+        `/posts/${postId}/pin`
+      );
 
     return response.data;
   },
@@ -180,10 +311,15 @@ export const postApi = {
 
   async listComments(
     postId: string
-  ): Promise<ApiResponse<CommentsResponseData>> {
-    const response = await apiClient.get<ApiResponse<CommentsResponseData>>(
-      `/posts/${postId}/comments`
-    );
+  ): Promise<
+    ApiResponse<CommentsResponseData>
+  > {
+    const response =
+      await apiClient.get<
+        ApiResponse<CommentsResponseData>
+      >(
+        `/posts/${postId}/comments`
+      );
 
     return response.data;
   },
@@ -197,10 +333,20 @@ export const postApi = {
   async createComment(
     postId: string,
     payload: CreateCommentPayload
-  ): Promise<ApiResponse<{ comment: PostComment }>> {
-    const response = await apiClient.post<
-      ApiResponse<{ comment: PostComment }>
-    >(`/posts/${postId}/comments`, payload);
+  ): Promise<
+    ApiResponse<{
+      comment: PostComment;
+    }>
+  > {
+    const response =
+      await apiClient.post<
+        ApiResponse<{
+          comment: PostComment;
+        }>
+      >(
+        `/posts/${postId}/comments`,
+        payload
+      );
 
     return response.data;
   },
@@ -214,10 +360,20 @@ export const postApi = {
   async updateComment(
     commentId: string,
     payload: CreateCommentPayload
-  ): Promise<ApiResponse<{ comment: PostComment }>> {
-    const response = await apiClient.patch<
-      ApiResponse<{ comment: PostComment }>
-    >(`/comments/${commentId}`, payload);
+  ): Promise<
+    ApiResponse<{
+      comment: PostComment;
+    }>
+  > {
+    const response =
+      await apiClient.patch<
+        ApiResponse<{
+          comment: PostComment;
+        }>
+      >(
+        `/comments/${commentId}`,
+        payload
+      );
 
     return response.data;
   },
@@ -228,10 +384,15 @@ export const postApi = {
   |--------------------------------------------------------------------------
   */
 
-  async deleteComment(commentId: string): Promise<ApiResponse<null>> {
-    const response = await apiClient.delete<ApiResponse<null>>(
-      `/comments/${commentId}`
-    );
+  async deleteComment(
+    commentId: string
+  ): Promise<ApiResponse<null>> {
+    const response =
+      await apiClient.delete<
+        ApiResponse<null>
+      >(
+        `/comments/${commentId}`
+      );
 
     return response.data;
   },
@@ -245,10 +406,20 @@ export const postApi = {
   async createReply(
     commentId: string,
     payload: CreateCommentPayload
-  ): Promise<ApiResponse<{ comment: PostComment }>> {
-    const response = await apiClient.post<
-      ApiResponse<{ comment: PostComment }>
-    >(`/comments/${commentId}/replies`, payload);
+  ): Promise<
+    ApiResponse<{
+      comment: PostComment;
+    }>
+  > {
+    const response =
+      await apiClient.post<
+        ApiResponse<{
+          comment: PostComment;
+        }>
+      >(
+        `/comments/${commentId}/replies`,
+        payload
+      );
 
     return response.data;
   },
@@ -267,12 +438,15 @@ export const postApi = {
       heartCount: number;
     }>
   > {
-    const response = await apiClient.post<
-      ApiResponse<{
-        hearted: boolean;
-        heartCount: number;
-      }>
-    >(`/comments/${commentId}/heart`);
+    const response =
+      await apiClient.post<
+        ApiResponse<{
+          hearted: boolean;
+          heartCount: number;
+        }>
+      >(
+        `/comments/${commentId}/heart`
+      );
 
     return response.data;
   },

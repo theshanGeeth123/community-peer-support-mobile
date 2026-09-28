@@ -16,7 +16,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Ionicons } from "@expo/vector-icons";
 
-import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
+import {
+  router,
+  useFocusEffect,
+  useLocalSearchParams,
+} from "expo-router";
 
 import { useAuth } from "@/features/auth/hooks/useAuth";
 
@@ -28,6 +32,7 @@ import type { SupportGroup } from "@/features/groups/types/group.types";
 import type {
   CreatePostPayload,
   Post,
+  PostReactionType,
   PostSort,
 } from "@/features/groups/types/post.types";
 
@@ -40,10 +45,17 @@ import CrisisSupportModal from "./CrisisSupportModal";
 import PostCard from "./PostCard";
 import PostCommentsModal from "./PostCommentsModal";
 
-type ReferenceWithId = { id?: string; _id?: string };
+type ReferenceWithId = {
+  id?: string;
+  _id?: string;
+};
 
 function getReferenceId(
-  reference: string | ReferenceWithId | null | undefined
+  reference:
+    | string
+    | ReferenceWithId
+    | null
+    | undefined
 ): string | null {
   if (!reference) {
     return null;
@@ -68,14 +80,26 @@ const SORT_OPTIONS: {
   label: string;
   icon: keyof typeof Ionicons.glyphMap;
 }[] = [
-  { value: "newest", label: "Newest", icon: "time-outline" },
-  { value: "most_supported", label: "Most supported", icon: "heart-outline" },
+  {
+    value: "newest",
+    label: "Newest",
+    icon: "time-outline",
+  },
+  {
+    value: "most_supported",
+    label: "Most supported",
+    icon: "heart-outline",
+  },
   {
     value: "most_discussed",
     label: "Most discussed",
     icon: "chatbubbles-outline",
   },
-  { value: "unanswered", label: "Unanswered", icon: "help-circle-outline" },
+  {
+    value: "unanswered",
+    label: "Unanswered",
+    icon: "help-circle-outline",
+  },
 ];
 
 function sortPosts(posts: Post[]) {
@@ -85,7 +109,8 @@ function sortPosts(posts: Post[]) {
     }
 
     return (
-      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      new Date(b.createdAt).getTime() -
+      new Date(a.createdAt).getTime()
     );
   });
 }
@@ -93,57 +118,99 @@ function sortPosts(posts: Post[]) {
 export default function GroupPostsScreen() {
   const params = useLocalSearchParams();
   const rawGroupId = params.groupId;
-  const groupId = Array.isArray(rawGroupId) ? rawGroupId[0] : rawGroupId;
+
+  const groupId = Array.isArray(rawGroupId)
+    ? rawGroupId[0]
+    : rawGroupId;
 
   const { user } = useAuth();
 
-  const [group, setGroup] = useState<SupportGroup | null>(null);
-  const [canPost, setCanPost] = useState(false);
-  const [canModerateAll, setCanModerateAll] = useState(false);
+  const [group, setGroup] =
+    useState<SupportGroup | null>(null);
 
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [submittingPost, setSubmittingPost] = useState(false);
+  const [canPost, setCanPost] =
+    useState(false);
 
-  const [activeCommentsPostId, setActiveCommentsPostId] = useState<
-    string | null
-  >(null);
+  const [canModerateAll, setCanModerateAll] =
+    useState(false);
 
-  const [reportingPostId, setReportingPostId] = useState<string | null>(null);
+  const [posts, setPosts] =
+    useState<Post[]>([]);
 
-  const [showCrisisSupport, setShowCrisisSupport] = useState(false);
+  const [loading, setLoading] =
+    useState(true);
+
+  const [refreshing, setRefreshing] =
+    useState(false);
+
+  const [error, setError] =
+    useState<string | null>(null);
+
+  const [submittingPost, setSubmittingPost] =
+    useState(false);
+
+  const [
+    activeCommentsPostId,
+    setActiveCommentsPostId,
+  ] = useState<string | null>(null);
+
+  const [
+    reportingPostId,
+    setReportingPostId,
+  ] = useState<string | null>(null);
+
+  const [
+    showCrisisSupport,
+    setShowCrisisSupport,
+  ] = useState(false);
 
   /*
    * searchText  → what is typed in the box
    * searchQuery → trimmed text, updated after the user stops typing
    */
-  const [searchText, setSearchText] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchResultCount, setSearchResultCount] = useState<number | null>(
-    null
-  );
+  const [searchText, setSearchText] =
+    useState("");
 
-  const [sortOption, setSortOption] = useState<PostSort>("newest");
+  const [searchQuery, setSearchQuery] =
+    useState("");
+
+  const [
+    searchResultCount,
+    setSearchResultCount,
+  ] = useState<number | null>(null);
+
+  const [sortOption, setSortOption] =
+    useState<PostSort>("newest");
 
   /*
    * True while search/sort results are being fetched
    * (not the first load, which shows the full-screen spinner).
    */
-  const [refetching, setRefetching] = useState(false);
+  const [refetching, setRefetching] =
+    useState(false);
 
-  const isSearchActive = searchQuery.length > 0;
+  const isSearchActive =
+    searchQuery.length > 0;
 
   /*
    * The normal feed keeps pinned posts on top. Search results and
    * other sort orders show posts exactly as the server orders them.
    */
-  const isDefaultFeed = !isSearchActive && sortOption === "newest";
+  const isDefaultFeed =
+    !isSearchActive &&
+    sortOption === "newest";
 
-  const filtersRef = useRef<PostListFilters>({ q: "", sort: "newest" });
-  const latestPostsRequestRef = useRef(0);
-  const hasLoadedRef = useRef(false);
+  const filtersRef =
+    useRef<PostListFilters>({
+      q: "",
+      sort: "newest",
+    });
+
+  const latestPostsRequestRef =
+    useRef(0);
+
+  const hasLoadedRef =
+    useRef(false);
 
   /*
    * Fetches posts for the current search/sort.
@@ -151,27 +218,53 @@ export default function GroupPostsScreen() {
    * or quick sort changes cannot show stale results.
    */
   const fetchPosts = useCallback(
-    async ({ q, sort }: PostListFilters) => {
+    async ({
+      q,
+      sort,
+    }: PostListFilters) => {
       if (!groupId) {
         return;
       }
 
-      const requestId = ++latestPostsRequestRef.current;
+      const requestId =
+        ++latestPostsRequestRef.current;
 
-      const response = await postApi.listPosts(groupId, {
-        ...(q ? { q } : {}),
-        ...(sort !== "newest" ? { sort } : {}),
-      });
+      const response =
+        await postApi.listPosts(
+          groupId,
+          {
+            ...(q ? { q } : {}),
+            ...(sort !== "newest"
+              ? { sort }
+              : {}),
+          }
+        );
 
-      if (requestId !== latestPostsRequestRef.current) {
+      if (
+        requestId !==
+        latestPostsRequestRef.current
+      ) {
         return;
       }
 
-      const fetchedPosts = response.data.posts ?? [];
-      const isDefault = !q && sort === "newest";
+      const fetchedPosts =
+        response.data.posts ?? [];
 
-      setPosts(isDefault ? sortPosts(fetchedPosts) : fetchedPosts);
-      setSearchResultCount(q ? response.data.pagination.totalPosts : null);
+      const isDefault =
+        !q && sort === "newest";
+
+      setPosts(
+        isDefault
+          ? sortPosts(fetchedPosts)
+          : fetchedPosts
+      );
+
+      setSearchResultCount(
+        q
+          ? response.data.pagination
+              .totalPosts
+          : null
+      );
     },
     [groupId]
   );
@@ -189,47 +282,77 @@ export default function GroupPostsScreen() {
 
         setError(null);
 
-        const groupResponse = await groupApi.getGroup(groupId);
-        const fetchedGroup = groupResponse.data.group;
+        const groupResponse =
+          await groupApi.getGroup(
+            groupId
+          );
+
+        const fetchedGroup =
+          groupResponse.data.group;
 
         setGroup(fetchedGroup);
 
         const isAssignedStaff =
           (user.role === "MODERATOR" &&
             fetchedGroup.moderators.some(
-              (reference) => getReferenceId(reference) === user.id
+              (reference) =>
+                getReferenceId(
+                  reference
+                ) === user.id
             )) ||
-          (user.role === "PEER_SUPPORTER" &&
+          (user.role ===
+            "PEER_SUPPORTER" &&
             fetchedGroup.peerSupporters.some(
-              (reference) => getReferenceId(reference) === user.id
+              (reference) =>
+                getReferenceId(
+                  reference
+                ) === user.id
             ));
 
-        const canModerate = user.role === "ADMIN" || isAssignedStaff;
+        const canModerate =
+          user.role === "ADMIN" ||
+          isAssignedStaff;
 
-        setCanModerateAll(canModerate);
+        setCanModerateAll(
+          canModerate
+        );
 
-        let hasActiveMembership = false;
+        let hasActiveMembership =
+          false;
 
         if (user.role === "USER") {
           const membershipsResponse =
             await groupMembershipApi.getMyJoinedGroups();
 
           hasActiveMembership = (
-            membershipsResponse.data.memberships ?? []
+            membershipsResponse.data
+              .memberships ?? []
           ).some(
             (membership) =>
-              membership.status === "ACTIVE" &&
-              getReferenceId(membership.group) === groupId
+              membership.status ===
+                "ACTIVE" &&
+              getReferenceId(
+                membership.group
+              ) === groupId
           );
         }
 
-        setCanPost(canModerate || hasActiveMembership);
+        setCanPost(
+          canModerate ||
+            hasActiveMembership
+        );
 
-        await fetchPosts(filtersRef.current);
+        await fetchPosts(
+          filtersRef.current
+        );
 
         hasLoadedRef.current = true;
       } catch (requestError) {
-        setError(getApiErrorMessage(requestError));
+        setError(
+          getApiErrorMessage(
+            requestError
+          )
+        );
       } finally {
         setLoading(false);
         setRefreshing(false);
@@ -240,16 +363,23 @@ export default function GroupPostsScreen() {
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      setSearchQuery(searchText.trim());
+      setSearchQuery(
+        searchText.trim()
+      );
     }, SEARCH_DEBOUNCE_MS);
 
-    return () => clearTimeout(timeout);
+    return () =>
+      clearTimeout(timeout);
   }, [searchText]);
 
   useEffect(() => {
-    const filters = { q: searchQuery, sort: sortOption };
+    const filters = {
+      q: searchQuery,
+      sort: sortOption,
+    };
 
-    filtersRef.current = filters;
+    filtersRef.current =
+      filters;
 
     /*
      * The first load is done by loadEverything.
@@ -265,14 +395,22 @@ export default function GroupPostsScreen() {
 
         await fetchPosts(filters);
       } catch (requestError) {
-        setError(getApiErrorMessage(requestError));
+        setError(
+          getApiErrorMessage(
+            requestError
+          )
+        );
       } finally {
         setRefetching(false);
       }
     };
 
     void refetch();
-  }, [searchQuery, sortOption, fetchPosts]);
+  }, [
+    searchQuery,
+    sortOption,
+    fetchPosts,
+  ]);
 
   const clearSearch = () => {
     setSearchText("");
@@ -302,26 +440,44 @@ export default function GroupPostsScreen() {
     try {
       setSubmittingPost(true);
 
-      const response = await postApi.createPost(groupId, payload);
+      const response =
+        await postApi.createPost(
+          groupId,
+          payload
+        );
 
       /*
        * A brand-new post belongs at the top of "Newest" and
        * "Unanswered". In the other sorts it would be out of place,
        * so switch back to Newest where the author can see it.
        */
-      if (sortOption === "newest" || sortOption === "unanswered") {
-        setPosts((previous) => [response.data.post, ...previous]);
+      if (
+        sortOption === "newest" ||
+        sortOption === "unanswered"
+      ) {
+        setPosts((previous) => [
+          response.data.post,
+          ...previous,
+        ]);
       } else {
         setSortOption("newest");
       }
 
-      if (response.data.safety?.crisisDetected) {
+      if (
+        response.data.safety
+          ?.crisisDetected
+      ) {
         setShowCrisisSupport(true);
       }
 
       return true;
     } catch (requestError) {
-      Alert.alert("Unable to post", getApiErrorMessage(requestError));
+      Alert.alert(
+        "Unable to post",
+        getApiErrorMessage(
+          requestError
+        )
+      );
 
       return false;
     } finally {
@@ -329,141 +485,335 @@ export default function GroupPostsScreen() {
     }
   };
 
-  const handleMarkCrisisHandled = async (postId: string) => {
-    try {
-      const response = await postApi.markCrisisHandled(postId);
+  const handleMarkCrisisHandled =
+    async (postId: string) => {
+      try {
+        const response =
+          await postApi.markCrisisHandled(
+            postId
+          );
 
+        setPosts((previous) =>
+          previous.map((post) =>
+            post.id === postId
+              ? {
+                  ...post,
+                  crisisFlag:
+                    response.data
+                      .crisisFlag,
+                }
+              : post
+          )
+        );
+      } catch (requestError) {
+        Alert.alert(
+          "Unable to update crisis alert",
+          getApiErrorMessage(
+            requestError
+          )
+        );
+      }
+    };
+
+  /*
+   * POST REACTIONS
+   *
+   * Selecting the same reaction removes it.
+   * Selecting a different reaction changes the existing reaction.
+   */
+  const handleToggleReaction =
+    async (
+      postId: string,
+      reactionType: PostReactionType
+    ) => {
+      /*
+       * Optimistic UI update.
+       */
       setPosts((previous) =>
-        previous.map((post) =>
-          post.id === postId
-            ? { ...post, crisisFlag: response.data.crisisFlag }
-            : post
-        )
-      );
-    } catch (requestError) {
-      Alert.alert(
-        "Unable to update crisis alert",
-        getApiErrorMessage(requestError)
-      );
-    }
-  };
+        previous.map((post) => {
+          if (post.id !== postId) {
+            return post;
+          }
 
-  const handleToggleLike = async (postId: string) => {
-    setPosts((previous) =>
-      previous.map((post) =>
-        post.id === postId
-          ? {
+          const currentReaction =
+            post.myReaction;
+
+          const updatedCounts = {
+            ...(post.reactionCounts ?? {
+              like: 0,
+              love: 0,
+              haha: 0,
+              wow: 0,
+              sad: 0,
+              angry: 0,
+            }),
+          };
+
+          /*
+           * Same reaction = remove reaction.
+           */
+          if (
+            currentReaction ===
+            reactionType
+          ) {
+            updatedCounts[
+              reactionType
+            ] = Math.max(
+              0,
+              updatedCounts[
+                reactionType
+              ] - 1
+            );
+
+            return {
               ...post,
-              likedByMe: !post.likedByMe,
-              likeCount: post.likedByMe
-                ? post.likeCount - 1
-                : post.likeCount + 1,
-            }
-          : post
-      )
-    );
+              myReaction: null,
+              reactionCounts:
+                updatedCounts,
+            };
+          }
 
-    try {
-      const response = await postApi.toggleLike(postId);
+          /*
+           * Changing from one reaction to another.
+           */
+          if (currentReaction) {
+            updatedCounts[
+              currentReaction
+            ] = Math.max(
+              0,
+              updatedCounts[
+                currentReaction
+              ] - 1
+            );
+          }
 
-      setPosts((previous) =>
-        previous.map((post) =>
-          post.id === postId
-            ? {
-                ...post,
-                likedByMe: response.data.liked,
-                likeCount: response.data.likeCount,
-              }
-            : post
-        )
+          updatedCounts[
+            reactionType
+          ] =
+            updatedCounts[
+              reactionType
+            ] + 1;
+
+          return {
+            ...post,
+            myReaction:
+              reactionType,
+            reactionCounts:
+              updatedCounts,
+          };
+        })
       );
-    } catch (requestError) {
-      Alert.alert("Unable to update like", getApiErrorMessage(requestError));
-      void loadEverything(false);
-    }
-  };
 
-  const handleTogglePin = async (postId: string) => {
-    try {
-      const response = await postApi.togglePin(postId);
+      try {
+        const response =
+          await postApi.toggleReaction(
+            postId,
+            reactionType
+          );
 
-      setPosts((previous) => {
-        const updated = previous.map((post) =>
-          post.id === postId
-            ? { ...post, isPinned: response.data.isPinned }
-            : post
+        /*
+         * Backend response is authoritative.
+         */
+        setPosts((previous) =>
+          previous.map((post) =>
+            post.id === postId
+              ? {
+                  ...post,
+                  myReaction:
+                    response.data
+                      .myReaction,
+                  reactionCounts:
+                    response.data
+                      .reactionCounts,
+                }
+              : post
+          )
+        );
+      } catch (requestError) {
+        Alert.alert(
+          "Unable to update reaction",
+          getApiErrorMessage(
+            requestError
+          )
         );
 
-        return isDefaultFeed ? sortPosts(updated) : updated;
-      });
-    } catch (requestError) {
-      Alert.alert("Unable to update pin", getApiErrorMessage(requestError));
-    }
+        /*
+         * Restore the actual server state if the request failed.
+         */
+        void loadEverything(false);
+      }
+    };
+
+  const handleTogglePin =
+    async (postId: string) => {
+      try {
+        const response =
+          await postApi.togglePin(
+            postId
+          );
+
+        setPosts((previous) => {
+          const updated =
+            previous.map(
+              (post) =>
+                post.id === postId
+                  ? {
+                      ...post,
+                      isPinned:
+                        response.data
+                          .isPinned,
+                    }
+                  : post
+            );
+
+          return isDefaultFeed
+            ? sortPosts(updated)
+            : updated;
+        });
+      } catch (requestError) {
+        Alert.alert(
+          "Unable to update pin",
+          getApiErrorMessage(
+            requestError
+          )
+        );
+      }
+    };
+
+  const handleDeletePost = (
+    postId: string
+  ) => {
+    Alert.alert(
+      "Delete post",
+      "Are you sure you want to delete this post?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () =>
+            void confirmDeletePost(
+              postId
+            ),
+        },
+      ]
+    );
   };
 
-  const handleDeletePost = (postId: string) => {
-    Alert.alert("Delete post", "Are you sure you want to delete this post?", [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Delete",
-        style: "destructive",
-        onPress: () => void confirmDeletePost(postId),
-      },
-    ]);
-  };
+  const confirmDeletePost =
+    async (postId: string) => {
+      try {
+        await postApi.deletePost(
+          postId
+        );
 
-  const confirmDeletePost = async (postId: string) => {
-    try {
-      await postApi.deletePost(postId);
-
-      setPosts((previous) => previous.filter((post) => post.id !== postId));
-    } catch (requestError) {
-      Alert.alert("Unable to delete post", getApiErrorMessage(requestError));
-    }
-  };
+        setPosts((previous) =>
+          previous.filter(
+            (post) =>
+              post.id !== postId
+          )
+        );
+      } catch (requestError) {
+        Alert.alert(
+          "Unable to delete post",
+          getApiErrorMessage(
+            requestError
+          )
+        );
+      }
+    };
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={["top", "left", "right"]}>
+    <SafeAreaView
+      style={styles.safeArea}
+      edges={[
+        "top",
+        "left",
+        "right",
+      ]}
+    >
       <View style={styles.header}>
-        <Pressable onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={22} color="#0f172a" />
+        <Pressable
+          onPress={() => router.back()}
+          style={styles.backButton}
+        >
+          <Ionicons
+            name="arrow-back"
+            size={22}
+            color="#0f172a"
+          />
         </Pressable>
 
-        <Text numberOfLines={1} style={styles.headerTitle}>
+        <Text
+          numberOfLines={1}
+          style={styles.headerTitle}
+        >
           {group?.name ?? "Posts"}
         </Text>
 
-        <View style={{ width: 42 }} />
+        <View
+          style={{ width: 42 }}
+        />
       </View>
 
       <ScrollView
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}
+        contentContainerStyle={
+          styles.content
+        }
+        showsVerticalScrollIndicator={
+          false
+        }
         keyboardShouldPersistTaps="handled"
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={
+              handleRefresh
+            }
+          />
         }
       >
         {/* SEARCH */}
 
         <View style={styles.searchBox}>
-          <Ionicons name="search" size={17} color="#94a3b8" />
+          <Ionicons
+            name="search"
+            size={17}
+            color="#94a3b8"
+          />
 
           <TextInput
             value={searchText}
-            onChangeText={setSearchText}
+            onChangeText={
+              setSearchText
+            }
             placeholder="Search posts in this group"
             placeholderTextColor="#94a3b8"
             autoCapitalize="none"
             autoCorrect={false}
             returnKeyType="search"
             maxLength={100}
-            style={styles.searchInput}
+            style={
+              styles.searchInput
+            }
           />
 
-          {searchText.length > 0 && (
-            <Pressable hitSlop={10} onPress={clearSearch}>
-              <Ionicons name="close-circle" size={18} color="#94a3b8" />
+          {searchText.length >
+            0 && (
+            <Pressable
+              hitSlop={10}
+              onPress={
+                clearSearch
+              }
+            >
+              <Ionicons
+                name="close-circle"
+                size={18}
+                color="#94a3b8"
+              />
             </Pressable>
           )}
         </View>
@@ -473,100 +823,215 @@ export default function GroupPostsScreen() {
         <View style={styles.sortRow}>
           <ScrollView
             horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.sortChips}
+            showsHorizontalScrollIndicator={
+              false
+            }
+            contentContainerStyle={
+              styles.sortChips
+            }
             keyboardShouldPersistTaps="handled"
           >
-            {SORT_OPTIONS.map((option) => {
-              const active = option.value === sortOption;
+            {SORT_OPTIONS.map(
+              (option) => {
+                const active =
+                  option.value ===
+                  sortOption;
 
-              return (
-                <Pressable
-                  key={option.value}
-                  onPress={() => setSortOption(option.value)}
-                  style={[styles.sortChip, active && styles.sortChipActive]}
-                >
-                  <Ionicons
-                    name={option.icon}
-                    size={14}
-                    color={active ? "#ffffff" : "#64748b"}
-                  />
-
-                  <Text
+                return (
+                  <Pressable
+                    key={
+                      option.value
+                    }
+                    onPress={() =>
+                      setSortOption(
+                        option.value
+                      )
+                    }
                     style={[
-                      styles.sortChipText,
-                      active && styles.sortChipTextActive,
+                      styles.sortChip,
+                      active &&
+                        styles.sortChipActive,
                     ]}
                   >
-                    {option.label}
-                  </Text>
-                </Pressable>
-              );
-            })}
+                    <Ionicons
+                      name={
+                        option.icon
+                      }
+                      size={14}
+                      color={
+                        active
+                          ? "#ffffff"
+                          : "#64748b"
+                      }
+                    />
+
+                    <Text
+                      style={[
+                        styles.sortChipText,
+                        active &&
+                          styles.sortChipTextActive,
+                      ]}
+                    >
+                      {
+                        option.label
+                      }
+                    </Text>
+                  </Pressable>
+                );
+              }
+            )}
           </ScrollView>
 
           {refetching && (
             <ActivityIndicator
               size="small"
               color="#4f46e5"
-              style={styles.sortSpinner}
+              style={
+                styles.sortSpinner
+              }
             />
           )}
         </View>
 
         {isSearchActive &&
-          searchResultCount !== null &&
+          searchResultCount !==
+            null &&
           searchResultCount > 0 && (
-            <Text style={styles.searchSummary}>
+            <Text
+              style={
+                styles.searchSummary
+              }
+            >
               {`${searchResultCount} ${
-                searchResultCount === 1 ? "post" : "posts"
+                searchResultCount ===
+                1
+                  ? "post"
+                  : "posts"
               } found for "${searchQuery}"${
-                searchResultCount > posts.length
+                searchResultCount >
+                posts.length
                   ? ` · showing latest ${posts.length}`
                   : ""
               }`}
             </Text>
           )}
 
-        {canPost && !isSearchActive && (
-          <CreatePostComposer
-            currentUserName={user?.fullName}
-            submitting={submittingPost}
-            onSubmit={handleCreatePost}
-          />
-        )}
+        {canPost &&
+          !isSearchActive && (
+            <CreatePostComposer
+              currentUserName={
+                user?.fullName
+              }
+              submitting={
+                submittingPost
+              }
+              onSubmit={
+                handleCreatePost
+              }
+            />
+          )}
 
         {error && (
-          <View style={styles.errorBox}>
-            <Text style={styles.errorText}>{error}</Text>
+          <View
+            style={
+              styles.errorBox
+            }
+          >
+            <Text
+              style={
+                styles.errorText
+              }
+            >
+              {error}
+            </Text>
           </View>
         )}
 
         {loading ? (
-          <View style={styles.center}>
-            <ActivityIndicator size="large" color="#4f46e5" />
+          <View
+            style={styles.center}
+          >
+            <ActivityIndicator
+              size="large"
+              color="#4f46e5"
+            />
 
-            <Text style={styles.loadingText}>Loading posts...</Text>
+            <Text
+              style={
+                styles.loadingText
+              }
+            >
+              Loading posts...
+            </Text>
           </View>
-        ) : posts.length === 0 && isSearchActive ? (
-          <View style={styles.emptyCard}>
-            <View style={styles.emptyIcon}>
-              <Ionicons name="search-outline" size={27} color="#4f46e5" />
+        ) : posts.length ===
+            0 &&
+          isSearchActive ? (
+          <View
+            style={
+              styles.emptyCard
+            }
+          >
+            <View
+              style={
+                styles.emptyIcon
+              }
+            >
+              <Ionicons
+                name="search-outline"
+                size={27}
+                color="#4f46e5"
+              />
             </View>
 
-            <Text style={styles.emptyTitle}>No matching posts</Text>
-
-            <Text style={styles.emptyDescription}>
-              Try a different word, or check the spelling.
+            <Text
+              style={
+                styles.emptyTitle
+              }
+            >
+              No matching posts
             </Text>
 
-            <Pressable onPress={clearSearch} style={styles.clearSearchButton}>
-              <Text style={styles.clearSearchButtonText}>Clear search</Text>
+            <Text
+              style={
+                styles.emptyDescription
+              }
+            >
+              Try a different word,
+              or check the spelling.
+            </Text>
+
+            <Pressable
+              onPress={
+                clearSearch
+              }
+              style={
+                styles.clearSearchButton
+              }
+            >
+              <Text
+                style={
+                  styles.clearSearchButtonText
+                }
+              >
+                Clear search
+              </Text>
             </Pressable>
           </View>
-        ) : posts.length === 0 && sortOption === "unanswered" ? (
-          <View style={styles.emptyCard}>
-            <View style={styles.emptyIcon}>
+        ) : posts.length ===
+            0 &&
+          sortOption ===
+            "unanswered" ? (
+          <View
+            style={
+              styles.emptyCard
+            }
+          >
+            <View
+              style={
+                styles.emptyIcon
+              }
+            >
               <Ionicons
                 name="checkmark-done-outline"
                 size={28}
@@ -574,15 +1039,36 @@ export default function GroupPostsScreen() {
               />
             </View>
 
-            <Text style={styles.emptyTitle}>Everyone has a reply</Text>
+            <Text
+              style={
+                styles.emptyTitle
+              }
+            >
+              Everyone has a reply
+            </Text>
 
-            <Text style={styles.emptyDescription}>
-              Every post in this group has at least one comment.
+            <Text
+              style={
+                styles.emptyDescription
+              }
+            >
+              Every post in this
+              group has at least one
+              comment.
             </Text>
           </View>
-        ) : posts.length === 0 ? (
-          <View style={styles.emptyCard}>
-            <View style={styles.emptyIcon}>
+        ) : posts.length ===
+          0 ? (
+          <View
+            style={
+              styles.emptyCard
+            }
+          >
+            <View
+              style={
+                styles.emptyIcon
+              }
+            >
               <Ionicons
                 name="chatbubbles-outline"
                 size={29}
@@ -590,9 +1076,19 @@ export default function GroupPostsScreen() {
               />
             </View>
 
-            <Text style={styles.emptyTitle}>No posts yet</Text>
+            <Text
+              style={
+                styles.emptyTitle
+              }
+            >
+              No posts yet
+            </Text>
 
-            <Text style={styles.emptyDescription}>
+            <Text
+              style={
+                styles.emptyDescription
+              }
+            >
               {canPost
                 ? "Be the first to share something with the group."
                 : "Nothing has been posted in this group yet."}
@@ -603,14 +1099,45 @@ export default function GroupPostsScreen() {
             <PostCard
               key={post.id}
               post={post}
-              currentUserId={user?.id}
-              canModerate={canModerateAll}
-              onToggleLike={() => void handleToggleLike(post.id)}
-              onOpenComments={() => setActiveCommentsPostId(post.id)}
-              onDelete={() => handleDeletePost(post.id)}
-              onTogglePin={() => void handleTogglePin(post.id)}
-              onReport={() => setReportingPostId(post.id)}
-              onMarkCrisisHandled={() => void handleMarkCrisisHandled(post.id)}
+              currentUserId={
+                user?.id
+              }
+              canModerate={
+                canModerateAll
+              }
+              onToggleReaction={(
+                reactionType
+              ) =>
+                void handleToggleReaction(
+                  post.id,
+                  reactionType
+                )
+              }
+              onOpenComments={() =>
+                setActiveCommentsPostId(
+                  post.id
+                )
+              }
+              onDelete={() =>
+                handleDeletePost(
+                  post.id
+                )
+              }
+              onTogglePin={() =>
+                void handleTogglePin(
+                  post.id
+                )
+              }
+              onReport={() =>
+                setReportingPostId(
+                  post.id
+                )
+              }
+              onMarkCrisisHandled={() =>
+                void handleMarkCrisisHandled(
+                  post.id
+                )
+              }
             />
           ))
         )}
@@ -618,24 +1145,49 @@ export default function GroupPostsScreen() {
 
       <CrisisSupportModal
         visible={showCrisisSupport}
-        onClose={() => setShowCrisisSupport(false)}
+        onClose={() =>
+          setShowCrisisSupport(false)
+        }
       />
 
       <PostCommentsModal
-        postId={activeCommentsPostId}
-        visible={activeCommentsPostId !== null}
-        currentUserId={user?.id}
-        canModerate={canModerateAll}
-        onClose={() => setActiveCommentsPostId(null)}
+        postId={
+          activeCommentsPostId
+        }
+        visible={
+          activeCommentsPostId !==
+          null
+        }
+        currentUserId={
+          user?.id
+        }
+        canModerate={
+          canModerateAll
+        }
+        onClose={() =>
+          setActiveCommentsPostId(
+            null
+          )
+        }
       />
 
-      {groupId && reportingPostId ? (
+      {groupId &&
+      reportingPostId ? (
         <SubmitReportSheet
-          visible={reportingPostId !== null}
-          onClose={() => setReportingPostId(null)}
+          visible={
+            reportingPostId !==
+            null
+          }
+          onClose={() =>
+            setReportingPostId(
+              null
+            )
+          }
           group={groupId}
           targetType="POST"
-          targetId={reportingPostId}
+          targetId={
+            reportingPostId
+          }
         />
       ) : null}
     </SafeAreaView>
