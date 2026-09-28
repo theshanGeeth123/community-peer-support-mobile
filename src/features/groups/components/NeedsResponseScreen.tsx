@@ -52,7 +52,10 @@ export default function NeedsResponseScreen() {
 
   const [crisisAlerts, setCrisisAlerts] = useState<Post[]>([]);
   const [unanswered, setUnanswered] = useState<Post[]>([]);
-  const [counts, setCounts] = useState({ crisisAlerts: 0, unanswered: 0 });
+  const [counts, setCounts] = useState({
+    crisisAlerts: 0,
+    unanswered: 0,
+  });
   const [maxAgeDays, setMaxAgeDays] = useState(14);
 
   const [page, setPage] = useState(1);
@@ -63,9 +66,8 @@ export default function NeedsResponseScreen() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [activeCommentsPostId, setActiveCommentsPostId] = useState<
-    string | null
-  >(null);
+  const [activeCommentsPostId, setActiveCommentsPostId] =
+    useState<string | null>(null);
 
   const loadQueue = useCallback(async (showLoading = true) => {
     try {
@@ -75,18 +77,29 @@ export default function NeedsResponseScreen() {
 
       setError(null);
 
-      const response = await postApi.getNeedsResponseQueue({
-        limit: PAGE_SIZE,
-      });
+      const response =
+        await postApi.getNeedsResponseQueue({
+          limit: PAGE_SIZE,
+        });
 
-      setCrisisAlerts(response.data.crisisAlerts);
-      setUnanswered(response.data.unanswered);
+      setCrisisAlerts(
+        response.data.crisisAlerts
+      );
+      setUnanswered(
+        response.data.unanswered
+      );
       setCounts(response.data.counts);
-      setMaxAgeDays(response.data.maxAgeDays);
+      setMaxAgeDays(
+        response.data.maxAgeDays
+      );
       setPage(1);
-      setHasNextPage(response.data.pagination.hasNextPage);
+      setHasNextPage(
+        response.data.pagination.hasNextPage
+      );
     } catch (requestError) {
-      setError(getApiErrorMessage(requestError));
+      setError(
+        getApiErrorMessage(requestError)
+      );
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -116,13 +129,16 @@ export default function NeedsResponseScreen() {
 
       const nextPage = page + 1;
 
-      const response = await postApi.getNeedsResponseQueue({
-        page: nextPage,
-        limit: PAGE_SIZE,
-      });
+      const response =
+        await postApi.getNeedsResponseQueue({
+          page: nextPage,
+          limit: PAGE_SIZE,
+        });
 
       setUnanswered((previous) => {
-        const knownIds = new Set(previous.map((post) => post.id));
+        const knownIds = new Set(
+          previous.map((post) => post.id)
+        );
 
         return [
           ...previous,
@@ -133,9 +149,14 @@ export default function NeedsResponseScreen() {
       });
 
       setPage(nextPage);
-      setHasNextPage(response.data.pagination.hasNextPage);
+      setHasNextPage(
+        response.data.pagination.hasNextPage
+      );
     } catch (requestError) {
-      Alert.alert("Unable to load more", getApiErrorMessage(requestError));
+      Alert.alert(
+        "Unable to load more",
+        getApiErrorMessage(requestError)
+      );
     } finally {
       setLoadingMore(false);
     }
@@ -144,9 +165,16 @@ export default function NeedsResponseScreen() {
   /*
    * Applies a change to a post in whichever section it is in.
    */
-  const updatePost = (postId: string, update: (post: Post) => Post) => {
+  const updatePost = (
+    postId: string,
+    update: (post: Post) => Post
+  ) => {
     const apply = (posts: Post[]) =>
-      posts.map((post) => (post.id === postId ? update(post) : post));
+      posts.map((post) =>
+        post.id === postId
+          ? update(post)
+          : post
+      );
 
     setCrisisAlerts(apply);
     setUnanswered(apply);
@@ -166,7 +194,8 @@ export default function NeedsResponseScreen() {
      * Optimistic UI update.
      */
     updatePost(postId, (post) => {
-      const currentReaction = post.myReaction;
+      const currentReaction =
+        post.myReaction;
 
       const updatedCounts = {
         ...(post.reactionCounts ?? {
@@ -182,11 +211,14 @@ export default function NeedsResponseScreen() {
       /*
        * Same reaction = remove reaction.
        */
-      if (currentReaction === reactionType) {
-        updatedCounts[reactionType] = Math.max(
-          0,
-          updatedCounts[reactionType] - 1
-        );
+      if (
+        currentReaction === reactionType
+      ) {
+        updatedCounts[reactionType] =
+          Math.max(
+            0,
+            updatedCounts[reactionType] - 1
+          );
 
         return {
           ...post,
@@ -199,10 +231,11 @@ export default function NeedsResponseScreen() {
        * Changing from one reaction to another.
        */
       if (currentReaction) {
-        updatedCounts[currentReaction] = Math.max(
-          0,
-          updatedCounts[currentReaction] - 1
-        );
+        updatedCounts[currentReaction] =
+          Math.max(
+            0,
+            updatedCounts[currentReaction] - 1
+          );
       }
 
       updatedCounts[reactionType] =
@@ -216,18 +249,21 @@ export default function NeedsResponseScreen() {
     });
 
     try {
-      const response = await postApi.toggleReaction(
-        postId,
-        reactionType
-      );
+      const response =
+        await postApi.toggleReaction(
+          postId,
+          reactionType
+        );
 
       /*
        * Backend response is authoritative.
        */
       updatePost(postId, (post) => ({
         ...post,
-        myReaction: response.data.myReaction,
-        reactionCounts: response.data.reactionCounts,
+        myReaction:
+          response.data.myReaction,
+        reactionCounts:
+          response.data.reactionCounts,
       }));
     } catch (requestError) {
       Alert.alert(
@@ -242,9 +278,13 @@ export default function NeedsResponseScreen() {
     }
   };
 
-  const handleMarkCrisisHandled = async (postId: string) => {
+  const handleMarkCrisisHandled = async (
+    postId: string
+  ) => {
     try {
-      await postApi.markCrisisHandled(postId);
+      await postApi.markCrisisHandled(
+        postId
+      );
 
       /*
        * The post leaves the crisis section. If nobody has replied,
@@ -259,24 +299,39 @@ export default function NeedsResponseScreen() {
     }
   };
 
-  const handleDeletePost = (postId: string) => {
-    Alert.alert("Delete post", "Are you sure you want to delete this post?", [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Delete",
-        style: "destructive",
-        onPress: () => void confirmDeletePost(postId),
-      },
-    ]);
+  const handleDeletePost = (
+    postId: string
+  ) => {
+    Alert.alert(
+      "Delete post",
+      "Are you sure you want to delete this post?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () =>
+            void confirmDeletePost(postId),
+        },
+      ]
+    );
   };
 
-  const confirmDeletePost = async (postId: string) => {
+  const confirmDeletePost = async (
+    postId: string
+  ) => {
     try {
       await postApi.deletePost(postId);
 
       void loadQueue(false);
     } catch (requestError) {
-      Alert.alert("Unable to delete post", getApiErrorMessage(requestError));
+      Alert.alert(
+        "Unable to delete post",
+        getApiErrorMessage(requestError)
+      );
     }
   };
 
@@ -296,46 +351,89 @@ export default function NeedsResponseScreen() {
       currentUserId={user?.id}
       canModerate
       onToggleReaction={(reactionType) =>
-        void handleToggleReaction(post.id, reactionType)
+        void handleToggleReaction(
+          post.id,
+          reactionType
+        )
       }
-      onOpenComments={() => setActiveCommentsPostId(post.id)}
-      onDelete={() => handleDeletePost(post.id)}
-      onMarkCrisisHandled={() => void handleMarkCrisisHandled(post.id)}
+      onOpenComments={() =>
+        setActiveCommentsPostId(post.id)
+      }
+      onDelete={() =>
+        handleDeletePost(post.id)
+      }
+      onMarkCrisisHandled={() =>
+        void handleMarkCrisisHandled(
+          post.id
+        )
+      }
     />
   );
 
-  const isQueueEmpty = crisisAlerts.length === 0 && unanswered.length === 0;
+  const isQueueEmpty =
+    crisisAlerts.length === 0 &&
+    unanswered.length === 0;
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={["top", "left", "right"]}>
+    <SafeAreaView
+      style={styles.safeArea}
+      edges={[
+        "top",
+        "left",
+        "right",
+      ]}
+    >
       <View style={styles.header}>
-        <Pressable onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={22} color="#0f172a" />
+        <Pressable
+          onPress={() => router.back()}
+          style={styles.backButton}
+        >
+          <Ionicons
+            name="arrow-back"
+            size={22}
+            color="#0f172a"
+          />
         </Pressable>
 
-        <Text style={styles.headerTitle}>Needs a response</Text>
+        <Text style={styles.headerTitle}>
+          Needs a response
+        </Text>
 
         <View style={{ width: 42 }} />
       </View>
 
       <ScrollView
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}
+        contentContainerStyle={
+          styles.content
+        }
+        showsVerticalScrollIndicator={
+          false
+        }
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+          />
         }
       >
         {error && (
           <View style={styles.errorBox}>
-            <Text style={styles.errorText}>{error}</Text>
+            <Text style={styles.errorText}>
+              {error}
+            </Text>
           </View>
         )}
 
         {loading ? (
           <View style={styles.center}>
-            <ActivityIndicator size="large" color="#4f46e5" />
+            <ActivityIndicator
+              size="large"
+              color="#4f46e5"
+            />
 
-            <Text style={styles.loadingText}>Loading queue...</Text>
+            <Text style={styles.loadingText}>
+              Loading queue...
+            </Text>
           </View>
         ) : isQueueEmpty && !error ? (
           <View style={styles.emptyCard}>
@@ -347,11 +445,19 @@ export default function NeedsResponseScreen() {
               />
             </View>
 
-            <Text style={styles.emptyTitle}>All caught up</Text>
+            <Text style={styles.emptyTitle}>
+              All caught up
+            </Text>
 
-            <Text style={styles.emptyDescription}>
-              No crisis alerts, and every post from the last {maxAgeDays}{" "}
-              days in your groups has a reply.
+            <Text
+              style={
+                styles.emptyDescription
+              }
+            >
+              No crisis alerts, and every
+              post from the last{" "}
+              {maxAgeDays} days in your
+              groups has a reply.
             </Text>
           </View>
         ) : (
@@ -360,56 +466,102 @@ export default function NeedsResponseScreen() {
 
             {crisisAlerts.length > 0 && (
               <View style={styles.section}>
-                <View style={styles.sectionHeader}>
-                  <Ionicons name="warning" size={18} color="#be123c" />
+                <View
+                  style={
+                    styles.sectionHeader
+                  }
+                >
+                  <Ionicons
+                    name="warning"
+                    size={18}
+                    color="#be123c"
+                  />
 
-                  <Text style={[styles.sectionTitle, styles.crisisTitle]}>
+                  <Text
+                    style={[
+                      styles.sectionTitle,
+                      styles.crisisTitle,
+                    ]}
+                  >
                     Crisis alerts
                   </Text>
 
-                  <View style={[styles.countBadge, styles.crisisBadge]}>
-                    <Text style={styles.countBadgeText}>
+                  <View
+                    style={[
+                      styles.countBadge,
+                      styles.crisisBadge,
+                    ]}
+                  >
+                    <Text
+                      style={
+                        styles.countBadgeText
+                      }
+                    >
                       {counts.crisisAlerts}
                     </Text>
                   </View>
                 </View>
 
-                <Text style={styles.sectionHint}>
-                  These posts may show a risk of self-harm. Please reach out
-                  first, then mark them as handled.
+                <Text
+                  style={styles.sectionHint}
+                >
+                  These posts may show a risk
+                  of self-harm. Please reach
+                  out first, then mark them as
+                  handled.
                 </Text>
 
-                {crisisAlerts.map(renderPost)}
+                {crisisAlerts.map(
+                  renderPost
+                )}
               </View>
             )}
 
             {/* WAITING FOR A REPLY */}
 
             <View style={styles.section}>
-              <View style={styles.sectionHeader}>
+              <View
+                style={styles.sectionHeader}
+              >
                 <Ionicons
                   name="chatbubble-ellipses"
                   size={18}
                   color="#4f46e5"
                 />
 
-                <Text style={styles.sectionTitle}>Waiting for a reply</Text>
+                <Text
+                  style={styles.sectionTitle}
+                >
+                  Waiting for a reply
+                </Text>
 
-                <View style={styles.countBadge}>
-                  <Text style={styles.countBadgeText}>
+                <View
+                  style={styles.countBadge}
+                >
+                  <Text
+                    style={
+                      styles.countBadgeText
+                    }
+                  >
                     {counts.unanswered}
                   </Text>
                 </View>
               </View>
 
-              <Text style={styles.sectionHint}>
-                Posts with no comments from the last {maxAgeDays} days —
+              <Text
+                style={styles.sectionHint}
+              >
+                Posts with no comments from
+                the last {maxAgeDays} days —
                 longest waiting first.
               </Text>
 
               {unanswered.length === 0 ? (
-                <Text style={styles.sectionEmpty}>
-                  Every recent post has at least one reply.
+                <Text
+                  style={styles.sectionEmpty}
+                >
+                  Every recent post has at
+                  least one reply.
                 </Text>
               ) : (
                 unanswered.map(renderPost)
@@ -418,13 +570,26 @@ export default function NeedsResponseScreen() {
               {hasNextPage && (
                 <Pressable
                   disabled={loadingMore}
-                  onPress={() => void handleLoadMore()}
-                  style={styles.loadMoreButton}
+                  onPress={() =>
+                    void handleLoadMore()
+                  }
+                  style={
+                    styles.loadMoreButton
+                  }
                 >
                   {loadingMore ? (
-                    <ActivityIndicator size="small" color="#4f46e5" />
+                    <ActivityIndicator
+                      size="small"
+                      color="#4f46e5"
+                    />
                   ) : (
-                    <Text style={styles.loadMoreText}>Load more</Text>
+                    <Text
+                      style={
+                        styles.loadMoreText
+                      }
+                    >
+                      Load more
+                    </Text>
                   )}
                 </Pressable>
               )}
@@ -435,7 +600,9 @@ export default function NeedsResponseScreen() {
 
       <PostCommentsModal
         postId={activeCommentsPostId}
-        visible={activeCommentsPostId !== null}
+        visible={
+          activeCommentsPostId !== null
+        }
         currentUserId={user?.id}
         canModerate
         onClose={handleCloseComments}

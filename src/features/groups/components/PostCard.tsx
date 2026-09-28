@@ -13,6 +13,7 @@ import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 
 import { formatContentWarnings } from "@/features/groups/constants/contentWarnings";
+
 import type {
   Post,
   PostReactionType,

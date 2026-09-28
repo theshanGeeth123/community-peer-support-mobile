@@ -4,7 +4,10 @@ import type { UserRole } from "@/features/auth/types/auth.types";
  * Set when the author is staff of the post's group (or an admin).
  * Never set on anonymous posts.
  */
-export type StaffBadge = "PEER_SUPPORTER" | "MODERATOR" | "ADMIN";
+export type StaffBadge =
+  | "PEER_SUPPORTER"
+  | "MODERATOR"
+  | "ADMIN";
 
 export interface PostAuthorSummary {
   id: string | null;
@@ -176,7 +179,10 @@ export interface CreatePostResponseData {
   };
 }
 
-export type CrisisAlertStatus = "open" | "handled" | "all";
+export type CrisisAlertStatus =
+  | "open"
+  | "handled"
+  | "all";
 
 /*
  * Mirrors backend post.constants.js POST_SORT

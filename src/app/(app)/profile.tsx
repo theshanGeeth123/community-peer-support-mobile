@@ -1,9 +1,7 @@
-import {
-  useEffect,
-  useState,
-} from "react";
+import { useEffect, useState } from "react";
 
 import {
+  ActivityIndicator,
   Alert,
   Pressable,
   ScrollView,
@@ -17,7 +15,11 @@ import {
 
 import { router } from "expo-router";
 
-import { Ionicons } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
+
+import {
+  Ionicons,
+} from "@expo/vector-icons";
 
 import {
   Controller,
@@ -45,9 +47,35 @@ import {
   type UpdateProfileFormData,
 } from "@/features/auth/schemas/auth.schemas";
 
+import UserAvatar from "@/features/navigation/components/UserAvatar";
+
 import {
   getApiErrorMessage,
 } from "@/services/api/apiError";
+
+const MAX_PROFILE_IMAGE_SIZE =
+  5 * 1024 * 1024;
+
+const ALLOWED_PROFILE_IMAGE_TYPES =
+  new Set([
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+  ]);
+
+const getDefaultImageFileName = (
+  mimeType?: string | null
+) => {
+  if (mimeType === "image/png") {
+    return `profile-${Date.now()}.png`;
+  }
+
+  if (mimeType === "image/webp") {
+    return `profile-${Date.now()}.webp`;
+  }
+
+  return `profile-${Date.now()}.jpg`;
+};
 
 export default function ProfileScreen() {
   const {
@@ -70,6 +98,16 @@ export default function ProfileScreen() {
   ] = useState<string | null>(
     null
   );
+
+  const [
+    isAvatarUploading,
+    setIsAvatarUploading,
+  ] = useState(false);
+
+  const [
+    isAvatarRemoving,
+    setIsAvatarRemoving,
+  ] = useState(false);
 
   const {
     control,
@@ -102,13 +140,17 @@ export default function ProfileScreen() {
     reset,
   ]);
 
+  const clearMessages = () => {
+    setApiError(null);
+    setSuccessMessage(null);
+  };
+
   const handleUpdateProfile =
     async (
       data: UpdateProfileFormData
     ) => {
       try {
-        setApiError(null);
-        setSuccessMessage(null);
+        clearMessages();
 
         const response =
           await authApi.updateProfile({
@@ -132,19 +174,226 @@ export default function ProfileScreen() {
       }
     };
 
+  const handleChooseProfilePicture =
+    async () => {
+      if (
+        isAvatarUploading ||
+        isAvatarRemoving
+      ) {
+        return;
+      }
+
+      try {
+        clearMessages();
+
+        const permissionResult =
+          await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+        if (
+          !permissionResult.granted
+        ) {
+          Alert.alert(
+            "Photo permission required",
+            "Please allow photo access so you can choose a profile picture."
+          );
+
+          return;
+        }
+
+        const pickerResult =
+          await ImagePicker.launchImageLibraryAsync(
+            {
+              mediaTypes: [
+                "images",
+              ],
+
+              allowsEditing: true,
+
+              aspect: [
+                1,
+                1,
+              ],
+
+              quality: 0.85,
+            }
+          );
+
+        if (
+          pickerResult.canceled ||
+          pickerResult.assets.length ===
+            0
+        ) {
+          return;
+        }
+
+        const asset =
+          pickerResult.assets[0];
+
+        if (!asset.uri) {
+          setApiError(
+            "Unable to read the selected image. Please choose another image."
+          );
+
+          return;
+        }
+
+        if (
+          asset.fileSize &&
+          asset.fileSize >
+            MAX_PROFILE_IMAGE_SIZE
+        ) {
+          setApiError(
+            "Profile image must be 5 MB or smaller."
+          );
+
+          return;
+        }
+
+        if (
+          asset.mimeType &&
+          !ALLOWED_PROFILE_IMAGE_TYPES.has(
+            asset.mimeType
+          )
+        ) {
+          setApiError(
+            "Please choose a JPEG, PNG, or WebP image."
+          );
+
+          return;
+        }
+
+        setIsAvatarUploading(
+          true
+        );
+
+        const response =
+          await authApi.uploadProfileImage(
+            {
+              uri:
+                asset.uri,
+
+              fileName:
+                asset.fileName ??
+                getDefaultImageFileName(
+                  asset.mimeType
+                ),
+
+              mimeType:
+                asset.mimeType ??
+                "image/jpeg",
+            }
+          );
+
+        setCurrentUser(
+          response.data.user
+        );
+
+        setSuccessMessage(
+          user?.avatarUrl
+            ? "Profile picture updated successfully."
+            : "Profile picture added successfully."
+        );
+      } catch (error) {
+        setApiError(
+          getApiErrorMessage(
+            error
+          )
+        );
+      } finally {
+        setIsAvatarUploading(
+          false
+        );
+      }
+    };
+
+  const removeProfilePicture =
+    async () => {
+      try {
+        clearMessages();
+
+        setIsAvatarRemoving(
+          true
+        );
+
+        const response =
+          await authApi.removeProfileImage();
+
+        setCurrentUser(
+          response.data.user
+        );
+
+        setSuccessMessage(
+          "Profile picture removed successfully."
+        );
+      } catch (error) {
+        setApiError(
+          getApiErrorMessage(
+            error
+          )
+        );
+      } finally {
+        setIsAvatarRemoving(
+          false
+        );
+      }
+    };
+
+  const handleRemoveProfilePicture =
+    () => {
+      if (
+        !user?.avatarUrl ||
+        isAvatarUploading ||
+        isAvatarRemoving
+      ) {
+        return;
+      }
+
+      Alert.alert(
+        "Remove profile picture",
+        "Are you sure you want to remove your current profile picture?",
+        [
+          {
+            text:
+              "Cancel",
+
+            style:
+              "cancel",
+          },
+
+          {
+            text:
+              "Remove",
+
+            style:
+              "destructive",
+
+            onPress: () => {
+              void removeProfilePicture();
+            },
+          },
+        ]
+      );
+    };
+
   const handleLogout = () => {
     Alert.alert(
       "Sign out",
       "Are you sure you want to sign out from this device?",
       [
         {
-          text: "Cancel",
-          style: "cancel",
+          text:
+            "Cancel",
+
+          style:
+            "cancel",
         },
 
         {
-          text: "Sign out",
-          style: "destructive",
+          text:
+            "Sign out",
+
+          style:
+            "destructive",
 
           onPress: () => {
             void logout();
@@ -160,13 +409,19 @@ export default function ProfileScreen() {
       "This will end all active sessions for your account.",
       [
         {
-          text: "Cancel",
-          style: "cancel",
+          text:
+            "Cancel",
+
+          style:
+            "cancel",
         },
 
         {
-          text: "Continue",
-          style: "destructive",
+          text:
+            "Continue",
+
+          style:
+            "destructive",
 
           onPress: () => {
             void logoutAll();
@@ -176,11 +431,16 @@ export default function ProfileScreen() {
     );
   };
 
+  const avatarBusy =
+    isAvatarUploading ||
+    isAvatarRemoving;
+
   return (
     <SafeAreaView
       style={{
         flex: 1,
-        backgroundColor: "#f8fafc",
+        backgroundColor:
+          "#f8fafc",
       }}
       edges={[
         "top",
@@ -202,49 +462,172 @@ export default function ProfileScreen() {
           </Text>
 
           <Text className="mt-2 leading-6 text-slate-500">
-            Manage your personal information
-            and account security.
+            Manage your personal
+            information and account
+            security.
           </Text>
         </View>
 
         <View className="rounded-3xl bg-indigo-600 p-6">
-          <View className="flex-row items-center">
-            <View className="h-16 w-16 items-center justify-center rounded-full bg-white/20">
-              <Text className="text-2xl font-bold text-white">
-                {user?.fullName
-                  ?.charAt(0)
-                  .toUpperCase() ||
-                  "U"}
-              </Text>
+          <View className="items-center">
+            <Pressable
+              onPress={() => {
+                void handleChooseProfilePicture();
+              }}
+              disabled={
+                avatarBusy
+              }
+              accessibilityRole="button"
+              accessibilityLabel="Change profile picture"
+              style={{
+                opacity:
+                  avatarBusy
+                    ? 0.7
+                    : 1,
+              }}
+            >
+              <View className="rounded-full border-4 border-white/30 bg-white p-1">
+                <UserAvatar
+                  fullName={
+                    user?.fullName
+                  }
+                  avatarUrl={
+                    user?.avatarUrl
+                  }
+                  size={88}
+                />
+              </View>
+
+              <View className="absolute bottom-0 right-0 h-9 w-9 items-center justify-center rounded-full border-2 border-indigo-600 bg-white">
+                {isAvatarUploading ? (
+                  <ActivityIndicator
+                    size="small"
+                    color="#4f46e5"
+                  />
+                ) : (
+                  <Ionicons
+                    name="camera"
+                    size={18}
+                    color="#4f46e5"
+                  />
+                )}
+              </View>
+            </Pressable>
+
+            <Text className="mt-4 text-xl font-bold text-white">
+              {user?.fullName}
+            </Text>
+
+            <Text className="mt-1 text-indigo-100">
+              {user?.email}
+            </Text>
+
+            <View className="mt-4 flex-row gap-2">
+              <View className="rounded-full bg-white/15 px-4 py-2">
+                <Text className="text-xs font-bold text-white">
+                  {user?.role}
+                </Text>
+              </View>
+
+              <View className="rounded-full bg-white/15 px-4 py-2">
+                <Text className="text-xs font-bold text-white">
+                  {
+                    user?.accountStatus
+                  }
+                </Text>
+              </View>
             </View>
 
-            <View className="ml-4 flex-1">
-              <Text className="text-xl font-bold text-white">
-                {user?.fullName}
-              </Text>
+            <View className="mt-5 w-full flex-row gap-3">
+              <Pressable
+                onPress={() => {
+                  void handleChooseProfilePicture();
+                }}
+                disabled={
+                  avatarBusy
+                }
+                className="min-h-12 flex-1 flex-row items-center justify-center rounded-2xl bg-white"
+                style={{
+                  opacity:
+                    avatarBusy
+                      ? 0.65
+                      : 1,
+                }}
+              >
+                {isAvatarUploading ? (
+                  <ActivityIndicator
+                    size="small"
+                    color="#4f46e5"
+                  />
+                ) : (
+                  <Ionicons
+                    name="image-outline"
+                    size={18}
+                    color="#4f46e5"
+                  />
+                )}
 
-              <Text className="mt-1 text-indigo-100">
-                {user?.email}
-              </Text>
-            </View>
-          </View>
+                <Text className="ml-2 font-bold text-indigo-600">
+                  {user?.avatarUrl
+                    ? "Change Photo"
+                    : "Add Photo"}
+                </Text>
+              </Pressable>
 
-          <View className="mt-5 flex-row gap-2">
-            <View className="rounded-full bg-white/15 px-4 py-2">
-              <Text className="text-xs font-bold text-white">
-                {user?.role}
-              </Text>
-            </View>
+              {user?.avatarUrl && (
+                <Pressable
+                  onPress={
+                    handleRemoveProfilePicture
+                  }
+                  disabled={
+                    avatarBusy
+                  }
+                  className="min-h-12 flex-1 flex-row items-center justify-center rounded-2xl bg-white/15"
+                  style={{
+                    opacity:
+                      avatarBusy
+                        ? 0.65
+                        : 1,
+                  }}
+                >
+                  {isAvatarRemoving ? (
+                    <ActivityIndicator
+                      size="small"
+                      color="#ffffff"
+                    />
+                  ) : (
+                    <Ionicons
+                      name="trash-outline"
+                      size={18}
+                      color="#ffffff"
+                    />
+                  )}
 
-            <View className="rounded-full bg-white/15 px-4 py-2">
-              <Text className="text-xs font-bold text-white">
-                {user?.accountStatus}
-              </Text>
+                  <Text className="ml-2 font-bold text-white">
+                    Remove
+                  </Text>
+                </Pressable>
+              )}
             </View>
           </View>
         </View>
 
-        <View className="mt-6 rounded-3xl border border-slate-200 bg-white p-6">
+        <View className="mt-5">
+          <ApiMessage
+            message={
+              apiError
+            }
+          />
+
+          <ApiMessage
+            message={
+              successMessage
+            }
+            type="success"
+          />
+        </View>
+
+        <View className="mt-2 rounded-3xl border border-slate-200 bg-white p-6">
           <View className="mb-5 flex-row items-center">
             <View className="h-10 w-10 items-center justify-center rounded-xl bg-indigo-50">
               <Ionicons
@@ -256,25 +639,16 @@ export default function ProfileScreen() {
 
             <View className="ml-3">
               <Text className="text-lg font-bold text-slate-900">
-                Personal Information
+                Personal
+                Information
               </Text>
 
               <Text className="mt-1 text-sm text-slate-500">
-                Update your account details
+                Update your account
+                details
               </Text>
             </View>
           </View>
-
-          <ApiMessage
-            message={apiError}
-          />
-
-          <ApiMessage
-            message={
-              successMessage
-            }
-            type="success"
-          />
 
           <Controller
             control={control}
@@ -357,7 +731,8 @@ export default function ProfileScreen() {
               </Text>
 
               <Text className="mt-1 text-sm text-slate-500">
-                Manage sign-in and sessions
+                Manage sign-in and
+                sessions
               </Text>
             </View>
           </View>
@@ -396,7 +771,8 @@ export default function ProfileScreen() {
               </Text>
 
               <Text className="mt-1 text-xs text-slate-500">
-                Update your account password
+                Update your account
+                password
               </Text>
             </View>
 
@@ -423,11 +799,13 @@ export default function ProfileScreen() {
 
             <View className="ml-3 flex-1">
               <Text className="font-bold text-orange-800">
-                Logout From All Devices
+                Logout From All
+                Devices
               </Text>
 
               <Text className="mt-1 text-xs text-orange-600">
-                End every active session
+                End every active
+                session
               </Text>
             </View>
           </Pressable>
@@ -452,7 +830,8 @@ export default function ProfileScreen() {
               </Text>
 
               <Text className="mt-1 text-xs text-red-500">
-                Sign out from this device
+                Sign out from this
+                device
               </Text>
             </View>
           </Pressable>
@@ -478,12 +857,13 @@ export default function ProfileScreen() {
 
               <View className="ml-4 flex-1">
                 <Text className="text-lg font-bold text-white">
-                  Admin User Management
+                  Admin User
+                  Management
                 </Text>
 
                 <Text className="mt-1 text-sm leading-5 text-slate-300">
-                  Manage users, roles and
-                  account access.
+                  Manage users, roles
+                  and account access.
                 </Text>
               </View>
 

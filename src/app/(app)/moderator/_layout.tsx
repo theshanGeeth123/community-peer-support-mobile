@@ -157,6 +157,17 @@ export default function ModeratorLayout() {
           }}
         />
 
+        <Tabs.Screen
+          name="needs-response"
+          options={{
+            href: null,
+
+            tabBarStyle: {
+              display: "none",
+            },
+          }}
+        />
+
         {/*
          * Group Details is a real
          * route, but must NOT appear
@@ -175,6 +186,17 @@ export default function ModeratorLayout() {
 
         <Tabs.Screen
           name="group/[groupId]/members"
+          options={{
+            href: null,
+
+            tabBarStyle: {
+              display: "none",
+            },
+          }}
+        />
+
+        <Tabs.Screen
+          name="group/[groupId]/report/[reportId]"
           options={{
             href: null,
 

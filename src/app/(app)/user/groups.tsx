@@ -149,12 +149,12 @@ export default function UserGroupsFeedScreen() {
   }, [joinedGroups, normalizedSearch]);
 
   const visitGroup = (groupId: string) => {
-  setSearch("");
+    setSearch("");
 
-  router.push(
-    `/(app)/user/group/${groupId}/posts` as Href
-  );
-};
+    router.push(
+      `/(app)/user/group/${groupId}/posts` as Href
+    );
+  };
 
   const handleCreatePost = async (
     payload: CreatePostPayload,
@@ -309,24 +309,40 @@ export default function UserGroupsFeedScreen() {
     try {
       await postApi.deletePost(postId);
 
-      setPosts((previous) => previous.filter((post) => post.id !== postId));
+      setPosts((previous) =>
+        previous.filter((post) => post.id !== postId)
+      );
     } catch (requestError) {
-      Alert.alert("Unable to delete post", getApiErrorMessage(requestError));
+      Alert.alert(
+        "Unable to delete post",
+        getApiErrorMessage(requestError)
+      );
     }
   };
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={["top", "left", "right"]}>
+    <SafeAreaView
+      style={styles.safeArea}
+      edges={["top", "left", "right"]}
+    >
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Groups</Text>
 
         <Pressable
-          onPress={() => router.push("/(app)/user/discover" as Href)}
+          onPress={() =>
+            router.push("/(app)/user/discover" as Href)
+          }
           style={styles.discoverButton}
         >
-          <Ionicons name="compass-outline" size={16} color="#4f46e5" />
+          <Ionicons
+            name="compass-outline"
+            size={16}
+            color="#4f46e5"
+          />
 
-          <Text style={styles.discoverButtonText}>Discover</Text>
+          <Text style={styles.discoverButtonText}>
+            Discover
+          </Text>
         </Pressable>
       </View>
 
@@ -334,12 +350,19 @@ export default function UserGroupsFeedScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.content}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+          />
         }
         keyboardShouldPersistTaps="handled"
       >
         <View style={styles.searchBox}>
-          <Ionicons name="search-outline" size={19} color="#94a3b8" />
+          <Ionicons
+            name="search-outline"
+            size={19}
+            color="#94a3b8"
+          />
 
           <TextInput
             value={search}
@@ -350,8 +373,15 @@ export default function UserGroupsFeedScreen() {
           />
 
           {search.length > 0 && (
-            <Pressable hitSlop={10} onPress={() => setSearch("")}>
-              <Ionicons name="close-circle" size={19} color="#94a3b8" />
+            <Pressable
+              hitSlop={10}
+              onPress={() => setSearch("")}
+            >
+              <Ionicons
+                name="close-circle"
+                size={19}
+                color="#94a3b8"
+              />
             </Pressable>
           )}
         </View>
@@ -370,10 +400,16 @@ export default function UserGroupsFeedScreen() {
                   style={styles.searchResultRow}
                 >
                   <View style={styles.searchResultIcon}>
-                    <Ionicons name="people" size={18} color="#4f46e5" />
+                    <Ionicons
+                      name="people"
+                      size={18}
+                      color="#4f46e5"
+                    />
                   </View>
 
-                  <Text style={styles.searchResultName}>{group.name}</Text>
+                  <Text style={styles.searchResultName}>
+                    {group.name}
+                  </Text>
 
                   <Ionicons
                     name="chevron-forward"
@@ -398,33 +434,55 @@ export default function UserGroupsFeedScreen() {
 
         {error && (
           <View style={styles.errorBox}>
-            <Text style={styles.errorText}>{error}</Text>
+            <Text style={styles.errorText}>
+              {error}
+            </Text>
           </View>
         )}
 
         {loading ? (
           <View style={styles.center}>
-            <ActivityIndicator size="large" color="#4f46e5" />
+            <ActivityIndicator
+              size="large"
+              color="#4f46e5"
+            />
 
-            <Text style={styles.loadingText}>Loading your feed...</Text>
+            <Text style={styles.loadingText}>
+              Loading your feed...
+            </Text>
           </View>
         ) : joinedGroups.length === 0 ? (
           <View style={styles.emptyCard}>
             <View style={styles.emptyIcon}>
-              <Ionicons name="people-outline" size={30} color="#4f46e5" />
+              <Ionicons
+                name="people-outline"
+                size={30}
+                color="#4f46e5"
+              />
             </View>
 
-            <Text style={styles.emptyTitle}>No groups joined yet</Text>
+            <Text style={styles.emptyTitle}>
+              No groups joined yet
+            </Text>
 
             <Text style={styles.emptyDescription}>
-              Discover a support group to join and start seeing posts here.
+              Discover a support group to join and start
+              seeing posts here.
             </Text>
 
             <Pressable
-              onPress={() => router.push("/(app)/user/discover" as Href)}
+              onPress={() =>
+                router.push(
+                  "/(app)/user/discover" as Href
+                )
+              }
               style={styles.emptyDiscoverButton}
             >
-              <Ionicons name="compass-outline" size={17} color="#ffffff" />
+              <Ionicons
+                name="compass-outline"
+                size={17}
+                color="#ffffff"
+              />
 
               <Text style={styles.emptyDiscoverButtonText}>
                 Discover Groups
@@ -441,10 +499,13 @@ export default function UserGroupsFeedScreen() {
               />
             </View>
 
-            <Text style={styles.emptyTitle}>No posts yet</Text>
+            <Text style={styles.emptyTitle}>
+              No posts yet
+            </Text>
 
             <Text style={styles.emptyDescription}>
-              Be the first to share something with your groups.
+              Be the first to share something with your
+              groups.
             </Text>
           </View>
         ) : (
@@ -455,11 +516,20 @@ export default function UserGroupsFeedScreen() {
               currentUserId={user?.id}
               canModerate={false}
               onToggleReaction={(reactionType) =>
-                void handleToggleReaction(post.id, reactionType)
+                void handleToggleReaction(
+                  post.id,
+                  reactionType
+                )
               }
-              onOpenComments={() => setActiveCommentsPostId(post.id)}
-              onDelete={() => handleDeletePost(post.id)}
-              onReport={() => setReportingPost(post)}
+              onOpenComments={() =>
+                setActiveCommentsPostId(post.id)
+              }
+              onDelete={() =>
+                handleDeletePost(post.id)
+              }
+              onReport={() =>
+                setReportingPost(post)
+              }
             />
           ))
         )}
@@ -470,13 +540,17 @@ export default function UserGroupsFeedScreen() {
         visible={activeCommentsPostId !== null}
         currentUserId={user?.id}
         canModerate={false}
-        onClose={() => setActiveCommentsPostId(null)}
+        onClose={() =>
+          setActiveCommentsPostId(null)
+        }
       />
 
       {reportingPost ? (
         <SubmitReportSheet
           visible={reportingPost !== null}
-          onClose={() => setReportingPost(null)}
+          onClose={() =>
+            setReportingPost(null)
+          }
           group={reportingPost.group}
           targetType="POST"
           targetId={reportingPost.id}
@@ -485,7 +559,9 @@ export default function UserGroupsFeedScreen() {
 
       <CrisisSupportModal
         visible={showCrisisSupport}
-        onClose={() => setShowCrisisSupport(false)}
+        onClose={() =>
+          setShowCrisisSupport(false)
+        }
       />
     </SafeAreaView>
   );
