@@ -129,6 +129,18 @@ export default function PostCommentsModal({
   const [newComment, setNewComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
+  /*
+  |--------------------------------------------------------------------------
+  | COMMENT SEARCH / SORTING
+  |--------------------------------------------------------------------------
+  */
+
+  const [commentSearch, setCommentSearch] = useState("");
+  const [commentSort, setCommentSort] = useState<
+    "newest" | "oldest" | "mostLiked"
+  >("newest");
+  const [showSortOptions, setShowSortOptions] = useState(false);
+
   const [replyingTo, setReplyingTo] = useState<Comment | null>(null);
 
   const [editingComment, setEditingComment] =
@@ -269,21 +281,123 @@ export default function PostCommentsModal({
   |--------------------------------------------------------------------------
   */
 
-  const rootComments = useMemo(() => {
-    return comments.filter(
-      (comment) => !comment.parentComment
-    );
-  }, [comments]);
-
-  /*
-  |--------------------------------------------------------------------------
-  | GET REPLIES
-  |--------------------------------------------------------------------------
-  */
-
   const getReplies = (commentId: string) => {
     return comments.filter(
       (comment) => comment.parentComment === commentId
+    );
+  };
+
+  /*
+  |--------------------------------------------------------------------------
+  | COMMENT SEARCH / SORTING
+  |--------------------------------------------------------------------------
+  */
+
+  const getCommentReactionCount = (comment: Comment) => {
+    const reactionStateItem =
+      reactionState[comment.id];
+
+    if (reactionStateItem) {
+      return reactionStateItem.count;
+    }
+
+    const reactionCounts = (
+      comment as Comment & {
+        reactionCounts?: Partial<
+          Record<CommentReactionType, number>
+        >;
+      }
+    ).reactionCounts;
+
+    if (reactionCounts) {
+      return Object.values(reactionCounts).reduce(
+        (total, value) => total + (value ?? 0),
+        0
+      );
+    }
+
+    return comment.heartCount ?? 0;
+  };
+
+  const normalizedSearch = commentSearch
+    .trim()
+    .toLowerCase();
+
+  const filteredRootComments = useMemo(() => {
+    const roots = comments.filter(
+      (comment) => !comment.parentComment
+    );
+
+    const filtered = roots.filter((comment) => {
+      if (!normalizedSearch) {
+        return true;
+      }
+
+      const commentMatches =
+        comment.content
+          .toLowerCase()
+          .includes(normalizedSearch);
+
+      if (commentMatches) {
+        return true;
+      }
+
+      return getReplies(comment.id).some((reply) =>
+        reply.content
+          .toLowerCase()
+          .includes(normalizedSearch)
+      );
+    });
+
+    return [...filtered].sort((a, b) => {
+      if (commentSort === "oldest") {
+        return (
+          new Date(a.createdAt).getTime() -
+          new Date(b.createdAt).getTime()
+        );
+      }
+
+      if (commentSort === "mostLiked") {
+        return (
+          getCommentReactionCount(b) -
+          getCommentReactionCount(a)
+        );
+      }
+
+      return (
+        new Date(b.createdAt).getTime() -
+        new Date(a.createdAt).getTime()
+      );
+    });
+  }, [
+    comments,
+    commentSearch,
+    commentSort,
+    reactionState,
+  ]);
+
+  const getVisibleReplies = (
+    comment: Comment
+  ) => {
+    const replies = getReplies(comment.id);
+
+    if (!normalizedSearch) {
+      return replies;
+    }
+
+    const commentMatches =
+      comment.content
+        .toLowerCase()
+        .includes(normalizedSearch);
+
+    if (commentMatches) {
+      return replies;
+    }
+
+    return replies.filter((reply) =>
+      reply.content
+        .toLowerCase()
+        .includes(normalizedSearch)
     );
   };
 
@@ -716,6 +830,43 @@ export default function PostCommentsModal({
 
   /*
   |--------------------------------------------------------------------------
+  | TOGGLE COMMENT / REPLY PIN
+  |--------------------------------------------------------------------------
+  */
+
+  const handleToggleCommentPin = async (
+    comment: Comment
+  ) => {
+    try {
+      setError(null);
+
+      const response =
+        await commentApi.toggleCommentPin(
+          comment.id
+        );
+
+      const isPinned =
+        response.data.isPinned;
+
+      setComments((previous) =>
+        previous.map((item) =>
+          item.id === comment.id
+            ? {
+                ...item,
+                isPinned,
+              }
+            : item
+        )
+      );
+    } catch (requestError) {
+      setError(
+        getApiErrorMessage(requestError)
+      );
+    }
+  };
+
+  /*
+  |--------------------------------------------------------------------------
   | OPEN REPLY
   |--------------------------------------------------------------------------
   */
@@ -909,6 +1060,15 @@ export default function PostCommentsModal({
       comment.author.id ===
         currentUserId;
 
+    const isCommentAuthor =
+      comment.author.id ===
+      currentUserId;
+
+    const isPinned =
+      (comment as Comment & {
+        isPinned?: boolean;
+      }).isPinned ?? false;
+
     const currentReaction =
       reactionState[
         comment.id
@@ -933,7 +1093,7 @@ export default function PostCommentsModal({
 
     const replies = isReply
       ? []
-      : getReplies(comment.id);
+      : getVisibleReplies(comment);
 
     const isReactionPickerOpen =
       openReactionCommentId ===
@@ -1208,6 +1368,47 @@ export default function PostCommentsModal({
                     </Pressable>
                   )}
 
+                  {isCommentAuthor && (
+                    <Pressable
+                      onPress={() =>
+                        void handleToggleCommentPin(
+                          comment
+                        )
+                      }
+                      style={[
+                        styles.smallAction,
+                        isPinned &&
+                          styles.pinnedAction,
+                      ]}
+                    >
+                      <Ionicons
+                        name={
+                          isPinned
+                            ? "pin"
+                            : "pin-outline"
+                        }
+                        size={15}
+                        color={
+                          isPinned
+                            ? "#4f46e5"
+                            : "#64748b"
+                        }
+                      />
+
+                      <Text
+                        style={[
+                          styles.smallActionText,
+                          isPinned &&
+                            styles.pinnedActionText,
+                        ]}
+                      >
+                        {isPinned
+                          ? "Unpin"
+                          : "Pin"}
+                      </Text>
+                    </Pressable>
+                  )}
+
                   {canModify && (
                     <Pressable
                       onPress={() =>
@@ -1359,6 +1560,129 @@ export default function PostCommentsModal({
               </Pressable>
             </View>
 
+            <View style={styles.searchSortContainer}>
+              <View style={styles.searchContainer}>
+                <Ionicons
+                  name="search-outline"
+                  size={18}
+                  color="#94a3b8"
+                />
+
+                <TextInput
+                  value={commentSearch}
+                  onChangeText={setCommentSearch}
+                  placeholder="Search comments..."
+                  placeholderTextColor="#94a3b8"
+                  style={styles.searchInput}
+                  returnKeyType="search"
+                  autoCorrect={false}
+                />
+
+                {commentSearch.length > 0 && (
+                  <Pressable
+                    onPress={() => setCommentSearch("")}
+                    hitSlop={8}
+                  >
+                    <Ionicons
+                      name="close-circle"
+                      size={18}
+                      color="#94a3b8"
+                    />
+                  </Pressable>
+                )}
+              </View>
+
+              <View style={styles.sortContainer}>
+                <Pressable
+                  onPress={() =>
+                    setShowSortOptions(
+                      (previous) => !previous
+                    )
+                  }
+                  style={styles.sortButton}
+                >
+                  <Ionicons
+                    name="swap-vertical-outline"
+                    size={17}
+                    color="#4f46e5"
+                  />
+
+                  <Text style={styles.sortButtonText}>
+                    {commentSort === "newest"
+                      ? "Newest"
+                      : commentSort === "oldest"
+                        ? "Oldest"
+                        : "Most Liked"}
+                  </Text>
+
+                  <Ionicons
+                    name={
+                      showSortOptions
+                        ? "chevron-up"
+                        : "chevron-down"
+                    }
+                    size={15}
+                    color="#64748b"
+                  />
+                </Pressable>
+
+                {showSortOptions && (
+                  <View style={styles.sortOptions}>
+                    {[
+                      {
+                        value: "newest" as const,
+                        label: "Newest",
+                      },
+                      {
+                        value: "oldest" as const,
+                        label: "Oldest",
+                      },
+                      {
+                        value: "mostLiked" as const,
+                        label: "Most Liked",
+                      },
+                    ].map((option) => (
+                      <Pressable
+                        key={option.value}
+                        onPress={() => {
+                          setCommentSort(
+                            option.value
+                          );
+                          setShowSortOptions(false);
+                        }}
+                        style={[
+                          styles.sortOption,
+                          commentSort ===
+                            option.value &&
+                            styles.sortOptionSelected,
+                        ]}
+                      >
+                        <Text
+                          style={[
+                            styles.sortOptionText,
+                            commentSort ===
+                              option.value &&
+                              styles.sortOptionSelectedText,
+                          ]}
+                        >
+                          {option.label}
+                        </Text>
+
+                        {commentSort ===
+                          option.value && (
+                          <Ionicons
+                            name="checkmark"
+                            size={16}
+                            color="#4f46e5"
+                          />
+                        )}
+                      </Pressable>
+                    ))}
+                  </View>
+                )}
+              </View>
+            </View>
+
             <ScrollView
               style={styles.list}
               contentContainerStyle={
@@ -1388,7 +1712,7 @@ export default function PostCommentsModal({
                     Loading comments...
                   </Text>
                 </View>
-              ) : rootComments.length ===
+              ) : filteredRootComments.length ===
                 0 ? (
                 <View
                   style={
@@ -1401,7 +1725,11 @@ export default function PostCommentsModal({
                     }
                   >
                     <Ionicons
-                      name="chatbubble-ellipses-outline"
+                      name={
+                        normalizedSearch
+                          ? "search-outline"
+                          : "chatbubble-ellipses-outline"
+                      }
                       size={32}
                       color="#6366f1"
                     />
@@ -1412,7 +1740,9 @@ export default function PostCommentsModal({
                       styles.emptyTitle
                     }
                   >
-                    No comments yet
+                    {normalizedSearch
+                      ? "No matching comments"
+                      : "No comments yet"}
                   </Text>
 
                   <Text
@@ -1420,12 +1750,13 @@ export default function PostCommentsModal({
                       styles.emptyText
                     }
                   >
-                    Start the conversation and
-                    support your community.
+                    {normalizedSearch
+                      ? "Try a different search term."
+                      : "Start the conversation and support your community."}
                   </Text>
                 </View>
               ) : (
-                rootComments.map(
+                filteredRootComments.map(
                   (comment) =>
                     renderComment(
                       comment
@@ -1661,6 +1992,106 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
 
+  searchSortContainer: {
+    paddingHorizontal: 18,
+    paddingTop: 10,
+    paddingBottom: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    borderBottomWidth: 1,
+    borderBottomColor: "#eef2f7",
+    backgroundColor: "#ffffff",
+    zIndex: 20,
+  },
+
+  searchContainer: {
+    flex: 1,
+    minHeight: 40,
+    paddingHorizontal: 11,
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#e2e8f0",
+    borderRadius: 12,
+    backgroundColor: "#f8fafc",
+  },
+
+  searchInput: {
+    flex: 1,
+    marginLeft: 7,
+    paddingVertical: 8,
+    color: "#0f172a",
+    fontSize: 13,
+  },
+
+  sortContainer: {
+    position: "relative",
+    marginLeft: 8,
+    zIndex: 30,
+  },
+
+  sortButton: {
+    minHeight: 40,
+    paddingHorizontal: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#e2e8f0",
+    borderRadius: 12,
+    backgroundColor: "#ffffff",
+  },
+
+  sortButtonText: {
+    marginHorizontal: 5,
+    fontSize: 12,
+    fontWeight: "700",
+    color: "#334155",
+  },
+
+  sortOptions: {
+    position: "absolute",
+    top: 45,
+    right: 0,
+    width: 145,
+    paddingVertical: 5,
+    borderWidth: 1,
+    borderColor: "#e2e8f0",
+    borderRadius: 12,
+    backgroundColor: "#ffffff",
+    shadowColor: "#0f172a",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    elevation: 6,
+    zIndex: 50,
+  },
+
+  sortOption: {
+    minHeight: 38,
+    paddingHorizontal: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+
+  sortOptionSelected: {
+    backgroundColor: "#eef2ff",
+  },
+
+  sortOptionText: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: "#475569",
+  },
+
+  sortOptionSelectedText: {
+    color: "#4f46e5",
+    fontWeight: "700",
+  },
+
   closeButton: {
     width: 38,
     height: 38,
@@ -1882,6 +2313,17 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     borderRadius: 999,
     backgroundColor: "#f8fafc",
+  },
+
+  pinnedAction: {
+    paddingHorizontal: 5,
+    paddingVertical: 2,
+    borderRadius: 999,
+    backgroundColor: "#eef2ff",
+  },
+
+  pinnedActionText: {
+    color: "#4f46e5",
   },
 
   selectedReactionEmoji: {

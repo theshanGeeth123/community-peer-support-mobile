@@ -352,4 +352,29 @@ export const commentApi = {
 
     return response.data;
   },
+
+  /*
+  |--------------------------------------------------------------------------
+  | TOGGLE COMMENT PIN
+  |--------------------------------------------------------------------------
+  |
+  | Pins or unpins the user's own comment.
+  |
+  | The backend checks whether the current user
+  | is the author of the comment.
+  |
+  */
+
+  async toggleCommentPin(
+    commentId: string
+  ): Promise<ApiResponse<{ isPinned: boolean }>> {
+    const response =
+      await apiClient.patch<
+        ApiResponse<{ isPinned: boolean }>
+      >(
+        `/comments/${commentId}/pin`
+      );
+
+    return response.data;
+  },
 };
