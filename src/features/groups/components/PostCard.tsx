@@ -103,11 +103,23 @@ export default function PostCard({
   onTogglePin,
   onReport,
   onMarkCrisisHandled,
+  highlighted = false,
+  fromNotification = false,
 }: {
   post: Post;
 
   currentUserId?: string;
   canModerate: boolean;
+
+  /*
+   * Briefly tinted, e.g. right after opening it from a notification.
+   */
+  highlighted?: boolean;
+
+  /*
+   * An older post shown at the top because a notification opened it.
+   */
+  fromNotification?: boolean;
 
   onToggleLike: () => void;
   onOpenComments: () => void;
@@ -153,8 +165,25 @@ export default function PostCard({
         styles.card,
         post.isPinned && styles.cardPinned,
         hasOpenCrisisAlert && styles.cardCrisis,
+        highlighted && styles.cardHighlighted,
       ]}
     >
+      {/* OPENED FROM A NOTIFICATION */}
+
+      {fromNotification && (
+        <View style={styles.notificationBadge}>
+          <Ionicons
+            name="notifications"
+            size={12}
+            color="#4f46e5"
+          />
+
+          <Text style={styles.notificationBadgeText}>
+            From your notification
+          </Text>
+        </View>
+      )}
+
       {/* CRISIS ALERT (staff only) */}
 
       {crisisFlag?.isFlagged && (
@@ -514,6 +543,30 @@ const styles = StyleSheet.create({
 
   cardCrisis: {
     borderColor: "#fda4af",
+  },
+
+  cardHighlighted: {
+    borderWidth: 2,
+    borderColor: "#6366f1",
+    backgroundColor: "#eef2ff",
+  },
+
+  notificationBadge: {
+    marginBottom: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    flexDirection: "row",
+    alignSelf: "flex-start",
+    alignItems: "center",
+    borderRadius: 999,
+    backgroundColor: "#e0e7ff",
+  },
+
+  notificationBadgeText: {
+    marginLeft: 5,
+    fontSize: 11,
+    fontWeight: "800",
+    color: "#4f46e5",
   },
 
   crisisBanner: {

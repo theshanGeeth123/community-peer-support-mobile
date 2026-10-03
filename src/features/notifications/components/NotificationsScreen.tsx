@@ -211,7 +211,16 @@ export default function NotificationsScreen() {
       return;
     }
 
-    router.push(getRoleGroupPostsRoute(user.role, notification.group.id));
+    /*
+     * Open the group at this exact post. Comment and reply
+     * notifications also open the post's comments.
+     */
+    router.push(
+      getRoleGroupPostsRoute(user.role, notification.group.id, {
+        postId: notification.post.id,
+        openComments: notification.type !== "POST_LIKE",
+      })
+    );
   };
 
   const handleMarkAllRead = async () => {
