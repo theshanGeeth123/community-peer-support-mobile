@@ -46,6 +46,8 @@ import { getApiErrorMessage } from "@/services/api/apiError";
 
 import { buildPostDraftKey } from "@/storage/postDraft.storage";
 
+import LanguageButton from "@/features/language/components/LanguageButton";
+
 function getGroupReferenceId(reference: GroupReference): string | null {
   if (typeof reference === "string") {
     return reference;
@@ -255,14 +257,18 @@ export default function UserGroupsFeedScreen() {
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Groups</Text>
 
-        <Pressable
-          onPress={() => router.push("/(app)/user/discover" as Href)}
-          style={styles.discoverButton}
-        >
-          <Ionicons name="compass-outline" size={16} color="#4f46e5" />
+        <View style={styles.headerActions}>
+          <LanguageButton />
 
-          <Text style={styles.discoverButtonText}>Discover</Text>
-        </Pressable>
+          <Pressable
+            onPress={() => router.push("/(app)/user/discover" as Href)}
+            style={styles.discoverButton}
+          >
+            <Ionicons name="compass-outline" size={16} color="#4f46e5" />
+
+            <Text style={styles.discoverButtonText}>Discover</Text>
+          </Pressable>
+        </View>
       </View>
 
       <ScrollView
@@ -445,6 +451,12 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "800",
     color: "#0f172a",
+  },
+
+  headerActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
   },
 
   discoverButton: {

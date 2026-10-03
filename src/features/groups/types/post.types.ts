@@ -30,6 +30,28 @@ export type ContentWarning =
  * Only returned to group staff. For everyone else it is null.
  */
 /*
+ * Mirrors backend post.constants.js POST_LANGUAGE.
+ * SI_LATN = Sinhala typed in English letters ("mata godak dukai").
+ */
+export type PostLanguage = "EN" | "SI" | "TA" | "SI_LATN" | "OTHER";
+
+/*
+ * Languages a post can be translated into
+ * (backend TRANSLATION_LANGUAGE).
+ */
+export type TranslationLanguage = "EN" | "SI" | "TA";
+
+export interface TranslatePostResponseData {
+  translation: {
+    language: TranslationLanguage;
+    content: string;
+    isCached: boolean;
+  };
+
+  sourceLanguage: PostLanguage;
+}
+
+/*
  * Mirrors backend post.constants.js AI_RISK_LEVEL
  */
 export type AiRiskLevel = "NONE" | "LOW" | "HIGH" | "URGENT";
@@ -94,6 +116,11 @@ export interface Post {
   isRemoved?: boolean;
   removedAt?: string | null;
   removalReason?: string | null;
+
+  /*
+   * The language the post is written in.
+   */
+  language?: PostLanguage | null;
 
   createdAt: string;
   updatedAt: string;

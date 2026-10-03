@@ -14,6 +14,7 @@ import type {
 } from "@/features/groups/types/post.types";
 
 import StaffBadge from "./StaffBadge";
+import TranslatablePostText from "./TranslatablePostText";
 
 function getInitials(name: string) {
   const parts = name.trim().split(/\s+/);
@@ -419,9 +420,10 @@ export default function PostCard({
             </View>
           )}
 
-          <Text style={styles.content}>
-            {post.content}
-          </Text>
+          <TranslatablePostText
+            post={post}
+            style={styles.content}
+          />
 
           {post.imageUrl && (
             <Pressable

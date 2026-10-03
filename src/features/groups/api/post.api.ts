@@ -16,6 +16,8 @@ import type {
   PostsResponseData,
   ToggleLikeResponseData,
   TogglePinResponseData,
+  TranslatePostResponseData,
+  TranslationLanguage,
 } from "../types/post.types";
 
 export const postApi = {
@@ -167,6 +169,25 @@ export const postApi = {
   ): Promise<ApiResponse<TogglePinResponseData>> {
     const response = await apiClient.post<ApiResponse<TogglePinResponseData>>(
       `/posts/${postId}/pin`
+    );
+
+    return response.data;
+  },
+
+  /*
+   * AI translation. The first request for a language can take a few
+   * seconds; after that the saved translation comes back instantly.
+   */
+  async translatePost(
+    postId: string,
+    language: TranslationLanguage
+  ): Promise<ApiResponse<TranslatePostResponseData>> {
+    const response = await apiClient.post<
+      ApiResponse<TranslatePostResponseData>
+    >(
+      `/posts/${postId}/translate`,
+      { language },
+      { timeout: 30000 }
     );
 
     return response.data;

@@ -38,6 +38,8 @@ import {
 
 import { buildPostDraftKey } from "@/storage/postDraft.storage";
 
+import LanguageButton from "@/features/language/components/LanguageButton";
+
 import SubmitReportSheet from "@/features/moderation/components/SubmitReportSheet";
 
 import CreatePostComposer from "./CreatePostComposer";
@@ -654,7 +656,7 @@ export default function GroupPostsScreen() {
           {group?.name ?? "Posts"}
         </Text>
 
-        <View style={{ width: 42 }} />
+        <LanguageButton />
       </View>
 
       <ScrollView
