@@ -7,7 +7,11 @@ import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 
 import { formatContentWarnings } from "@/features/groups/constants/contentWarnings";
-import type { Post } from "@/features/groups/types/post.types";
+import type {
+  AiRiskLevel,
+  CrisisFlag,
+  Post,
+} from "@/features/groups/types/post.types";
 
 import StaffBadge from "./StaffBadge";
 
@@ -48,6 +52,47 @@ function formatRelativeTime(isoDate: string) {
   return new Date(isoDate).toLocaleDateString();
 }
 
+const AI_RISK_LABELS: Record<AiRiskLevel, string> = {
+  NONE: "No risk seen",
+  LOW: "Low risk",
+  HIGH: "High risk",
+  URGENT: "Urgent risk",
+};
+
+/*
+ * One line describing the AI safety check for staff, or null when
+ * there is nothing to show (AI not configured, or it failed — the
+ * keyword result still applies).
+ */
+function getAiReviewText(crisisFlag: CrisisFlag): string | null {
+  if (crisisFlag.aiStatus === "PENDING") {
+    return "AI review in progress…";
+  }
+
+  const ai = crisisFlag.ai;
+
+  if (!ai) {
+    return null;
+  }
+
+  const label = AI_RISK_LABELS[ai.riskLevel] ?? ai.riskLevel;
+
+  /*
+   * Keywords flagged it but the AI sees little risk: likely a false
+   * alarm. The flag stays — staff make the final call.
+   */
+  const isLikelyFalseAlarm =
+    ai.riskLevel === "NONE" || ai.riskLevel === "LOW";
+
+  return [
+    `AI review: ${label}`,
+    isLikelyFalseAlarm ? "may be a false alarm" : null,
+    ai.reason,
+  ]
+    .filter(Boolean)
+    .join(" — ");
+}
+
 export default function PostCard({
   post,
   currentUserId,
@@ -83,6 +128,10 @@ export default function PostCard({
   const crisisFlag = post.crisisFlag;
   const hasOpenCrisisAlert =
     crisisFlag?.isFlagged === true && !crisisFlag.isHandled;
+
+  const aiReviewText = crisisFlag
+    ? getAiReviewText(crisisFlag)
+    : null;
 
   /*
    * Posts with content warnings stay covered until the viewer
@@ -134,15 +183,25 @@ export default function PostCard({
             >
               {crisisFlag.isHandled
                 ? "Crisis alert handled"
-                : "Possible crisis — please reach out"}
+                : crisisFlag.ai?.riskLevel === "URGENT"
+                  ? "Urgent — please reach out now"
+                  : "Possible crisis — please reach out"}
             </Text>
 
             {!crisisFlag.isHandled &&
               crisisFlag.matchedTerms.length > 0 && (
                 <Text style={styles.crisisTerms}>
-                  Detected: {crisisFlag.matchedTerms.join(", ")}
+                  Keywords: {crisisFlag.matchedTerms.join(", ")}
                 </Text>
               )}
+
+            {/* AI SAFETY CHECK */}
+
+            {!crisisFlag.isHandled && aiReviewText && (
+              <Text style={styles.crisisTerms}>
+                {aiReviewText}
+              </Text>
+            )}
           </View>
 
           {!crisisFlag.isHandled && onMarkCrisisHandled && (

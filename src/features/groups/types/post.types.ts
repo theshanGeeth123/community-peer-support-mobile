@@ -29,6 +29,21 @@ export type ContentWarning =
 /*
  * Only returned to group staff. For everyone else it is null.
  */
+/*
+ * Mirrors backend post.constants.js AI_RISK_LEVEL
+ */
+export type AiRiskLevel = "NONE" | "LOW" | "HIGH" | "URGENT";
+
+/*
+ * The AI safety check's view of a post (Gemini). Staff only.
+ */
+export interface AiAssessment {
+  riskLevel: AiRiskLevel;
+  reason: string | null;
+  mood: string | null;
+  checkedAt: string | null;
+}
+
 export interface CrisisFlag {
   isFlagged: boolean;
   matchedTerms: string[];
@@ -37,6 +52,18 @@ export interface CrisisFlag {
   isHandled: boolean;
   handledBy: string | null;
   handledAt: string | null;
+
+  /*
+   * What raised the flag. null on posts flagged before the AI check.
+   */
+  source?: "KEYWORD" | "AI" | "BOTH" | null;
+
+  /*
+   * PENDING = the AI check is still running.
+   * FAILED / SKIPPED = no AI result (keyword detection only).
+   */
+  aiStatus?: "PENDING" | "DONE" | "FAILED" | "SKIPPED" | null;
+  ai?: AiAssessment | null;
 }
 
 export interface Post {
