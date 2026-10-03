@@ -36,6 +36,8 @@ import {
   isNotFoundError,
 } from "@/services/api/apiError";
 
+import { buildPostDraftKey } from "@/storage/postDraft.storage";
+
 import SubmitReportSheet from "@/features/moderation/components/SubmitReportSheet";
 
 import CreatePostComposer from "./CreatePostComposer";
@@ -753,6 +755,11 @@ export default function GroupPostsScreen() {
             currentUserName={user?.fullName}
             submitting={submittingPost}
             onSubmit={handleCreatePost}
+            draftKey={
+              user && groupId
+                ? buildPostDraftKey(user.id, `group:${groupId}`)
+                : undefined
+            }
           />
         )}
 

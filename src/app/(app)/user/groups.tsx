@@ -44,6 +44,8 @@ import type {
 
 import { getApiErrorMessage } from "@/services/api/apiError";
 
+import { buildPostDraftKey } from "@/storage/postDraft.storage";
+
 function getGroupReferenceId(reference: GroupReference): string | null {
   if (typeof reference === "string") {
     return reference;
@@ -326,6 +328,9 @@ export default function UserGroupsFeedScreen() {
             groupOptions={joinedGroups}
             onSubmit={handleCreatePost}
             autoExpandKey={compose}
+            draftKey={
+              user ? buildPostDraftKey(user.id, "feed") : undefined
+            }
           />
         )}
 
