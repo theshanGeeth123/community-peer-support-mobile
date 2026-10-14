@@ -108,12 +108,14 @@ function getReactionEmoji(
 
 export default function PostCommentsModal({
   postId,
+  postContent,
   visible,
   currentUserId,
   canModerate,
   onClose,
 }: {
   postId: string | null;
+  postContent: string | null;
   visible: boolean;
 
   currentUserId?: string;
@@ -128,6 +130,11 @@ export default function PostCommentsModal({
 
   const [newComment, setNewComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [aiSuggestions, setAiSuggestions] = useState<
+    [string, string] | null
+  >(null);
+  const [loadingAiSuggestions, setLoadingAiSuggestions] =
+    useState(false);
 
   /*
   |--------------------------------------------------------------------------
@@ -256,6 +263,11 @@ export default function PostCommentsModal({
       void loadComments();
     }
   }, [visible, loadComments]);
+
+  useEffect(() => {
+    setAiSuggestions(null);
+    setLoadingAiSuggestions(false);
+  }, [visible, postId]);
 
   /*
   |--------------------------------------------------------------------------
@@ -893,6 +905,37 @@ export default function PostCommentsModal({
     setNewComment("");
     setEditText("");
     setSelectedMedia([]);
+  };
+
+  const handleGenerateAiSuggestions = async () => {
+    if (
+      !postContent?.trim() ||
+      loadingAiSuggestions
+    ) {
+      return;
+    }
+
+    try {
+      setLoadingAiSuggestions(true);
+      setError(null);
+
+      const response =
+        await commentApi.getAiSuggestions({
+          postContent: postContent.trim(),
+          tone: "supportive",
+        });
+
+      setAiSuggestions(response.data.suggestions);
+    } catch (requestError) {
+      setError(getApiErrorMessage(requestError));
+    } finally {
+      setLoadingAiSuggestions(false);
+    }
+  };
+
+  const selectAiSuggestion = (suggestion: string) => {
+    setNewComment(suggestion);
+    setAiSuggestions(null);
   };
 
   /*
@@ -1842,6 +1885,101 @@ export default function PostCommentsModal({
 
             {renderMediaPreview()}
 
+            {(aiSuggestions || loadingAiSuggestions) && (
+              <View style={styles.aiSuggestionsContainer}>
+                <View style={styles.aiSuggestionsHeader}>
+                  <Text style={styles.aiSuggestionsTitle}>
+                    Choose a supportive comment
+                  </Text>
+
+                  <Pressable
+                    onPress={() => setAiSuggestions(null)}
+                    hitSlop={8}
+                  >
+                    <Ionicons
+                      name="close"
+                      size={18}
+                      color="#64748b"
+                    />
+                  </Pressable>
+                </View>
+
+                {loadingAiSuggestions ? (
+                  <View style={styles.aiLoadingRow}>
+                    <ActivityIndicator
+                      size="small"
+                      color="#4f46e5"
+                    />
+                    <Text style={styles.aiLoadingText}>
+                      Generating suggestions...
+                    </Text>
+                  </View>
+                ) : (
+                  aiSuggestions?.map((suggestion) => (
+                    <Pressable
+                      key={suggestion}
+                      onPress={() =>
+                        selectAiSuggestion(suggestion)
+                      }
+                      style={styles.aiSuggestionCard}
+                    >
+                      <Text style={styles.aiSuggestionText}>
+                        {suggestion}
+                      </Text>
+                      <Text style={styles.aiSelectText}>
+                        Use this
+                      </Text>
+                    </Pressable>
+                  ))
+                )}
+
+                {!loadingAiSuggestions && (
+                  <Pressable
+                    onPress={() =>
+                      void handleGenerateAiSuggestions()
+                    }
+                    style={styles.aiRegenerateButton}
+                  >
+                    <Ionicons
+                      name="refresh-outline"
+                      size={16}
+                      color="#4f46e5"
+                    />
+                    <Text style={styles.aiRegenerateText}>
+                      Regenerate
+                    </Text>
+                  </Pressable>
+                )}
+              </View>
+            )}
+
+            <View style={styles.aiSuggestRow}>
+              <Pressable
+                disabled={
+                  loadingAiSuggestions ||
+                  !postContent?.trim()
+                }
+                onPress={() =>
+                  void handleGenerateAiSuggestions()
+                }
+                style={[
+                  styles.aiSuggestButton,
+                  (loadingAiSuggestions ||
+                    !postContent?.trim()) &&
+                    styles.disabledAiSuggestButton,
+                ]}
+              >
+                <Ionicons
+                  name="sparkles-outline"
+                  size={16}
+                  color="#4f46e5"
+                />
+                <Text style={styles.aiSuggestText}>
+                  AI Suggest
+                </Text>
+              </Pressable>
+            </View>
+
             <View
               style={
                 styles.inputContainer
@@ -2536,6 +2674,102 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: "#eef2f7",
     backgroundColor: "#ffffff",
+  },
+
+  aiSuggestRow: {
+    paddingHorizontal: 14,
+    paddingTop: 8,
+    backgroundColor: "#ffffff",
+  },
+
+  aiSuggestButton: {
+    alignSelf: "flex-start",
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 11,
+    paddingVertical: 7,
+    borderRadius: 14,
+    backgroundColor: "#eef2ff",
+  },
+
+  disabledAiSuggestButton: {
+    opacity: 0.45,
+  },
+
+  aiSuggestText: {
+    marginLeft: 5,
+    color: "#4338ca",
+    fontSize: 12,
+    fontWeight: "700",
+  },
+
+  aiSuggestionsContainer: {
+    marginHorizontal: 14,
+    marginBottom: 8,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: "#c7d2fe",
+    borderRadius: 14,
+    backgroundColor: "#eef2ff",
+  },
+
+  aiSuggestionsHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 8,
+  },
+
+  aiSuggestionsTitle: {
+    color: "#3730a3",
+    fontSize: 12,
+    fontWeight: "700",
+  },
+
+  aiLoadingRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 8,
+  },
+
+  aiLoadingText: {
+    marginLeft: 8,
+    color: "#475569",
+    fontSize: 12,
+  },
+
+  aiSuggestionCard: {
+    marginTop: 6,
+    padding: 10,
+    borderRadius: 10,
+    backgroundColor: "#ffffff",
+  },
+
+  aiSuggestionText: {
+    color: "#334155",
+    fontSize: 13,
+    lineHeight: 19,
+  },
+
+  aiSelectText: {
+    marginTop: 6,
+    color: "#4f46e5",
+    fontSize: 11,
+    fontWeight: "700",
+  },
+
+  aiRegenerateButton: {
+    alignSelf: "flex-start",
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 9,
+  },
+
+  aiRegenerateText: {
+    marginLeft: 4,
+    color: "#4f46e5",
+    fontSize: 12,
+    fontWeight: "700",
   },
 
   inputAvatar: {
