@@ -59,6 +59,15 @@ export interface CommentMediaFile {
   type?: string;
 }
 
+export interface CommentSuggestionsRequest {
+  postContent: string;
+  tone: "supportive";
+}
+
+export interface CommentSuggestionsResponse {
+  suggestions: [string, string];
+}
+
 /*
 |--------------------------------------------------------------------------
 | CREATE COMMENT FORM DATA
@@ -126,6 +135,20 @@ const createCommentFormData = (
 */
 
 export const commentApi = {
+  async getAiSuggestions(
+    payload: CommentSuggestionsRequest
+  ): Promise<ApiResponse<CommentSuggestionsResponse>> {
+    const response =
+      await apiClient.post<
+        ApiResponse<CommentSuggestionsResponse>
+      >(
+        "/comments/ai-suggestions",
+        payload
+      );
+
+    return response.data;
+  },
+
   /*
   |--------------------------------------------------------------------------
   | CREATE COMMENT

@@ -1154,6 +1154,13 @@ export default function GroupPostsScreen() {
         postId={
           activeCommentsPostId
         }
+        postContent={
+          posts.find(
+            (post) =>
+              post.id ===
+              activeCommentsPostId
+          )?.content ?? null
+        }
         visible={
           activeCommentsPostId !==
           null
