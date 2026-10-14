@@ -600,6 +600,15 @@ export default function NeedsResponseScreen() {
 
       <PostCommentsModal
         postId={activeCommentsPostId}
+        postContent={
+          [
+            ...crisisAlerts,
+            ...unanswered,
+          ].find(
+            (post) =>
+              post.id === activeCommentsPostId
+          )?.content ?? null
+        }
         visible={
           activeCommentsPostId !== null
         }

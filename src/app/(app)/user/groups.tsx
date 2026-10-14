@@ -537,6 +537,11 @@ export default function UserGroupsFeedScreen() {
 
       <PostCommentsModal
         postId={activeCommentsPostId}
+        postContent={
+          posts.find(
+            (post) => post.id === activeCommentsPostId
+          )?.content ?? null
+        }
         visible={activeCommentsPostId !== null}
         currentUserId={user?.id}
         canModerate={false}
