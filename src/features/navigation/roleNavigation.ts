@@ -26,3 +26,35 @@ export function getRoleHomeRoute(
 ): Href {
   return ROLE_HOME_ROUTES[role];
 }
+
+const ROLE_GROUP_POSTS_PATHS: Record<
+  UserRole,
+  string
+> = {
+  USER:
+    "/(app)/user/group/[groupId]/posts",
+
+  PEER_SUPPORTER:
+    "/(app)/peer-supporter/group/[groupId]/posts",
+
+  MODERATOR:
+    "/(app)/moderator/group/[groupId]/posts",
+
+  ADMIN:
+    "/(app)/admin/group/[groupId]/posts",
+};
+
+/*
+ * A group's posts screen for the given role
+ * (each role area has its own copy of the route).
+ */
+export function getRoleGroupPostsRoute(
+  role: UserRole,
+  groupId: string
+): Href {
+  return {
+    pathname:
+      ROLE_GROUP_POSTS_PATHS[role],
+    params: { groupId },
+  } as Href;
+}

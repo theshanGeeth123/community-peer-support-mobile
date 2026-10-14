@@ -177,6 +177,17 @@ export default function PeerSupporterLayout() {
           }}
         />
 
+        <Tabs.Screen
+          name="needs-response"
+          options={{
+            href: null,
+
+            tabBarStyle: {
+              display: "none",
+            },
+          }}
+        />
+
         {/*
          * Group Details is a real
          * route, but must NOT appear

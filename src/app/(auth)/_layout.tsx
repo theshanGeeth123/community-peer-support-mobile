@@ -13,6 +13,8 @@ import {
   useAuth,
 } from "@/features/auth/hooks/useAuth";
 
+import PublicChatbotWidget from "@/features/chatbot/components/PublicChatbotWidget";
+
 import {
   getRoleHomeRoute,
 } from "@/features/navigation/roleNavigation";
@@ -53,23 +55,50 @@ export default function AuthLayout() {
   }
 
   return (
-    <Stack
-      screenOptions={{
-        headerShown: false,
+    <View
+      style={
+        styles.container
+      }
+    >
+      <Stack
+        screenOptions={{
+          headerShown:
+            false,
 
-        animation:
-          "slide_from_right",
-      }}
-    />
+          animation:
+            "slide_from_right",
+        }}
+      />
+
+      {/*
+       * Public floating chatbot.
+       *
+       * It is available on:
+       * - Login
+       * - Register
+       * - Verify Email
+       * - Forgot Password
+       * - Reset Password
+       *
+       * Authenticated role areas are
+       * not modified.
+       */}
+      <PublicChatbotWidget />
+    </View>
   );
 }
 
 const styles =
   StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+
     loadingContainer: {
       flex: 1,
 
-      alignItems: "center",
+      alignItems:
+        "center",
 
       justifyContent:
         "center",
