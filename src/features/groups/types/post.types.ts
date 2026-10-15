@@ -4,7 +4,10 @@ import type { UserRole } from "@/features/auth/types/auth.types";
  * Set when the author is staff of the post's group (or an admin).
  * Never set on anonymous posts.
  */
-export type StaffBadge = "PEER_SUPPORTER" | "MODERATOR" | "ADMIN";
+export type StaffBadge =
+  | "PEER_SUPPORTER"
+  | "MODERATOR"
+  | "ADMIN";
 
 export interface PostAuthorSummary {
   id: string | null;
@@ -88,6 +91,29 @@ export interface CrisisFlag {
   ai?: AiAssessment | null;
 }
 
+/*
+ * Post reaction types supported by the backend.
+ */
+export type PostReactionType =
+  | "like"
+  | "love"
+  | "haha"
+  | "wow"
+  | "sad"
+  | "angry";
+
+/*
+ * Number of each reaction on a post.
+ */
+export interface PostReactionCounts {
+  like: number;
+  love: number;
+  haha: number;
+  wow: number;
+  sad: number;
+  angry: number;
+}
+
 export interface Post {
   id: string;
 
@@ -105,6 +131,13 @@ export interface Post {
   likeCount: number;
   commentCount: number;
   likedByMe: boolean;
+
+  /*
+   * New reaction system.
+   * myReaction is the reaction selected by the current user.
+   */
+  myReaction: PostReactionType | null;
+  reactionCounts: PostReactionCounts;
 
   crisisFlag?: CrisisFlag | null;
 
@@ -200,7 +233,10 @@ export interface CreatePostResponseData {
   };
 }
 
-export type CrisisAlertStatus = "open" | "handled" | "all";
+export type CrisisAlertStatus =
+  | "open"
+  | "handled"
+  | "all";
 
 /*
  * Mirrors backend post.constants.js POST_SORT

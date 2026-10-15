@@ -32,6 +32,29 @@ apiClient.interceptors.request.use(
         `Bearer ${token}`;
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | HANDLE MULTIPART / FORMDATA REQUESTS
+    |--------------------------------------------------------------------------
+    |
+    | Normal API requests use:
+    |
+    | Content-Type: application/json
+    |
+    | But when FormData is being sent, Axios needs to
+    | generate the multipart boundary automatically.
+    |
+    | Without this, the backend may receive the text
+    | but req.files can be empty.
+    |
+    */
+
+    if (
+      config.data instanceof FormData
+    ) {
+      delete config.headers["Content-Type"];
+    }
+
     return config;
   },
   (error) => {

@@ -259,17 +259,27 @@ export default function SubmitReportSheet({
                   name="additionalDetails"
                   control={control}
                   render={({ field }) => (
-                    <TextInput
-                      style={styles.textArea}
-                      placeholder="Provide any extra context that will help our moderators..."
-                      placeholderTextColor="#94a3b8"
-                      multiline
-                      numberOfLines={4}
-                      maxLength={500}
-                      value={field.value}
-                      onChangeText={field.onChange}
-                      textAlignVertical="top"
-                    />
+                    <>
+                      <TextInput
+                        style={styles.textArea}
+                        placeholder="Provide any extra context that will help our moderators..."
+                        placeholderTextColor="#94a3b8"
+                        multiline
+                        numberOfLines={4}
+                        maxLength={500}
+                        value={field.value}
+                        onChangeText={field.onChange}
+                        textAlignVertical="top"
+                      />
+                      <Text
+                        style={[
+                          styles.charCounter,
+                          (field.value?.length ?? 0) > 450 && { color: "#e11d48" },
+                        ]}
+                      >
+                        {field.value?.length ?? 0} / 500
+                      </Text>
+                    </>
                   )}
                 />
 
@@ -455,6 +465,12 @@ const styles = StyleSheet.create({
     color: "#0f172a",
     minHeight: 100,
     backgroundColor: "#f8fafc",
+  },
+  charCounter: {
+    fontSize: 11,
+    color: "#94a3b8",
+    textAlign: "right",
+    marginTop: 5,
   },
   errorBox: {
     flexDirection: "row",
