@@ -28,6 +28,8 @@ import type {
 
 import { getApiErrorMessage } from "@/services/api/apiError";
 
+import LanguageButton from "@/features/language/components/LanguageButton";
+
 import PostCard from "./PostCard";
 import PostCommentsModal from "./PostCommentsModal";
 
@@ -399,7 +401,7 @@ export default function NeedsResponseScreen() {
           Needs a response
         </Text>
 
-        <View style={{ width: 42 }} />
+        <LanguageButton />
       </View>
 
       <ScrollView
