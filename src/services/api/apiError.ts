@@ -45,6 +45,15 @@ export const getApiErrorMessage = (
   return "Something went wrong. Please try again.";
 };
 
+export const isNotFoundError = (
+  error: unknown
+): boolean => {
+  return (
+    axios.isAxiosError(error) &&
+    error.response?.status === 404
+  );
+};
+
 export const isUnauthorizedError = (
   error: unknown
 ): boolean => {

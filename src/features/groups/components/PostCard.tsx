@@ -13,13 +13,15 @@ import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 
 import { formatContentWarnings } from "@/features/groups/constants/contentWarnings";
-
 import type {
+  AiRiskLevel,
+  CrisisFlag,
   Post,
   PostReactionType,
 } from "@/features/groups/types/post.types";
 
 import StaffBadge from "./StaffBadge";
+import TranslatablePostText from "./TranslatablePostText";
 
 function getInitials(name: string) {
   const parts = name.trim().split(/\s+/);
@@ -56,6 +58,47 @@ function formatRelativeTime(isoDate: string) {
   }
 
   return new Date(isoDate).toLocaleDateString();
+}
+
+const AI_RISK_LABELS: Record<AiRiskLevel, string> = {
+  NONE: "No risk seen",
+  LOW: "Low risk",
+  HIGH: "High risk",
+  URGENT: "Urgent risk",
+};
+
+/*
+ * One line describing the AI safety check for staff, or null when
+ * there is nothing to show (AI not configured, or it failed — the
+ * keyword result still applies).
+ */
+function getAiReviewText(crisisFlag: CrisisFlag): string | null {
+  if (crisisFlag.aiStatus === "PENDING") {
+    return "AI review in progress…";
+  }
+
+  const ai = crisisFlag.ai;
+
+  if (!ai) {
+    return null;
+  }
+
+  const label = AI_RISK_LABELS[ai.riskLevel] ?? ai.riskLevel;
+
+  /*
+   * Keywords flagged it but the AI sees little risk: likely a false
+   * alarm. The flag stays — staff make the final call.
+   */
+  const isLikelyFalseAlarm =
+    ai.riskLevel === "NONE" || ai.riskLevel === "LOW";
+
+  return [
+    `AI review: ${label}`,
+    isLikelyFalseAlarm ? "may be a false alarm" : null,
+    ai.reason,
+  ]
+    .filter(Boolean)
+    .join(" — ");
 }
 
 /*
@@ -136,11 +179,23 @@ export default function PostCard({
   onTogglePin,
   onReport,
   onMarkCrisisHandled,
+  highlighted = false,
+  fromNotification = false,
 }: {
   post: Post;
 
   currentUserId?: string;
   canModerate: boolean;
+
+  /*
+   * Briefly tinted, e.g. right after opening it from a notification.
+   */
+  highlighted?: boolean;
+
+  /*
+   * An older post shown at the top because a notification opened it.
+   */
+  fromNotification?: boolean;
 
   onToggleReaction: (
     reactionType: PostReactionType
@@ -163,6 +218,10 @@ export default function PostCard({
   const crisisFlag = post.crisisFlag;
   const hasOpenCrisisAlert =
     crisisFlag?.isFlagged === true && !crisisFlag.isHandled;
+
+  const aiReviewText = crisisFlag
+    ? getAiReviewText(crisisFlag)
+    : null;
 
   /*
    * Posts with content warnings stay covered until the viewer
@@ -222,8 +281,25 @@ export default function PostCard({
         styles.card,
         post.isPinned && styles.cardPinned,
         hasOpenCrisisAlert && styles.cardCrisis,
+        highlighted && styles.cardHighlighted,
       ]}
     >
+      {/* OPENED FROM A NOTIFICATION */}
+
+      {fromNotification && (
+        <View style={styles.notificationBadge}>
+          <Ionicons
+            name="notifications"
+            size={12}
+            color="#4f46e5"
+          />
+
+          <Text style={styles.notificationBadgeText}>
+            From your notification
+          </Text>
+        </View>
+      )}
+
       {/* CRISIS ALERT (staff only) */}
 
       {crisisFlag?.isFlagged && (
@@ -258,16 +334,25 @@ export default function PostCard({
             >
               {crisisFlag.isHandled
                 ? "Crisis alert handled"
-                : "Possible crisis — please reach out"}
+                : crisisFlag.ai?.riskLevel === "URGENT"
+                  ? "Urgent — please reach out now"
+                  : "Possible crisis — please reach out"}
             </Text>
 
             {!crisisFlag.isHandled &&
               crisisFlag.matchedTerms.length > 0 && (
                 <Text style={styles.crisisTerms}>
-                  Detected:{" "}
-                  {crisisFlag.matchedTerms.join(", ")}
+                  Keywords: {crisisFlag.matchedTerms.join(", ")}
                 </Text>
               )}
+
+            {/* AI SAFETY CHECK */}
+
+            {!crisisFlag.isHandled && aiReviewText && (
+              <Text style={styles.crisisTerms}>
+                {aiReviewText}
+              </Text>
+            )}
           </View>
 
           {!crisisFlag.isHandled &&
@@ -474,9 +559,10 @@ export default function PostCard({
             </View>
           )}
 
-          <Text style={styles.content}>
-            {post.content}
-          </Text>
+          <TranslatablePostText
+            post={post}
+            style={styles.content}
+          />
 
           {post.imageUrl && (
             <Pressable
@@ -655,6 +741,30 @@ const styles = StyleSheet.create({
 
   cardCrisis: {
     borderColor: "#fda4af",
+  },
+
+  cardHighlighted: {
+    borderWidth: 2,
+    borderColor: "#6366f1",
+    backgroundColor: "#eef2ff",
+  },
+
+  notificationBadge: {
+    marginBottom: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    flexDirection: "row",
+    alignSelf: "flex-start",
+    alignItems: "center",
+    borderRadius: 999,
+    backgroundColor: "#e0e7ff",
+  },
+
+  notificationBadgeText: {
+    marginLeft: 5,
+    fontSize: 11,
+    fontWeight: "800",
+    color: "#4f46e5",
   },
 
   crisisBanner: {

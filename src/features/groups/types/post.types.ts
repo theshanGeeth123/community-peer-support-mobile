@@ -32,6 +32,43 @@ export type ContentWarning =
 /*
  * Only returned to group staff. For everyone else it is null.
  */
+/*
+ * Mirrors backend post.constants.js POST_LANGUAGE.
+ * SI_LATN = Sinhala typed in English letters ("mata godak dukai").
+ */
+export type PostLanguage = "EN" | "SI" | "TA" | "SI_LATN" | "OTHER";
+
+/*
+ * Languages a post can be translated into
+ * (backend TRANSLATION_LANGUAGE).
+ */
+export type TranslationLanguage = "EN" | "SI" | "TA";
+
+export interface TranslatePostResponseData {
+  translation: {
+    language: TranslationLanguage;
+    content: string;
+    isCached: boolean;
+  };
+
+  sourceLanguage: PostLanguage;
+}
+
+/*
+ * Mirrors backend post.constants.js AI_RISK_LEVEL
+ */
+export type AiRiskLevel = "NONE" | "LOW" | "HIGH" | "URGENT";
+
+/*
+ * The AI safety check's view of a post (Gemini). Staff only.
+ */
+export interface AiAssessment {
+  riskLevel: AiRiskLevel;
+  reason: string | null;
+  mood: string | null;
+  checkedAt: string | null;
+}
+
 export interface CrisisFlag {
   isFlagged: boolean;
   matchedTerms: string[];
@@ -40,6 +77,18 @@ export interface CrisisFlag {
   isHandled: boolean;
   handledBy: string | null;
   handledAt: string | null;
+
+  /*
+   * What raised the flag. null on posts flagged before the AI check.
+   */
+  source?: "KEYWORD" | "AI" | "BOTH" | null;
+
+  /*
+   * PENDING = the AI check is still running.
+   * FAILED / SKIPPED = no AI result (keyword detection only).
+   */
+  aiStatus?: "PENDING" | "DONE" | "FAILED" | "SKIPPED" | null;
+  ai?: AiAssessment | null;
 }
 
 /*
@@ -100,6 +149,11 @@ export interface Post {
   isRemoved?: boolean;
   removedAt?: string | null;
   removalReason?: string | null;
+
+  /*
+   * The language the post is written in.
+   */
+  language?: PostLanguage | null;
 
   createdAt: string;
   updatedAt: string;
