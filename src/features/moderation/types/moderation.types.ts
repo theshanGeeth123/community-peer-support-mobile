@@ -121,6 +121,20 @@ export interface HistoryPagination {
   hasPreviousPage: boolean;
 }
 
+// --- AI Review ---------------------------------------------------------------
+
+export type AiReviewVerdict =
+  | "NO_VIOLATION"
+  | "POSSIBLE_VIOLATION"
+  | "CLEAR_VIOLATION";
+
+export interface AiReview {
+  verdict: AiReviewVerdict;
+  suggestedAction: ModerationActionType;
+  summary: string;
+  concernedParts: string | null;
+}
+
 // --- Response Data -----------------------------------------------------------
 
 export interface ReportsResponseData {
