@@ -1,3 +1,4 @@
+import { useThemeTone, useThemedStyles } from '@/theme/useAlyvenAppearance';
 import {
   Alert,
   Linking,
@@ -25,6 +26,9 @@ export default function CrisisSupportModal({
   visible: boolean;
   onClose: () => void;
 }) {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   const handleCall = async (phone: string) => {
     try {
       await Linking.openURL(`tel:${phone}`);
@@ -40,19 +44,19 @@ export default function CrisisSupportModal({
       animationType="slide"
       onRequestClose={onClose}
     >
-      <View style={styles.overlay}>
-        <View style={styles.sheet}>
+      <View style={themeStyles.overlay}>
+        <View style={themeStyles.sheet}>
           <ScrollView
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.sheetContent}
+            contentContainerStyle={themeStyles.sheetContent}
           >
-            <View style={styles.iconCircle}>
-              <Ionicons name="heart" size={28} color="#e11d48" />
+            <View style={themeStyles.iconCircle}>
+              <Ionicons name="heart" size={28} color={themeTone("#e11d48", "color")} />
             </View>
 
-            <Text style={styles.title}>You are not alone</Text>
+            <Text style={themeStyles.title}>You are not alone</Text>
 
-            <Text style={styles.message}>
+            <Text style={themeStyles.message}>
               Your post has been shared with your group. It sounds like you
               might be going through something really hard right now. Talking
               to someone can help — these services are free and confidential.
@@ -62,32 +66,32 @@ export default function CrisisSupportModal({
               <Pressable
                 key={resource.phone}
                 onPress={() => void handleCall(resource.phone)}
-                style={styles.resourceCard}
+                style={themeStyles.resourceCard}
               >
-                <View style={styles.resourceText}>
-                  <Text style={styles.resourceName}>{resource.name}</Text>
+                <View style={themeStyles.resourceText}>
+                  <Text style={themeStyles.resourceName}>{resource.name}</Text>
 
-                  <Text style={styles.resourceDescription}>
+                  <Text style={themeStyles.resourceDescription}>
                     {resource.description}
                   </Text>
                 </View>
 
-                <View style={styles.callButton}>
-                  <Ionicons name="call" size={15} color="#ffffff" />
+                <View style={themeStyles.callButton}>
+                  <Ionicons name="call" size={15} color={themeTone("#ffffff", "color")} />
 
-                  <Text style={styles.callButtonText}>
+                  <Text style={themeStyles.callButtonText}>
                     {resource.displayPhone}
                   </Text>
                 </View>
               </Pressable>
             ))}
 
-            <Text style={styles.footnote}>
+            <Text style={themeStyles.footnote}>
               A peer supporter from your group may also reach out to you.
             </Text>
 
-            <Pressable onPress={onClose} style={styles.closeButton}>
-              <Text style={styles.closeButtonText}>Close</Text>
+            <Pressable onPress={onClose} style={themeStyles.closeButton}>
+              <Text style={themeStyles.closeButtonText}>Close</Text>
             </Pressable>
           </ScrollView>
         </View>

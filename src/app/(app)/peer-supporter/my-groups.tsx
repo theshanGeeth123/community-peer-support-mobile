@@ -1,3 +1,4 @@
+import { useThemeTone, useThemedStyles } from '@/theme/useAlyvenAppearance';
 import {
   useCallback,
   useMemo,
@@ -41,6 +42,9 @@ import {
 } from "@/services/api/apiError";
 
 export default function PeerSupporterMyGroupsScreen() {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   const [
     groups,
     setGroups,
@@ -206,7 +210,7 @@ export default function PeerSupporterMyGroupsScreen() {
   return (
     <SafeAreaView
       style={
-        styles.safeArea
+        themeStyles.safeArea
       }
       edges={[
         "top",
@@ -222,7 +226,7 @@ export default function PeerSupporterMyGroupsScreen() {
           false
         }
         contentContainerStyle={
-          styles.content
+          themeStyles.content
         }
         refreshControl={
           <RefreshControl
@@ -237,12 +241,12 @@ export default function PeerSupporterMyGroupsScreen() {
       >
         <View
           style={
-            styles.headingArea
+            themeStyles.headingArea
           }
         >
           <Text
             style={
-              styles.heading
+              themeStyles.heading
             }
           >
             My Groups
@@ -250,7 +254,7 @@ export default function PeerSupporterMyGroupsScreen() {
 
           <Text
             style={
-              styles.headingDescription
+              themeStyles.headingDescription
             }
           >
             View the support
@@ -262,29 +266,29 @@ export default function PeerSupporterMyGroupsScreen() {
 
         <View
           style={
-            styles.summaryCard
+            themeStyles.summaryCard
           }
         >
           <View
             style={
-              styles.summaryIcon
+              themeStyles.summaryIcon
             }
           >
             <Ionicons
               name="heart-outline"
               size={25}
-              color="#0E7C86"
+              color={themeTone("#0E7C86", "color")}
             />
           </View>
 
           <View
             style={
-              styles.summaryContent
+              themeStyles.summaryContent
             }
           >
             <Text
               style={
-                styles.summaryLabel
+                themeStyles.summaryLabel
               }
             >
               Assigned Groups
@@ -292,7 +296,7 @@ export default function PeerSupporterMyGroupsScreen() {
 
             <Text
               style={
-                styles.summaryValue
+                themeStyles.summaryValue
               }
             >
               {groups.length}
@@ -302,13 +306,13 @@ export default function PeerSupporterMyGroupsScreen() {
 
         <View
           style={
-            styles.searchBox
+            themeStyles.searchBox
           }
         >
           <Ionicons
             name="search-outline"
             size={20}
-            color="#8BA3AB"
+            color={themeTone("#8BA3AB", "color")}
           />
 
           <TextInput
@@ -317,9 +321,9 @@ export default function PeerSupporterMyGroupsScreen() {
               setSearch
             }
             placeholder="Search assigned groups..."
-            placeholderTextColor="#8BA3AB"
+            placeholderTextColor={themeTone("#8BA3AB", "placeholderTextColor")}
             style={
-              styles.searchInput
+              themeStyles.searchInput
             }
           />
 
@@ -334,7 +338,7 @@ export default function PeerSupporterMyGroupsScreen() {
               <Ionicons
                 name="close-circle"
                 size={20}
-                color="#8BA3AB"
+                color={themeTone("#8BA3AB", "color")}
               />
             </Pressable>
           )}
@@ -343,23 +347,23 @@ export default function PeerSupporterMyGroupsScreen() {
         {error && (
           <View
             style={
-              styles.errorBox
+              themeStyles.errorBox
             }
           >
             <Ionicons
               name="alert-circle-outline"
               size={20}
-              color="#b91c1c"
+              color={themeTone("#b91c1c", "color")}
             />
 
             <View
               style={
-                styles.errorContent
+                themeStyles.errorContent
               }
             >
               <Text
                 style={
-                  styles.errorText
+                  themeStyles.errorText
                 }
               >
                 {error}
@@ -372,7 +376,7 @@ export default function PeerSupporterMyGroupsScreen() {
               >
                 <Text
                   style={
-                    styles.retryText
+                    themeStyles.retryText
                   }
                 >
                   Try Again
@@ -385,17 +389,17 @@ export default function PeerSupporterMyGroupsScreen() {
         {loading ? (
           <View
             style={
-              styles.loadingArea
+              themeStyles.loadingArea
             }
           >
             <ActivityIndicator
               size="large"
-              color="#0E7C86"
+              color={themeTone("#0E7C86", "color")}
             />
 
             <Text
               style={
-                styles.loadingText
+                themeStyles.loadingText
               }
             >
               Loading assigned
@@ -406,24 +410,24 @@ export default function PeerSupporterMyGroupsScreen() {
           0 ? (
           <View
             style={
-              styles.emptyCard
+              themeStyles.emptyCard
             }
           >
             <View
               style={
-                styles.emptyIcon
+                themeStyles.emptyIcon
               }
             >
               <Ionicons
                 name="people-outline"
                 size={30}
-                color="#8BA3AB"
+                color={themeTone("#8BA3AB", "color")}
               />
             </View>
 
             <Text
               style={
-                styles.emptyTitle
+                themeStyles.emptyTitle
               }
             >
               {search
@@ -433,7 +437,7 @@ export default function PeerSupporterMyGroupsScreen() {
 
             <Text
               style={
-                styles.emptyDescription
+                themeStyles.emptyDescription
               }
             >
               {search
@@ -444,7 +448,7 @@ export default function PeerSupporterMyGroupsScreen() {
         ) : (
           <View
             style={
-              styles.groupList
+              themeStyles.groupList
             }
           >
             {filteredGroups.map(
@@ -486,6 +490,9 @@ function GroupCard({
   onViewRequests: () => void;
   onViewPosts: () => void;
 }) {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   const peerSupporterCount =
     group.peerSupporters
       ?.length ?? 0;
@@ -497,34 +504,34 @@ function GroupCard({
   return (
     <View
       style={
-        styles.groupCard
+        themeStyles.groupCard
       }
     >
       <View
         style={
-          styles.cardHeader
+          themeStyles.cardHeader
         }
       >
         <View
           style={
-            styles.groupIcon
+            themeStyles.groupIcon
           }
         >
           <Ionicons
             name="people"
             size={23}
-            color="#0E7C86"
+            color={themeTone("#0E7C86", "color")}
           />
         </View>
 
         <View
           style={
-            styles.groupTitleArea
+            themeStyles.groupTitleArea
           }
         >
           <Text
             style={
-              styles.groupName
+              themeStyles.groupName
             }
           >
             {group.name}
@@ -532,7 +539,7 @@ function GroupCard({
 
           <Text
             style={
-              styles.category
+              themeStyles.category
             }
           >
             {group.category}
@@ -541,12 +548,12 @@ function GroupCard({
 
         <View
           style={
-            styles.activeBadge
+            themeStyles.activeBadge
           }
         >
           <Text
             style={
-              styles.activeText
+              themeStyles.activeText
             }
           >
             ACTIVE
@@ -557,7 +564,7 @@ function GroupCard({
       <Text
         numberOfLines={3}
         style={
-          styles.description
+          themeStyles.description
         }
       >
         {group.description}
@@ -566,18 +573,18 @@ function GroupCard({
       {group.communityLocation && (
         <View
           style={
-            styles.locationRow
+            themeStyles.locationRow
           }
         >
           <Ionicons
             name="location-outline"
             size={16}
-            color="#64808C"
+            color={themeTone("#64808C", "color")}
           />
 
           <Text
             style={
-              styles.locationText
+              themeStyles.locationText
             }
           >
             {
@@ -589,23 +596,23 @@ function GroupCard({
 
       <View
         style={
-          styles.staffSection
+          themeStyles.staffSection
         }
       >
         <View
           style={
-            styles.staffItem
+            themeStyles.staffItem
           }
         >
           <Ionicons
             name="heart-outline"
             size={17}
-            color="#168994"
+            color={themeTone("#168994", "color")}
           />
 
           <Text
             style={
-              styles.staffText
+              themeStyles.staffText
             }
           >
             {peerSupporterCount}{" "}
@@ -619,18 +626,18 @@ function GroupCard({
 
         <View
           style={
-            styles.staffItem
+            themeStyles.staffItem
           }
         >
           <Ionicons
             name="shield-checkmark-outline"
             size={17}
-            color="#168994"
+            color={themeTone("#168994", "color")}
           />
 
           <Text
             style={
-              styles.staffText
+              themeStyles.staffText
             }
           >
             {moderatorCount}{" "}
@@ -650,7 +657,7 @@ function GroupCard({
         style={({
           pressed,
         }) => [
-          styles.requestsButton,
+          themeStyles.requestsButton,
 
           pressed && {
             opacity: 0.82,
@@ -659,24 +666,24 @@ function GroupCard({
       >
         <View
           style={
-            styles.requestsButtonIcon
+            themeStyles.requestsButtonIcon
           }
         >
           <Ionicons
             name="person-add-outline"
             size={18}
-            color="#0E7C86"
+            color={themeTone("#0E7C86", "color")}
           />
         </View>
 
         <View
           style={
-            styles.requestsButtonContent
+            themeStyles.requestsButtonContent
           }
         >
           <Text
             style={
-              styles.requestsButtonTitle
+              themeStyles.requestsButtonTitle
             }
           >
             Join Requests
@@ -684,7 +691,7 @@ function GroupCard({
 
           <Text
             style={
-              styles.requestsButtonDescription
+              themeStyles.requestsButtonDescription
             }
           >
             Review requests for
@@ -695,7 +702,7 @@ function GroupCard({
         <Ionicons
           name="chevron-forward"
           size={19}
-          color="#168994"
+          color={themeTone("#168994", "color")}
         />
       </Pressable>
 
@@ -706,7 +713,7 @@ function GroupCard({
         style={({
           pressed,
         }) => [
-          styles.requestsButton,
+          themeStyles.requestsButton,
           { marginTop: 10 },
 
           pressed && {
@@ -716,24 +723,24 @@ function GroupCard({
       >
         <View
           style={
-            styles.requestsButtonIcon
+            themeStyles.requestsButtonIcon
           }
         >
           <Ionicons
             name="chatbubbles-outline"
             size={18}
-            color="#0E7C86"
+            color={themeTone("#0E7C86", "color")}
           />
         </View>
 
         <View
           style={
-            styles.requestsButtonContent
+            themeStyles.requestsButtonContent
           }
         >
           <Text
             style={
-              styles.requestsButtonTitle
+              themeStyles.requestsButtonTitle
             }
           >
             Posts
@@ -741,7 +748,7 @@ function GroupCard({
 
           <Text
             style={
-              styles.requestsButtonDescription
+              themeStyles.requestsButtonDescription
             }
           >
             View and moderate posts
@@ -751,7 +758,7 @@ function GroupCard({
         <Ionicons
           name="chevron-forward"
           size={19}
-          color="#168994"
+          color={themeTone("#168994", "color")}
         />
       </Pressable>
     </View>

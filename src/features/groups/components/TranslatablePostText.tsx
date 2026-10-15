@@ -1,3 +1,4 @@
+import { useThemeTone, useThemedStyles } from '@/theme/useAlyvenAppearance';
 import { useEffect, useState } from "react";
 
 import {
@@ -42,6 +43,9 @@ export default function TranslatablePostText({
   post: Pick<Post, "id" | "content" | "language">;
   style?: StyleProp<TextStyle>;
 }) {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   const myLanguage = useMyLanguage();
 
   /*
@@ -118,40 +122,40 @@ export default function TranslatablePostText({
       </Text>
 
       {canTranslate && (
-        <View style={styles.row}>
+        <View style={themeStyles.row}>
           {isShowingTranslation ? (
             <>
-              <Ionicons name="sparkles" size={12} color="#8BA3AB" />
+              <Ionicons name="sparkles" size={12} color={themeTone("#8BA3AB", "color")} />
 
-              <Text style={styles.translatedLabel}>
+              <Text style={themeStyles.translatedLabel}>
                 {text.translatedByAi}
               </Text>
 
-              <Text style={styles.separator}>·</Text>
+              <Text style={themeStyles.separator}>·</Text>
 
               <Pressable
                 hitSlop={8}
                 onPress={() => setShowingTranslation(false)}
               >
-                <Text style={styles.link}>{text.showOriginal}</Text>
+                <Text style={themeStyles.link}>{text.showOriginal}</Text>
               </Pressable>
             </>
           ) : loading ? (
             <>
-              <ActivityIndicator size="small" color="#0E7C86" />
+              <ActivityIndicator size="small" color={themeTone("#0E7C86", "color")} />
 
-              <Text style={styles.translatedLabel}>{text.translating}</Text>
+              <Text style={themeStyles.translatedLabel}>{text.translating}</Text>
             </>
           ) : (
             <Pressable
               hitSlop={8}
               accessibilityRole="button"
               onPress={() => void handleTranslate()}
-              style={styles.translateButton}
+              style={themeStyles.translateButton}
             >
-              <Ionicons name="language" size={14} color="#0E7C86" />
+              <Ionicons name="language" size={14} color={themeTone("#0E7C86", "color")} />
 
-              <Text style={styles.link}>
+              <Text style={themeStyles.link}>
                 {translationForMyLanguage !== null
                   ? text.showTranslation
                   : text.translate}
@@ -162,7 +166,7 @@ export default function TranslatablePostText({
       )}
 
       {canTranslate && error && !isShowingTranslation && (
-        <Text style={styles.error}>{error}</Text>
+        <Text style={themeStyles.error}>{error}</Text>
       )}
     </View>
   );

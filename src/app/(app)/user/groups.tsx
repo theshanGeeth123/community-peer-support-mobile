@@ -1,3 +1,4 @@
+import { useThemeTone, useThemedStyles } from '@/theme/useAlyvenAppearance';
 import SectionBanner from "@/features/branding/components/SectionBanner";
 import { useCallback, useMemo, useState } from "react";
 
@@ -59,6 +60,9 @@ function getGroupReferenceId(reference: GroupReference): string | null {
 }
 
 export default function UserGroupsFeedScreen() {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   const { user } = useAuth();
 
   /*
@@ -327,29 +331,29 @@ export default function UserGroupsFeedScreen() {
 
   return (
     <SafeAreaView
-      style={styles.safeArea}
+      style={themeStyles.safeArea}
       edges={["top", "left", "right"]}
     >
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Groups</Text>
+      <View style={themeStyles.header}>
+        <Text style={themeStyles.headerTitle}>Groups</Text>
 
-        <View style={styles.headerActions}>
+        <View style={themeStyles.headerActions}>
           <LanguageButton />
 
           <Pressable
             onPress={() => router.push("/(app)/user/discover" as Href)}
-            style={styles.discoverButton}
+            style={themeStyles.discoverButton}
           >
-            <Ionicons name="compass-outline" size={16} color="#0E7C86" />
+            <Ionicons name="compass-outline" size={16} color={themeTone("#0E7C86", "color")} />
 
-            <Text style={styles.discoverButtonText}>Discover</Text>
+            <Text style={themeStyles.discoverButtonText}>Discover</Text>
           </Pressable>
         </View>
       </View>
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.content}
+        contentContainerStyle={themeStyles.content}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -364,19 +368,19 @@ export default function UserGroupsFeedScreen() {
           description="Connect with your groups, follow conversations, and share at your pace."
           icon="people-outline"
         />
-        <View style={styles.searchBox}>
+        <View style={themeStyles.searchBox}>
           <Ionicons
             name="search-outline"
             size={19}
-            color="#8BA3AB"
+            color={themeTone("#8BA3AB", "color")}
           />
 
           <TextInput
             value={search}
             onChangeText={setSearch}
             placeholder="Search your groups to visit..."
-            placeholderTextColor="#8BA3AB"
-            style={styles.searchInput}
+            placeholderTextColor={themeTone("#8BA3AB", "placeholderTextColor")}
+            style={themeStyles.searchInput}
           />
 
           {search.length > 0 && (
@@ -387,16 +391,16 @@ export default function UserGroupsFeedScreen() {
               <Ionicons
                 name="close-circle"
                 size={19}
-                color="#8BA3AB"
+                color={themeTone("#8BA3AB", "color")}
               />
             </Pressable>
           )}
         </View>
 
         {normalizedSearch.length > 0 && (
-          <View style={styles.searchResults}>
+          <View style={themeStyles.searchResults}>
             {matchingGroups.length === 0 ? (
-              <Text style={styles.searchResultsEmpty}>
+              <Text style={themeStyles.searchResultsEmpty}>
                 No joined groups match "{search}".
               </Text>
             ) : (
@@ -404,24 +408,24 @@ export default function UserGroupsFeedScreen() {
                 <Pressable
                   key={group.id}
                   onPress={() => visitGroup(group.id)}
-                  style={styles.searchResultRow}
+                  style={themeStyles.searchResultRow}
                 >
-                  <View style={styles.searchResultIcon}>
+                  <View style={themeStyles.searchResultIcon}>
                     <Ionicons
                       name="people"
                       size={18}
-                      color="#0E7C86"
+                      color={themeTone("#0E7C86", "color")}
                     />
                   </View>
 
-                  <Text style={styles.searchResultName}>
+                  <Text style={themeStyles.searchResultName}>
                     {group.name}
                   </Text>
 
                   <Ionicons
                     name="chevron-forward"
                     size={18}
-                    color="#8BA3AB"
+                    color={themeTone("#8BA3AB", "color")}
                   />
                 </Pressable>
               ))
@@ -443,39 +447,39 @@ export default function UserGroupsFeedScreen() {
         )}
 
         {error && (
-          <View style={styles.errorBox}>
-            <Text style={styles.errorText}>
+          <View style={themeStyles.errorBox}>
+            <Text style={themeStyles.errorText}>
               {error}
             </Text>
           </View>
         )}
 
         {loading ? (
-          <View style={styles.center}>
+          <View style={themeStyles.center}>
             <ActivityIndicator
               size="large"
-              color="#0E7C86"
+              color={themeTone("#0E7C86", "color")}
             />
 
-            <Text style={styles.loadingText}>
+            <Text style={themeStyles.loadingText}>
               Loading your feed...
             </Text>
           </View>
         ) : joinedGroups.length === 0 ? (
-          <View style={styles.emptyCard}>
-            <View style={styles.emptyIcon}>
+          <View style={themeStyles.emptyCard}>
+            <View style={themeStyles.emptyIcon}>
               <Ionicons
                 name="people-outline"
                 size={30}
-                color="#0E7C86"
+                color={themeTone("#0E7C86", "color")}
               />
             </View>
 
-            <Text style={styles.emptyTitle}>
+            <Text style={themeStyles.emptyTitle}>
               No groups joined yet
             </Text>
 
-            <Text style={styles.emptyDescription}>
+            <Text style={themeStyles.emptyDescription}>
               Discover a support group to join and start
               seeing posts here.
             </Text>
@@ -486,34 +490,34 @@ export default function UserGroupsFeedScreen() {
                   "/(app)/user/discover" as Href
                 )
               }
-              style={styles.emptyDiscoverButton}
+              style={themeStyles.emptyDiscoverButton}
             >
               <Ionicons
                 name="compass-outline"
                 size={17}
-                color="#ffffff"
+                color={themeTone("#ffffff", "color")}
               />
 
-              <Text style={styles.emptyDiscoverButtonText}>
+              <Text style={themeStyles.emptyDiscoverButtonText}>
                 Discover Groups
               </Text>
             </Pressable>
           </View>
         ) : posts.length === 0 ? (
-          <View style={styles.emptyCard}>
-            <View style={styles.emptyIcon}>
+          <View style={themeStyles.emptyCard}>
+            <View style={themeStyles.emptyIcon}>
               <Ionicons
                 name="chatbubbles-outline"
                 size={29}
-                color="#0E7C86"
+                color={themeTone("#0E7C86", "color")}
               />
             </View>
 
-            <Text style={styles.emptyTitle}>
+            <Text style={themeStyles.emptyTitle}>
               No posts yet
             </Text>
 
-            <Text style={styles.emptyDescription}>
+            <Text style={themeStyles.emptyDescription}>
               Be the first to share something with your
               groups.
             </Text>

@@ -1,3 +1,4 @@
+import { useThemeTone, useThemedStyles } from '@/theme/useAlyvenAppearance';
 import { useCallback, useState } from "react";
 
 import {
@@ -50,6 +51,9 @@ const PAGE_SIZE = 20;
 */
 
 export default function NeedsResponseScreen() {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   const { user } = useAuth();
 
   const [crisisAlerts, setCrisisAlerts] = useState<Post[]>([]);
@@ -378,26 +382,26 @@ export default function NeedsResponseScreen() {
 
   return (
     <SafeAreaView
-      style={styles.safeArea}
+      style={themeStyles.safeArea}
       edges={[
         "top",
         "left",
         "right",
       ]}
     >
-      <View style={styles.header}>
+      <View style={themeStyles.header}>
         <Pressable
           onPress={() => router.back()}
-          style={styles.backButton}
+          style={themeStyles.backButton}
         >
           <Ionicons
             name="arrow-back"
             size={22}
-            color="#0E2A47"
+            color={themeTone("#0E2A47", "color")}
           />
         </Pressable>
 
-        <Text style={styles.headerTitle}>
+        <Text style={themeStyles.headerTitle}>
           Needs a response
         </Text>
 
@@ -406,7 +410,7 @@ export default function NeedsResponseScreen() {
 
       <ScrollView
         contentContainerStyle={
-          styles.content
+          themeStyles.content
         }
         showsVerticalScrollIndicator={
           false
@@ -419,41 +423,41 @@ export default function NeedsResponseScreen() {
         }
       >
         {error && (
-          <View style={styles.errorBox}>
-            <Text style={styles.errorText}>
+          <View style={themeStyles.errorBox}>
+            <Text style={themeStyles.errorText}>
               {error}
             </Text>
           </View>
         )}
 
         {loading ? (
-          <View style={styles.center}>
+          <View style={themeStyles.center}>
             <ActivityIndicator
               size="large"
-              color="#0E7C86"
+              color={themeTone("#0E7C86", "color")}
             />
 
-            <Text style={styles.loadingText}>
+            <Text style={themeStyles.loadingText}>
               Loading queue...
             </Text>
           </View>
         ) : isQueueEmpty && !error ? (
-          <View style={styles.emptyCard}>
-            <View style={styles.emptyIcon}>
+          <View style={themeStyles.emptyCard}>
+            <View style={themeStyles.emptyIcon}>
               <Ionicons
                 name="checkmark-done-outline"
                 size={30}
-                color="#16a34a"
+                color={themeTone("#16a34a", "color")}
               />
             </View>
 
-            <Text style={styles.emptyTitle}>
+            <Text style={themeStyles.emptyTitle}>
               All caught up
             </Text>
 
             <Text
               style={
-                styles.emptyDescription
+                themeStyles.emptyDescription
               }
             >
               No crisis alerts, and every
@@ -467,22 +471,22 @@ export default function NeedsResponseScreen() {
             {/* CRISIS ALERTS */}
 
             {crisisAlerts.length > 0 && (
-              <View style={styles.section}>
+              <View style={themeStyles.section}>
                 <View
                   style={
-                    styles.sectionHeader
+                    themeStyles.sectionHeader
                   }
                 >
                   <Ionicons
                     name="warning"
                     size={18}
-                    color="#be123c"
+                    color={themeTone("#be123c", "color")}
                   />
 
                   <Text
                     style={[
-                      styles.sectionTitle,
-                      styles.crisisTitle,
+                      themeStyles.sectionTitle,
+                      themeStyles.crisisTitle,
                     ]}
                   >
                     Crisis alerts
@@ -490,13 +494,13 @@ export default function NeedsResponseScreen() {
 
                   <View
                     style={[
-                      styles.countBadge,
-                      styles.crisisBadge,
+                      themeStyles.countBadge,
+                      themeStyles.crisisBadge,
                     ]}
                   >
                     <Text
                       style={
-                        styles.countBadgeText
+                        themeStyles.countBadgeText
                       }
                     >
                       {counts.crisisAlerts}
@@ -505,7 +509,7 @@ export default function NeedsResponseScreen() {
                 </View>
 
                 <Text
-                  style={styles.sectionHint}
+                  style={themeStyles.sectionHint}
                 >
                   These posts may show a risk
                   of self-harm. Please reach
@@ -521,28 +525,28 @@ export default function NeedsResponseScreen() {
 
             {/* WAITING FOR A REPLY */}
 
-            <View style={styles.section}>
+            <View style={themeStyles.section}>
               <View
-                style={styles.sectionHeader}
+                style={themeStyles.sectionHeader}
               >
                 <Ionicons
                   name="chatbubble-ellipses"
                   size={18}
-                  color="#0E7C86"
+                  color={themeTone("#0E7C86", "color")}
                 />
 
                 <Text
-                  style={styles.sectionTitle}
+                  style={themeStyles.sectionTitle}
                 >
                   Waiting for a reply
                 </Text>
 
                 <View
-                  style={styles.countBadge}
+                  style={themeStyles.countBadge}
                 >
                   <Text
                     style={
-                      styles.countBadgeText
+                      themeStyles.countBadgeText
                     }
                   >
                     {counts.unanswered}
@@ -551,7 +555,7 @@ export default function NeedsResponseScreen() {
               </View>
 
               <Text
-                style={styles.sectionHint}
+                style={themeStyles.sectionHint}
               >
                 Posts with no comments from
                 the last {maxAgeDays} days —
@@ -560,7 +564,7 @@ export default function NeedsResponseScreen() {
 
               {unanswered.length === 0 ? (
                 <Text
-                  style={styles.sectionEmpty}
+                  style={themeStyles.sectionEmpty}
                 >
                   Every recent post has at
                   least one reply.
@@ -576,18 +580,18 @@ export default function NeedsResponseScreen() {
                     void handleLoadMore()
                   }
                   style={
-                    styles.loadMoreButton
+                    themeStyles.loadMoreButton
                   }
                 >
                   {loadingMore ? (
                     <ActivityIndicator
                       size="small"
-                      color="#0E7C86"
+                      color={themeTone("#0E7C86", "color")}
                     />
                   ) : (
                     <Text
                       style={
-                        styles.loadMoreText
+                        themeStyles.loadMoreText
                       }
                     >
                       Load more

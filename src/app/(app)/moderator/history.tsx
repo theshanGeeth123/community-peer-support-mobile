@@ -1,3 +1,4 @@
+import { useThemeTone, useThemedStyles } from '@/theme/useAlyvenAppearance';
 ﻿import {
   ActivityIndicator,
   FlatList,
@@ -18,6 +19,9 @@ import ReportCard from "@/features/moderation/components/ReportCard";
 import type { Report } from "@/features/moderation/types/moderation.types";
 
 export default function ModeratorHistoryScreen() {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   const {
     reports,
     pagination,
@@ -41,16 +45,16 @@ export default function ModeratorHistoryScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
+    <SafeAreaView style={themeStyles.container} edges={["top", "left", "right"]}>
       {/* Header */}
-      <View style={styles.header}>
-        <Pressable onPress={() => router.back()} style={styles.backBtn} hitSlop={10}>
-          <Ionicons name="arrow-back" size={22} color="#0E2A47" />
+      <View style={themeStyles.header}>
+        <Pressable onPress={() => router.back()} style={themeStyles.backBtn} hitSlop={10}>
+          <Ionicons name="arrow-back" size={22} color={themeTone("#0E2A47", "color")} />
         </Pressable>
-        <View style={styles.headerCenter}>
-          <Text style={styles.headerTitle}>Moderation History</Text>
+        <View style={themeStyles.headerCenter}>
+          <Text style={themeStyles.headerTitle}>Moderation History</Text>
           {pagination && (
-            <Text style={styles.headerSub}>
+            <Text style={themeStyles.headerSub}>
               {pagination.totalReports} reviewed
             </Text>
           )}
@@ -59,27 +63,27 @@ export default function ModeratorHistoryScreen() {
       </View>
 
       {/* Info banner */}
-      <View style={styles.infoBanner}>
-        <Ionicons name="checkmark-circle-outline" size={14} color="#059669" />
-        <Text style={styles.infoBannerText}>
+      <View style={themeStyles.infoBanner}>
+        <Ionicons name="checkmark-circle-outline" size={14} color={themeTone("#059669", "color")} />
+        <Text style={themeStyles.infoBannerText}>
           Showing all reports you have reviewed
         </Text>
       </View>
 
       {loading ? (
-        <View style={styles.centered}>
-          <ActivityIndicator size="large" color="#0E7C86" />
-          <Text style={styles.loadingText}>Loading history...</Text>
+        <View style={themeStyles.centered}>
+          <ActivityIndicator size="large" color={themeTone("#0E7C86", "color")} />
+          <Text style={themeStyles.loadingText}>Loading history...</Text>
         </View>
       ) : error ? (
-        <View style={styles.centered}>
-          <View style={styles.errorIconWrap}>
-            <Ionicons name="alert-circle-outline" size={36} color="#e11d48" />
+        <View style={themeStyles.centered}>
+          <View style={themeStyles.errorIconWrap}>
+            <Ionicons name="alert-circle-outline" size={36} color={themeTone("#e11d48", "color")} />
           </View>
-          <Text style={styles.errorTitle}>Failed to load history</Text>
-          <Text style={styles.errorSub}>{error}</Text>
-          <Pressable onPress={() => void refresh()} style={styles.retryBtn}>
-            <Text style={styles.retryLabel}>Retry</Text>
+          <Text style={themeStyles.errorTitle}>Failed to load history</Text>
+          <Text style={themeStyles.errorSub}>{error}</Text>
+          <Pressable onPress={() => void refresh()} style={themeStyles.retryBtn}>
+            <Text style={themeStyles.retryLabel}>Retry</Text>
           </Pressable>
         </View>
       ) : (
@@ -92,32 +96,32 @@ export default function ModeratorHistoryScreen() {
               onPress={handlePressReport}
             />
           )}
-          contentContainerStyle={styles.listContent}
+          contentContainerStyle={themeStyles.listContent}
           showsVerticalScrollIndicator={false}
           refreshControl={
             <RefreshControl
               refreshing={refreshing}
               onRefresh={() => void refresh()}
-              tintColor="#0E7C86"
+              tintColor={themeTone("#0E7C86", "tintColor")}
             />
           }
           onEndReached={() => void loadMore()}
           onEndReachedThreshold={0.3}
           ListEmptyComponent={
-            <View style={styles.emptyBox}>
-              <View style={styles.emptyIcon}>
-                <Ionicons name="time-outline" size={36} color="#8BA3AB" />
+            <View style={themeStyles.emptyBox}>
+              <View style={themeStyles.emptyIcon}>
+                <Ionicons name="time-outline" size={36} color={themeTone("#8BA3AB", "color")} />
               </View>
-              <Text style={styles.emptyTitle}>No history yet</Text>
-              <Text style={styles.emptySub}>
+              <Text style={themeStyles.emptyTitle}>No history yet</Text>
+              <Text style={themeStyles.emptySub}>
                 Reports you review will appear here once you take action on them.
               </Text>
             </View>
           }
           ListFooterComponent={
             loadingMore ? (
-              <View style={styles.loadingMore}>
-                <ActivityIndicator size="small" color="#0E7C86" />
+              <View style={themeStyles.loadingMore}>
+                <ActivityIndicator size="small" color={themeTone("#0E7C86", "color")} />
               </View>
             ) : null
           }

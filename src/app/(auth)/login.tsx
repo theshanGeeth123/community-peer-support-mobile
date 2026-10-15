@@ -1,3 +1,4 @@
+import { useThemeTone, useThemedClassName } from '@/theme/useAlyvenAppearance';
 import {
   useState,
 } from "react";
@@ -82,6 +83,9 @@ const DEMO_ACCOUNTS = [
 ];
 
 export default function LoginScreen() {
+  const themeClass = useThemedClassName();
+  const themeTone = useThemeTone();
+
   const {
     login,
   } = useAuth();
@@ -259,14 +263,14 @@ export default function LoginScreen() {
       />
 
       <Pressable
-        className="mb-5 self-end"
+        className={themeClass("mb-5 self-end")}
         onPress={() =>
           router.push(
             "/(auth)/forgot-password"
           )
         }
       >
-        <Text className="font-semibold text-indigo-600">
+        <Text className={themeClass("font-semibold text-indigo-600")}>
           Forgot password?
         </Text>
       </Pressable>
@@ -284,18 +288,18 @@ export default function LoginScreen() {
         )}
       />
 
-      <View className="my-6 flex-row items-center">
-        <View className="h-px flex-1 bg-slate-200" />
+      <View className={themeClass("my-6 flex-row items-center")}>
+        <View className={themeClass("h-px flex-1 bg-slate-200")} />
 
-        <Text className="mx-3 text-sm text-slate-400">
+        <Text className={themeClass("mx-3 text-sm text-slate-400")}>
           or continue with
         </Text>
 
-        <View className="h-px flex-1 bg-slate-200" />
+        <View className={themeClass("h-px flex-1 bg-slate-200")} />
       </View>
 
       <Pressable
-        className="min-h-14 flex-row items-center justify-center rounded-2xl border border-slate-300 bg-white"
+        className={themeClass("min-h-14 flex-row items-center justify-center rounded-2xl border border-slate-300 bg-white")}
         onPress={() => {
           /*
            * Google Login will be integrated
@@ -306,16 +310,16 @@ export default function LoginScreen() {
         <Ionicons
           name="logo-google"
           size={20}
-          color="#31515F"
+          color={themeTone("#31515F", "color")}
         />
 
-        <Text className="ml-3 font-bold text-slate-700">
+        <Text className={themeClass("ml-3 font-bold text-slate-700")}>
           Continue with Google
         </Text>
       </Pressable>
 
-      <View className="mt-6 flex-row justify-center">
-        <Text className="text-slate-500">
+      <View className={themeClass("mt-6 flex-row justify-center")}>
+        <Text className={themeClass("text-slate-500")}>
           Don't have an account?{" "}
         </Text>
 
@@ -326,7 +330,7 @@ export default function LoginScreen() {
             )
           }
         >
-          <Text className="font-bold text-indigo-600">
+          <Text className={themeClass("font-bold text-indigo-600")}>
             Create account
           </Text>
         </Pressable>
@@ -339,28 +343,28 @@ export default function LoginScreen() {
        * running the app in development mode.
        */}
       {__DEV__ && (
-        <View className="mb-6 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-          <View className="mb-3 flex-row items-center">
-            <View className="mr-2 h-8 w-8 items-center justify-center rounded-full bg-indigo-50">
+        <View className={themeClass("mb-6 rounded-2xl border border-slate-200 bg-slate-50 p-4")}>
+          <View className={themeClass("mb-3 flex-row items-center")}>
+            <View className={themeClass("mr-2 h-8 w-8 items-center justify-center rounded-full bg-indigo-50")}>
               <Ionicons
                 name="flash-outline"
                 size={17}
-                color="#b45309"
+                color={themeTone("#b45309", "color")}
               />
             </View>
 
-            <View className="flex-1">
-              <Text className="font-bold text-slate-900">
+            <View className={themeClass("flex-1")}>
+              <Text className={themeClass("font-bold text-slate-900")}>
                 Demo Login
               </Text>
 
-              <Text className="mt-0.5 text-xs text-slate-500">
+              <Text className={themeClass("mt-0.5 text-xs text-slate-500")}>
                 Development-only role shortcuts
               </Text>
             </View>
           </View>
 
-          <View className="gap-2">
+          <View className={themeClass("gap-2")}>
             {DEMO_ACCOUNTS.map(
               (
                 account
@@ -387,17 +391,17 @@ export default function LoginScreen() {
                         account.email
                       )
                     }
-                    className={`min-h-12 flex-row items-center rounded-xl border px-4 ${
+                    className={themeClass(`min-h-12 flex-row items-center rounded-xl border px-4 ${
                       isDisabled
                         ? "border-slate-200 bg-slate-100"
                         : "border-amber-200 bg-white active:bg-indigo-50"
-                    }`}
+                    }`)}
                   >
-                    <View className="mr-3 h-8 w-8 items-center justify-center rounded-lg bg-indigo-50">
+                    <View className={themeClass("mr-3 h-8 w-8 items-center justify-center rounded-lg bg-indigo-50")}>
                       {isCurrentLoading ? (
                         <ActivityIndicator
                           size="small"
-                          color="#0E7C86"
+                          color={themeTone("#0E7C86", "color")}
                         />
                       ) : (
                         <Ionicons
@@ -407,13 +411,13 @@ export default function LoginScreen() {
                           size={
                             18
                           }
-                          color="#0E7C86"
+                          color={themeTone("#0E7C86", "color")}
                         />
                       )}
                     </View>
 
-                    <View className="flex-1">
-                      <Text className="font-semibold text-slate-800">
+                    <View className={themeClass("flex-1")}>
+                      <Text className={themeClass("font-semibold text-slate-800")}>
                         {
                           account.label
                         }
@@ -423,7 +427,7 @@ export default function LoginScreen() {
                         numberOfLines={
                           1
                         }
-                        className="text-xs text-slate-500"
+                        className={themeClass("text-xs text-slate-500")}
                       >
                         {
                           account.email
@@ -434,7 +438,7 @@ export default function LoginScreen() {
                     <Ionicons
                       name="arrow-forward-outline"
                       size={18}
-                      color="#64808C"
+                      color={themeTone("#64808C", "color")}
                     />
                   </Pressable>
                 );

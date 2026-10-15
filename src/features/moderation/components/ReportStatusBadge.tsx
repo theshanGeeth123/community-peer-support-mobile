@@ -1,3 +1,4 @@
+import { useThemedStyles } from '@/theme/useAlyvenAppearance';
 ﻿import { StyleSheet, Text, View } from "react-native";
 
 import type { ReportStatus } from "../types/moderation.types";
@@ -27,19 +28,21 @@ const config: Record<
 export default function ReportStatusBadge({
   status,
 }: ReportStatusBadgeProps) {
+  const themeStyles = useThemedStyles(styles);
+
   const c = config[status];
 
   return (
     <View
       style={[
-        styles.badge,
+        themeStyles.badge,
         { backgroundColor: c.bg },
       ]}
     >
       <View
-        style={[styles.dot, { backgroundColor: c.dot }]}
+        style={[themeStyles.dot, { backgroundColor: c.dot }]}
       />
-      <Text style={[styles.label, { color: c.text }]}>
+      <Text style={[themeStyles.label, { color: c.text }]}>
         {c.label}
       </Text>
     </View>

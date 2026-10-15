@@ -1,3 +1,4 @@
+import { useThemeTone, useThemedStyles } from '@/theme/useAlyvenAppearance';
 import {
   ActivityIndicator,
   StyleSheet,
@@ -16,6 +17,9 @@ import {
 import ShakeQuickActions from "@/features/safety/components/ShakeQuickActions";
 
 export default function AppLayout() {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   const {
     isAuthenticated,
     isInitializing,
@@ -25,12 +29,12 @@ export default function AppLayout() {
     return (
       <View
         style={
-          styles.loadingContainer
+          themeStyles.loadingContainer
         }
       >
         <ActivityIndicator
           size="large"
-          color="#0E7C86"
+          color={themeTone("#0E7C86", "color")}
         />
       </View>
     );
@@ -45,14 +49,14 @@ export default function AppLayout() {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={themeStyles.container}>
       <Stack
         screenOptions={{
           headerShown: false,
 
           contentStyle: {
             backgroundColor:
-              "#F5FAF9",
+              themeTone("#F5FAF9", "backgroundColor"),
           },
         }}
       />

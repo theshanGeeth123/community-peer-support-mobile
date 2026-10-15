@@ -1,3 +1,4 @@
+import { useThemeTone, useThemedStyles } from '@/theme/useAlyvenAppearance';
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { Ionicons } from "@expo/vector-icons";
@@ -58,59 +59,62 @@ export default function GlobalPostCard({
   onOpenComments: () => void;
   onDelete: () => void;
 }) {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   const canDelete =
     canModerate || (currentUserId && post.author.id === currentUserId);
 
   return (
-    <View style={[styles.card, post.isPinned && styles.cardPinned]}>
+    <View style={[themeStyles.card, post.isPinned && themeStyles.cardPinned]}>
       {post.isPinned && (
-        <View style={styles.pinnedBadge}>
-          <Ionicons name="pin" size={12} color="#b45309" />
-          <Text style={styles.pinnedBadgeText}>
+        <View style={themeStyles.pinnedBadge}>
+          <Ionicons name="pin" size={12} color={themeTone("#b45309", "color")} />
+          <Text style={themeStyles.pinnedBadgeText}>
             {post.postType === "announcement" ? "Announcement" : "Pinned"}
           </Text>
         </View>
       )}
 
-      <View style={styles.header}>
-        <View style={styles.avatar}>
-          <Text style={styles.avatarText}>
+      <View style={themeStyles.header}>
+        <View style={themeStyles.avatar}>
+          <Text style={themeStyles.avatarText}>
             {getInitials(post.author.fullName)}
           </Text>
         </View>
 
-        <View style={styles.headerText}>
-          <Text style={styles.authorName}>{post.author.fullName}</Text>
+        <View style={themeStyles.headerText}>
+          <Text style={themeStyles.authorName}>{post.author.fullName}</Text>
 
-          <Text style={styles.timestamp}>
+          <Text style={themeStyles.timestamp}>
             {post.author.role} · {formatRelativeTime(post.createdAt)}
           </Text>
         </View>
 
         {canDelete && (
           <Pressable hitSlop={10} onPress={onDelete}>
-            <Ionicons name="trash-outline" size={19} color="#8BA3AB" />
+            <Ionicons name="trash-outline" size={19} color={themeTone("#8BA3AB", "color")} />
           </Pressable>
         )}
       </View>
 
-      <Text style={styles.content}>{post.content}</Text>
+      <Text style={themeStyles.content}>{post.content}</Text>
 
-      <View style={styles.footer}>
-        <Pressable style={styles.actionButton} onPress={onToggleLike}>
+      <View style={themeStyles.footer}>
+        <Pressable style={themeStyles.actionButton} onPress={onToggleLike}>
           <Ionicons
             name={post.likedByMe ? "heart" : "heart-outline"}
             size={19}
             color={post.likedByMe ? "#ef4444" : "#64808C"}
           />
 
-          <Text style={styles.actionText}>{post.likeCount}</Text>
+          <Text style={themeStyles.actionText}>{post.likeCount}</Text>
         </Pressable>
 
-        <Pressable style={styles.actionButton} onPress={onOpenComments}>
-          <Ionicons name="chatbubble-outline" size={18} color="#64808C" />
+        <Pressable style={themeStyles.actionButton} onPress={onOpenComments}>
+          <Ionicons name="chatbubble-outline" size={18} color={themeTone("#64808C", "color")} />
 
-          <Text style={styles.actionText}>{post.commentCount}</Text>
+          <Text style={themeStyles.actionText}>{post.commentCount}</Text>
         </Pressable>
       </View>
     </View>

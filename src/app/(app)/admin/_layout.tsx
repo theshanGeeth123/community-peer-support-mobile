@@ -1,3 +1,4 @@
+import { useThemeTone } from '@/theme/useAlyvenAppearance';
 import {
     Platform,
 } from "react-native";
@@ -13,6 +14,8 @@ import {
 import RoleAreaGuard from "@/features/navigation/components/RoleAreaGuard";
 
 export default function AdminTabsLayout() {
+  const themeTone = useThemeTone();
+
   return (
     <RoleAreaGuard
       allowedRole="ADMIN"
@@ -23,10 +26,10 @@ export default function AdminTabsLayout() {
           headerShown: false,
 
           tabBarActiveTintColor:
-            "#0E7C86",
+            themeTone("#0E7C86", "color"),
 
           tabBarInactiveTintColor:
-            "#8BA3AB",
+            themeTone("#8BA3AB", "color"),
 
           tabBarHideOnKeyboard:
             true,
@@ -37,14 +40,14 @@ export default function AdminTabsLayout() {
           },
 
           tabBarStyle: {
-            backgroundColor: '#FFFFFF',
+            backgroundColor: themeTone('#FFFFFF', "backgroundColor"),
             borderTopWidth: 0,
             borderTopLeftRadius: 24,
             borderTopRightRadius: 24,
             height: Platform.OS === 'ios' ? 90 : 76,
             paddingTop: 11,
             paddingBottom: Platform.OS === 'ios' ? 26 : 9,
-            shadowColor: '#0E2A47',
+            shadowColor: themeTone('#0E2A47', "shadowColor"),
             shadowOffset: { width: 0, height: -5 },
             shadowOpacity: 0.07,
             shadowRadius: 14,

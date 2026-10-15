@@ -1,3 +1,4 @@
+import { useThemeTone, useThemedStyles } from '@/theme/useAlyvenAppearance';
 import {
     useCallback,
     useMemo,
@@ -43,6 +44,9 @@ import {
 } from "@/services/api/apiError";
 
 export default function ModeratorMembersScreen() {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   const params =
     useLocalSearchParams();
 
@@ -329,12 +333,12 @@ export default function ModeratorMembersScreen() {
   return (
     <SafeAreaView
       style={
-        styles.safeArea
+        themeStyles.safeArea
       }
     >
       <View
         style={
-          styles.header
+          themeStyles.header
         }
       >
         <Pressable
@@ -342,13 +346,13 @@ export default function ModeratorMembersScreen() {
             router.back()
           }
           style={
-            styles.backButton
+            themeStyles.backButton
           }
         >
           <Ionicons
             name="arrow-back"
             size={22}
-            color="#0E2A47"
+            color={themeTone("#0E2A47", "color")}
           />
         </Pressable>
 
@@ -361,7 +365,7 @@ export default function ModeratorMembersScreen() {
           <Text
             numberOfLines={1}
             style={
-              styles.title
+              themeStyles.title
             }
           >
             {groupName}
@@ -369,7 +373,7 @@ export default function ModeratorMembersScreen() {
 
           <Text
             style={
-              styles.subtitle
+              themeStyles.subtitle
             }
           >
             Member Management
@@ -379,7 +383,7 @@ export default function ModeratorMembersScreen() {
 
       <ScrollView
         contentContainerStyle={
-          styles.content
+          themeStyles.content
         }
         showsVerticalScrollIndicator={
           false
@@ -387,13 +391,13 @@ export default function ModeratorMembersScreen() {
       >
         <View
           style={
-            styles.searchBox
+            themeStyles.searchBox
           }
         >
           <Ionicons
             name="search-outline"
             size={20}
-            color="#8BA3AB"
+            color={themeTone("#8BA3AB", "color")}
           />
 
           <TextInput
@@ -402,9 +406,9 @@ export default function ModeratorMembersScreen() {
               setSearch
             }
             placeholder="Search members..."
-            placeholderTextColor="#8BA3AB"
+            placeholderTextColor={themeTone("#8BA3AB", "placeholderTextColor")}
             style={
-              styles.searchInput
+              themeStyles.searchInput
             }
           />
         </View>
@@ -412,12 +416,12 @@ export default function ModeratorMembersScreen() {
         {error && (
           <View
             style={
-              styles.errorBox
+              themeStyles.errorBox
             }
           >
             <Text
               style={
-                styles.errorText
+                themeStyles.errorText
               }
             >
               {error}
@@ -428,30 +432,30 @@ export default function ModeratorMembersScreen() {
         {loading ? (
           <View
             style={
-              styles.center
+              themeStyles.center
             }
           >
             <ActivityIndicator
               size="large"
-              color="#0E7C86"
+              color={themeTone("#0E7C86", "color")}
             />
           </View>
         ) : filteredMemberships.length ===
           0 ? (
           <View
             style={
-              styles.emptyCard
+              themeStyles.emptyCard
             }
           >
             <Ionicons
               name="people-outline"
               size={34}
-              color="#8BA3AB"
+              color={themeTone("#8BA3AB", "color")}
             />
 
             <Text
               style={
-                styles.emptyTitle
+                themeStyles.emptyTitle
               }
             >
               No members found
@@ -477,22 +481,22 @@ export default function ModeratorMembersScreen() {
                     membership.id
                   }
                   style={
-                    styles.memberCard
+                    themeStyles.memberCard
                   }
                 >
                   <View
                     style={
-                      styles.memberTop
+                      themeStyles.memberTop
                     }
                   >
                     <View
                       style={
-                        styles.avatar
+                        themeStyles.avatar
                       }
                     >
                       <Text
                         style={
-                          styles.avatarText
+                          themeStyles.avatarText
                         }
                       >
                         {getInitials(
@@ -510,7 +514,7 @@ export default function ModeratorMembersScreen() {
                     >
                       <Text
                         style={
-                          styles.memberName
+                          themeStyles.memberName
                         }
                       >
                         {
@@ -520,7 +524,7 @@ export default function ModeratorMembersScreen() {
 
                       <Text
                         style={
-                          styles.memberEmail
+                          themeStyles.memberEmail
                         }
                       >
                         {
@@ -539,12 +543,12 @@ export default function ModeratorMembersScreen() {
                   {membership.statusReason && (
                     <View
                       style={
-                        styles.reasonBox
+                        themeStyles.reasonBox
                       }
                     >
                       <Text
                         style={
-                          styles.reasonLabel
+                          themeStyles.reasonLabel
                         }
                       >
                         Latest reason
@@ -552,7 +556,7 @@ export default function ModeratorMembersScreen() {
 
                       <Text
                         style={
-                          styles.reasonText
+                          themeStyles.reasonText
                         }
                       >
                         {
@@ -565,18 +569,18 @@ export default function ModeratorMembersScreen() {
                   {processing ? (
                     <View
                       style={
-                        styles.processingArea
+                        themeStyles.processingArea
                       }
                     >
                       <ActivityIndicator
-                        color="#0E7C86"
+                        color={themeTone("#0E7C86", "color")}
                       />
                     </View>
                   ) : membership.status ===
                     "ACTIVE" ? (
                     <View
                       style={
-                        styles.actions
+                        themeStyles.actions
                       }
                     >
                       <Pressable
@@ -587,12 +591,12 @@ export default function ModeratorMembersScreen() {
                           )
                         }
                         style={
-                          styles.suspendButton
+                          themeStyles.suspendButton
                         }
                       >
                         <Text
                           style={
-                            styles.suspendText
+                            themeStyles.suspendText
                           }
                         >
                           Suspend
@@ -607,12 +611,12 @@ export default function ModeratorMembersScreen() {
                           )
                         }
                         style={
-                          styles.removeButton
+                          themeStyles.removeButton
                         }
                       >
                         <Text
                           style={
-                            styles.removeText
+                            themeStyles.removeText
                           }
                         >
                           Remove
@@ -623,7 +627,7 @@ export default function ModeratorMembersScreen() {
                     "SUSPENDED" ? (
                     <View
                       style={
-                        styles.actions
+                        themeStyles.actions
                       }
                     >
                       <Pressable
@@ -633,12 +637,12 @@ export default function ModeratorMembersScreen() {
                           )
                         }
                         style={
-                          styles.reactivateButton
+                          themeStyles.reactivateButton
                         }
                       >
                         <Text
                           style={
-                            styles.reactivateText
+                            themeStyles.reactivateText
                           }
                         >
                           Reactivate
@@ -653,12 +657,12 @@ export default function ModeratorMembersScreen() {
                           )
                         }
                         style={
-                          styles.removeButton
+                          themeStyles.removeButton
                         }
                       >
                         <Text
                           style={
-                            styles.removeText
+                            themeStyles.removeText
                           }
                         >
                           Remove
@@ -684,6 +688,8 @@ function StatusBadge({
     | "SUSPENDED"
     | "REMOVED";
 }) {
+  const themeStyles = useThemedStyles(styles);
+
   const config = {
     ACTIVE: {
       bg: "#ecfdf5",
@@ -704,7 +710,7 @@ function StatusBadge({
   return (
     <View
       style={[
-        styles.statusBadge,
+        themeStyles.statusBadge,
         {
           backgroundColor:
             config.bg,

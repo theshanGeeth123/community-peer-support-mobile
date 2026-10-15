@@ -1,3 +1,4 @@
+import { useThemeTone, useThemedClassName } from '@/theme/useAlyvenAppearance';
 import { useCallback, useState } from "react";
 
 import { Pressable, Text, View } from "react-native";
@@ -19,6 +20,9 @@ export default function NeedsResponseQuickAction({
   href: Href;
   className?: string;
 }) {
+  const themeClass = useThemedClassName();
+  const themeTone = useThemeTone();
+
   const [counts, setCounts] = useState<{
     crisisAlerts: number;
     unanswered: number;
@@ -68,14 +72,14 @@ export default function NeedsResponseQuickAction({
   return (
     <Pressable
       onPress={() => router.push(href)}
-      className={`flex-row items-center rounded-3xl border bg-white p-5 ${
+      className={themeClass(`flex-row items-center rounded-3xl border bg-white p-5 ${
         hasCrisis ? "border-rose-300" : "border-slate-200"
-      } ${className}`}
+      } ${className}`)}
     >
       <View
-        className={`h-12 w-12 items-center justify-center rounded-2xl ${
+        className={themeClass(`h-12 w-12 items-center justify-center rounded-2xl ${
           hasCrisis ? "bg-rose-50" : "bg-indigo-50"
-        }`}
+        }`)}
       >
         <Ionicons
           name={hasCrisis ? "warning-outline" : "chatbubble-ellipses-outline"}
@@ -84,15 +88,15 @@ export default function NeedsResponseQuickAction({
         />
       </View>
 
-      <View className="ml-4 flex-1">
-        <Text className="text-base font-bold text-slate-900">
+      <View className={themeClass("ml-4 flex-1")}>
+        <Text className={themeClass("text-base font-bold text-slate-900")}>
           Needs a Response
         </Text>
 
         <Text
-          className={`mt-1 text-sm leading-5 ${
+          className={themeClass(`mt-1 text-sm leading-5 ${
             hasCrisis ? "font-semibold text-rose-600" : "text-slate-500"
-          }`}
+          }`)}
         >
           {description}
         </Text>
@@ -100,17 +104,17 @@ export default function NeedsResponseQuickAction({
 
       {badgeCount > 0 && (
         <View
-          className={`mr-2 min-w-7 items-center rounded-full px-2 py-1 ${
+          className={themeClass(`mr-2 min-w-7 items-center rounded-full px-2 py-1 ${
             hasCrisis ? "bg-rose-600" : "bg-indigo-600"
-          }`}
+          }`)}
         >
-          <Text className="text-xs font-bold text-white">
+          <Text className={themeClass("text-xs font-bold text-white")}>
             {badgeCount > 99 ? "99+" : badgeCount}
           </Text>
         </View>
       )}
 
-      <Ionicons name="chevron-forward" size={20} color="#8BA3AB" />
+      <Ionicons name="chevron-forward" size={20} color={themeTone("#8BA3AB", "color")} />
     </Pressable>
   );
 }

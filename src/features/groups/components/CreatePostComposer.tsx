@@ -1,3 +1,4 @@
+import { useThemeTone, useThemedStyles } from '@/theme/useAlyvenAppearance';
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import {
@@ -111,6 +112,9 @@ export default function CreatePostComposer({
    */
   draftKey?: string;
 }) {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   const [expanded, setExpanded] = useState(false);
   const [content, setContent] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);
@@ -449,10 +453,10 @@ export default function CreatePostComposer({
   )?.name;
 
   return (
-    <View style={styles.card}>
-      <View style={styles.topRow}>
-        <View style={styles.avatar}>
-          <Text style={styles.avatarText}>
+    <View style={themeStyles.card}>
+      <View style={themeStyles.topRow}>
+        <View style={themeStyles.avatar}>
+          <Text style={themeStyles.avatarText}>
             {getInitials(currentUserName)}
           </Text>
         </View>
@@ -467,17 +471,17 @@ export default function CreatePostComposer({
             textAlignVertical="top"
             maxLength={MAX_CONTENT_LENGTH}
             placeholder="What's on your mind?"
-            placeholderTextColor="#8BA3AB"
-            style={styles.input}
+            placeholderTextColor={themeTone("#8BA3AB", "placeholderTextColor")}
+            style={themeStyles.input}
           />
         ) : (
-          <Pressable style={styles.trigger} onPress={handleExpand}>
+          <Pressable style={themeStyles.trigger} onPress={handleExpand}>
             {content.trim().length > 0 ? (
-              <Text numberOfLines={1} style={styles.triggerDraftText}>
+              <Text numberOfLines={1} style={themeStyles.triggerDraftText}>
                 Draft: {content.trim()}
               </Text>
             ) : (
-              <Text style={styles.triggerText}>What's on your mind?</Text>
+              <Text style={themeStyles.triggerText}>What's on your mind?</Text>
             )}
           </Pressable>
         )}
@@ -488,10 +492,10 @@ export default function CreatePostComposer({
           {/* RESTORED DRAFT */}
 
           {hasRestoredDraft && (
-            <View style={styles.draftNote}>
-              <Ionicons name="document-text-outline" size={14} color="#0E7C86" />
+            <View style={themeStyles.draftNote}>
+              <Ionicons name="document-text-outline" size={14} color={themeTone("#0E7C86", "color")} />
 
-              <Text style={styles.draftNoteText}>
+              <Text style={themeStyles.draftNoteText}>
                 Draft restored — saved on this phone only
               </Text>
 
@@ -500,19 +504,19 @@ export default function CreatePostComposer({
                 disabled={submitting}
                 onPress={handleDiscardRestoredDraft}
               >
-                <Text style={styles.draftDiscardText}>Discard</Text>
+                <Text style={themeStyles.draftDiscardText}>Discard</Text>
               </Pressable>
             </View>
           )}
 
           {groupOptions && groupOptions.length > 1 && (
-            <View style={styles.groupPickerSection}>
-              <Text style={styles.groupPickerLabel}>Posting to</Text>
+            <View style={themeStyles.groupPickerSection}>
+              <Text style={themeStyles.groupPickerLabel}>Posting to</Text>
 
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.groupChipRow}
+                contentContainerStyle={themeStyles.groupChipRow}
               >
                 {groupOptions.map((option) => {
                   const active = option.id === selectedGroupId;
@@ -522,14 +526,14 @@ export default function CreatePostComposer({
                       key={option.id}
                       onPress={() => setSelectedGroupId(option.id)}
                       style={[
-                        styles.groupChip,
-                        active && styles.groupChipActive,
+                        themeStyles.groupChip,
+                        active && themeStyles.groupChipActive,
                       ]}
                     >
                       <Text
                         style={[
-                          styles.groupChipText,
-                          active && styles.groupChipTextActive,
+                          themeStyles.groupChipText,
+                          active && themeStyles.groupChipTextActive,
                         ]}
                       >
                         {option.name}
@@ -542,10 +546,10 @@ export default function CreatePostComposer({
           )}
 
           {groupOptions && groupOptions.length === 1 && selectedGroupName && (
-            <View style={styles.singleGroupBadge}>
-              <Ionicons name="people-outline" size={13} color="#0E7C86" />
+            <View style={themeStyles.singleGroupBadge}>
+              <Ionicons name="people-outline" size={13} color={themeTone("#0E7C86", "color")} />
 
-              <Text style={styles.singleGroupBadgeText}>
+              <Text style={themeStyles.singleGroupBadgeText}>
                 {selectedGroupName}
               </Text>
             </View>
@@ -554,10 +558,10 @@ export default function CreatePostComposer({
           {/* PHOTO */}
 
           {image && (
-            <View style={styles.imagePreviewWrapper}>
+            <View style={themeStyles.imagePreviewWrapper}>
               <Image
                 source={{ uri: image.uri }}
-                style={styles.imagePreview}
+                style={themeStyles.imagePreview}
                 contentFit="cover"
               />
 
@@ -566,18 +570,18 @@ export default function CreatePostComposer({
                   hitSlop={8}
                   onPress={() => setImage(null)}
                   accessibilityLabel="Remove photo"
-                  style={styles.imageRemoveButton}
+                  style={themeStyles.imageRemoveButton}
                 >
-                  <Ionicons name="close" size={16} color="#ffffff" />
+                  <Ionicons name="close" size={16} color={themeTone("#ffffff", "color")} />
                 </Pressable>
               )}
             </View>
           )}
 
-          <View style={styles.optionsRow}>
+          <View style={themeStyles.optionsRow}>
             <Pressable
               disabled={submitting}
-              style={styles.warningToggle}
+              style={themeStyles.warningToggle}
               onPress={() => void handlePickImage()}
             >
               <Ionicons
@@ -588,8 +592,8 @@ export default function CreatePostComposer({
 
               <Text
                 style={[
-                  styles.warningToggleText,
-                  image && styles.photoToggleTextActive,
+                  themeStyles.warningToggleText,
+                  image && themeStyles.photoToggleTextActive,
                 ]}
               >
                 {image ? "Change photo" : "Add photo"}
@@ -599,7 +603,7 @@ export default function CreatePostComposer({
             {/* CONTENT WARNINGS */}
 
             <Pressable
-              style={styles.warningToggle}
+              style={themeStyles.warningToggle}
               onPress={() => setShowWarningPicker((previous) => !previous)}
             >
               <Ionicons
@@ -612,9 +616,9 @@ export default function CreatePostComposer({
 
               <Text
                 style={[
-                  styles.warningToggleText,
+                  themeStyles.warningToggleText,
                   contentWarnings.length > 0 &&
-                    styles.warningToggleTextActive,
+                    themeStyles.warningToggleTextActive,
                 ]}
               >
                 {contentWarnings.length > 0
@@ -625,19 +629,19 @@ export default function CreatePostComposer({
               <Ionicons
                 name={showWarningPicker ? "chevron-up" : "chevron-down"}
                 size={14}
-                color="#8BA3AB"
+                color={themeTone("#8BA3AB", "color")}
               />
             </Pressable>
           </View>
 
           {showWarningPicker && (
-            <View style={styles.warningPicker}>
-              <Text style={styles.warningHint}>
+            <View style={themeStyles.warningPicker}>
+              <Text style={themeStyles.warningHint}>
                 Members will see a warning and choose whether to view your
                 post.
               </Text>
 
-              <View style={styles.warningChipRow}>
+              <View style={themeStyles.warningChipRow}>
                 {CONTENT_WARNING_OPTIONS.map((warning) => {
                   const active = contentWarnings.includes(warning);
 
@@ -646,14 +650,14 @@ export default function CreatePostComposer({
                       key={warning}
                       onPress={() => toggleContentWarning(warning)}
                       style={[
-                        styles.warningChip,
-                        active && styles.warningChipActive,
+                        themeStyles.warningChip,
+                        active && themeStyles.warningChipActive,
                       ]}
                     >
                       <Text
                         style={[
-                          styles.warningChipText,
-                          active && styles.warningChipTextActive,
+                          themeStyles.warningChipText,
+                          active && themeStyles.warningChipTextActive,
                         ]}
                       >
                         {CONTENT_WARNING_LABELS[warning]}
@@ -665,44 +669,44 @@ export default function CreatePostComposer({
             </View>
           )}
 
-          <View style={styles.footer}>
+          <View style={themeStyles.footer}>
             <Pressable
-              style={styles.anonymousToggle}
+              style={themeStyles.anonymousToggle}
               onPress={() => setIsAnonymous((previous) => !previous)}
             >
               <Ionicons
                 name={isAnonymous ? "checkbox" : "square-outline"}
                 size={19}
-                color="#0E7C86"
+                color={themeTone("#0E7C86", "color")}
               />
 
-              <Text style={styles.anonymousLabel}>Post anonymously</Text>
+              <Text style={themeStyles.anonymousLabel}>Post anonymously</Text>
             </Pressable>
 
-            <View style={styles.footerButtons}>
+            <View style={themeStyles.footerButtons}>
               <Pressable
                 disabled={submitting}
                 onPress={handleCancel}
-                style={styles.cancelButton}
+                style={themeStyles.cancelButton}
               >
-                <Text style={styles.cancelButtonText}>Cancel</Text>
+                <Text style={themeStyles.cancelButtonText}>Cancel</Text>
               </Pressable>
 
               <Pressable
                 disabled={!canSubmit}
                 onPress={() => void handleSubmit()}
                 style={[
-                  styles.submitButton,
-                  !canSubmit && styles.submitDisabled,
+                  themeStyles.submitButton,
+                  !canSubmit && themeStyles.submitDisabled,
                 ]}
               >
                 {submitting ? (
-                  <ActivityIndicator size="small" color="#ffffff" />
+                  <ActivityIndicator size="small" color={themeTone("#ffffff", "color")} />
                 ) : (
                   <>
-                    <Ionicons name="send-outline" size={15} color="#ffffff" />
+                    <Ionicons name="send-outline" size={15} color={themeTone("#ffffff", "color")} />
 
-                    <Text style={styles.submitButtonText}>Post</Text>
+                    <Text style={themeStyles.submitButtonText}>Post</Text>
                   </>
                 )}
               </Pressable>
@@ -710,7 +714,7 @@ export default function CreatePostComposer({
           </View>
 
           {isAnonymous && (
-            <Text style={styles.anonymousCaption}>
+            <Text style={themeStyles.anonymousCaption}>
               Your name will be hidden from other members. Moderators can
               still see it if needed.
             </Text>

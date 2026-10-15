@@ -1,3 +1,4 @@
+import { useThemeTone, useThemedStyles } from '@/theme/useAlyvenAppearance';
 import SectionBanner from "@/features/branding/components/SectionBanner";
 import { useCallback, useState } from "react";
 
@@ -30,6 +31,9 @@ import GlobalPostCard from "./GlobalPostCard";
 import GlobalPostCommentsModal from "./GlobalPostCommentsModal";
 
 export default function CommunityWallScreen() {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   const { user } = useAuth();
 
   const canPost = user?.role !== "USER";
@@ -152,13 +156,13 @@ export default function CommunityWallScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={["top", "left", "right"]}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Community</Text>
+    <SafeAreaView style={themeStyles.safeArea} edges={["top", "left", "right"]}>
+      <View style={themeStyles.header}>
+        <Text style={themeStyles.headerTitle}>Community</Text>
       </View>
 
       <ScrollView
-        contentContainerStyle={styles.content}
+        contentContainerStyle={themeStyles.content}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
@@ -182,26 +186,26 @@ export default function CommunityWallScreen() {
         )}
 
         {error && (
-          <View style={styles.errorBox}>
-            <Text style={styles.errorText}>{error}</Text>
+          <View style={themeStyles.errorBox}>
+            <Text style={themeStyles.errorText}>{error}</Text>
           </View>
         )}
 
         {loading ? (
-          <View style={styles.center}>
-            <ActivityIndicator size="large" color="#0E7C86" />
+          <View style={themeStyles.center}>
+            <ActivityIndicator size="large" color={themeTone("#0E7C86", "color")} />
 
-            <Text style={styles.loadingText}>Loading community wall...</Text>
+            <Text style={themeStyles.loadingText}>Loading community wall...</Text>
           </View>
         ) : posts.length === 0 ? (
-          <View style={styles.emptyCard}>
-            <View style={styles.emptyIcon}>
-              <Ionicons name="globe-outline" size={29} color="#0E7C86" />
+          <View style={themeStyles.emptyCard}>
+            <View style={themeStyles.emptyIcon}>
+              <Ionicons name="globe-outline" size={29} color={themeTone("#0E7C86", "color")} />
             </View>
 
-            <Text style={styles.emptyTitle}>Nothing here yet</Text>
+            <Text style={themeStyles.emptyTitle}>Nothing here yet</Text>
 
-            <Text style={styles.emptyDescription}>
+            <Text style={themeStyles.emptyDescription}>
               {canPost
                 ? "Share the first update with the whole community."
                 : "Check back soon for announcements and updates."}

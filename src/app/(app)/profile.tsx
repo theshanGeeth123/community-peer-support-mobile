@@ -1,3 +1,5 @@
+import ThemeModeSwitcher from "@/features/theme/components/ThemeModeSwitcher";
+import { useThemeTone, useThemedClassName } from '@/theme/useAlyvenAppearance';
 import { useEffect, useState } from "react";
 
 import {
@@ -78,6 +80,9 @@ const getDefaultImageFileName = (
 };
 
 export default function ProfileScreen() {
+  const themeClass = useThemedClassName();
+  const themeTone = useThemeTone();
+
   const {
     user,
     setCurrentUser,
@@ -440,7 +445,7 @@ export default function ProfileScreen() {
       style={{
         flex: 1,
         backgroundColor:
-          "#F5FAF9",
+          themeTone("#F5FAF9", "backgroundColor"),
       }}
       edges={[
         "top",
@@ -449,27 +454,29 @@ export default function ProfileScreen() {
       ]}
     >
       <ScrollView
-        className="flex-1"
-        contentContainerClassName="px-5 pb-8 pt-4"
+        className={themeClass("flex-1")}
+        contentContainerClassName={themeClass("px-5 pb-8 pt-4")}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={
           false
         }
       >
-        <View className="mb-6">
-          <Text className="text-3xl font-bold text-slate-900">
+        <View className={themeClass("mb-6")}>
+          <Text className={themeClass("text-3xl font-bold text-slate-900")}>
             Profile
           </Text>
 
-          <Text className="mt-2 leading-6 text-slate-500">
+          <Text className={themeClass("mt-2 leading-6 text-slate-500")}>
             Manage your personal
             information and account
             security.
           </Text>
         </View>
 
-        <View className="rounded-3xl bg-indigo-600 p-6">
-          <View className="items-center">
+        <ThemeModeSwitcher />
+
+        <View className={themeClass("rounded-3xl bg-indigo-600 p-6")}>
+          <View className={themeClass("items-center")}>
             <Pressable
               onPress={() => {
                 void handleChooseProfilePicture();
@@ -486,7 +493,7 @@ export default function ProfileScreen() {
                     : 1,
               }}
             >
-              <View className="rounded-full border-4 border-white/30 bg-white p-1">
+              <View className={themeClass("rounded-full border-4 border-white/30 bg-white p-1")}>
                 <UserAvatar
                   fullName={
                     user?.fullName
@@ -498,39 +505,39 @@ export default function ProfileScreen() {
                 />
               </View>
 
-              <View className="absolute bottom-0 right-0 h-9 w-9 items-center justify-center rounded-full border-2 border-indigo-600 bg-white">
+              <View className={themeClass("absolute bottom-0 right-0 h-9 w-9 items-center justify-center rounded-full border-2 border-indigo-600 bg-white")}>
                 {isAvatarUploading ? (
                   <ActivityIndicator
                     size="small"
-                    color="#0E7C86"
+                    color={themeTone("#0E7C86", "color")}
                   />
                 ) : (
                   <Ionicons
                     name="camera"
                     size={18}
-                    color="#0E7C86"
+                    color={themeTone("#0E7C86", "color")}
                   />
                 )}
               </View>
             </Pressable>
 
-            <Text className="mt-4 text-xl font-bold text-white">
+            <Text className={themeClass("mt-4 text-xl font-bold text-white")}>
               {user?.fullName}
             </Text>
 
-            <Text className="mt-1 text-indigo-100">
+            <Text className={themeClass("mt-1 text-indigo-100")}>
               {user?.email}
             </Text>
 
-            <View className="mt-4 flex-row gap-2">
-              <View className="rounded-full bg-white/15 px-4 py-2">
-                <Text className="text-xs font-bold text-white">
+            <View className={themeClass("mt-4 flex-row gap-2")}>
+              <View className={themeClass("rounded-full bg-white/15 px-4 py-2")}>
+                <Text className={themeClass("text-xs font-bold text-white")}>
                   {user?.role}
                 </Text>
               </View>
 
-              <View className="rounded-full bg-white/15 px-4 py-2">
-                <Text className="text-xs font-bold text-white">
+              <View className={themeClass("rounded-full bg-white/15 px-4 py-2")}>
+                <Text className={themeClass("text-xs font-bold text-white")}>
                   {
                     user?.accountStatus
                   }
@@ -538,7 +545,7 @@ export default function ProfileScreen() {
               </View>
             </View>
 
-            <View className="mt-5 w-full flex-row gap-3">
+            <View className={themeClass("mt-5 w-full flex-row gap-3")}>
               <Pressable
                 onPress={() => {
                   void handleChooseProfilePicture();
@@ -546,7 +553,7 @@ export default function ProfileScreen() {
                 disabled={
                   avatarBusy
                 }
-                className="min-h-12 flex-1 flex-row items-center justify-center rounded-2xl bg-white"
+                className={themeClass("min-h-12 flex-1 flex-row items-center justify-center rounded-2xl bg-white")}
                 style={{
                   opacity:
                     avatarBusy
@@ -557,17 +564,17 @@ export default function ProfileScreen() {
                 {isAvatarUploading ? (
                   <ActivityIndicator
                     size="small"
-                    color="#0E7C86"
+                    color={themeTone("#0E7C86", "color")}
                   />
                 ) : (
                   <Ionicons
                     name="image-outline"
                     size={18}
-                    color="#0E7C86"
+                    color={themeTone("#0E7C86", "color")}
                   />
                 )}
 
-                <Text className="ml-2 font-bold text-indigo-600">
+                <Text className={themeClass("ml-2 font-bold text-indigo-600")}>
                   {user?.avatarUrl
                     ? "Change Photo"
                     : "Add Photo"}
@@ -582,7 +589,7 @@ export default function ProfileScreen() {
                   disabled={
                     avatarBusy
                   }
-                  className="min-h-12 flex-1 flex-row items-center justify-center rounded-2xl bg-white/15"
+                  className={themeClass("min-h-12 flex-1 flex-row items-center justify-center rounded-2xl bg-white/15")}
                   style={{
                     opacity:
                       avatarBusy
@@ -593,17 +600,17 @@ export default function ProfileScreen() {
                   {isAvatarRemoving ? (
                     <ActivityIndicator
                       size="small"
-                      color="#ffffff"
+                      color={themeTone("#ffffff", "color")}
                     />
                   ) : (
                     <Ionicons
                       name="trash-outline"
                       size={18}
-                      color="#ffffff"
+                      color={themeTone("#ffffff", "color")}
                     />
                   )}
 
-                  <Text className="ml-2 font-bold text-white">
+                  <Text className={themeClass("ml-2 font-bold text-white")}>
                     Remove
                   </Text>
                 </Pressable>
@@ -612,7 +619,7 @@ export default function ProfileScreen() {
           </View>
         </View>
 
-        <View className="mt-5">
+        <View className={themeClass("mt-5")}>
           <ApiMessage
             message={
               apiError
@@ -627,23 +634,23 @@ export default function ProfileScreen() {
           />
         </View>
 
-        <View className="mt-2 rounded-3xl border border-slate-200 bg-white p-6">
-          <View className="mb-5 flex-row items-center">
-            <View className="h-10 w-10 items-center justify-center rounded-xl bg-indigo-50">
+        <View className={themeClass("mt-2 rounded-3xl border border-slate-200 bg-white p-6")}>
+          <View className={themeClass("mb-5 flex-row items-center")}>
+            <View className={themeClass("h-10 w-10 items-center justify-center rounded-xl bg-indigo-50")}>
               <Ionicons
                 name="person-outline"
                 size={21}
-                color="#0E7C86"
+                color={themeTone("#0E7C86", "color")}
               />
             </View>
 
-            <View className="ml-3">
-              <Text className="text-lg font-bold text-slate-900">
+            <View className={themeClass("ml-3")}>
+              <Text className={themeClass("text-lg font-bold text-slate-900")}>
                 Personal
                 Information
               </Text>
 
-              <Text className="mt-1 text-sm text-slate-500">
+              <Text className={themeClass("mt-1 text-sm text-slate-500")}>
                 Update your account
                 details
               </Text>
@@ -678,19 +685,19 @@ export default function ProfileScreen() {
             )}
           />
 
-          <View className="mb-5">
-            <Text className="mb-2 text-sm font-semibold text-slate-700">
+          <View className={themeClass("mb-5")}>
+            <Text className={themeClass("mb-2 text-sm font-semibold text-slate-700")}>
               Email address
             </Text>
 
-            <View className="min-h-14 flex-row items-center rounded-2xl border border-slate-200 bg-slate-100 px-4">
+            <View className={themeClass("min-h-14 flex-row items-center rounded-2xl border border-slate-200 bg-slate-100 px-4")}>
               <Ionicons
                 name="mail-outline"
                 size={19}
-                color="#64808C"
+                color={themeTone("#64808C", "color")}
               />
 
-              <Text className="ml-3 flex-1 text-slate-500">
+              <Text className={themeClass("ml-3 flex-1 text-slate-500")}>
                 {user?.email}
               </Text>
 
@@ -698,7 +705,7 @@ export default function ProfileScreen() {
                 <Ionicons
                   name="checkmark-circle"
                   size={20}
-                  color="#059669"
+                  color={themeTone("#059669", "color")}
                 />
               )}
             </View>
@@ -715,34 +722,34 @@ export default function ProfileScreen() {
           />
         </View>
 
-        <View className="mt-6 rounded-3xl border border-slate-200 bg-white p-6">
-          <View className="mb-5 flex-row items-center">
-            <View className="h-10 w-10 items-center justify-center rounded-xl bg-emerald-50">
+        <View className={themeClass("mt-6 rounded-3xl border border-slate-200 bg-white p-6")}>
+          <View className={themeClass("mb-5 flex-row items-center")}>
+            <View className={themeClass("h-10 w-10 items-center justify-center rounded-xl bg-emerald-50")}>
               <Ionicons
                 name="shield-checkmark-outline"
                 size={21}
-                color="#059669"
+                color={themeTone("#059669", "color")}
               />
             </View>
 
-            <View className="ml-3">
-              <Text className="text-lg font-bold text-slate-900">
+            <View className={themeClass("ml-3")}>
+              <Text className={themeClass("text-lg font-bold text-slate-900")}>
                 Security
               </Text>
 
-              <Text className="mt-1 text-sm text-slate-500">
+              <Text className={themeClass("mt-1 text-sm text-slate-500")}>
                 Manage sign-in and
                 sessions
               </Text>
             </View>
           </View>
 
-          <View className="mb-4 rounded-2xl bg-slate-50 p-4">
-            <Text className="text-xs font-semibold uppercase text-slate-400">
+          <View className={themeClass("mb-4 rounded-2xl bg-slate-50 p-4")}>
+            <Text className={themeClass("text-xs font-semibold uppercase text-slate-400")}>
               Login Methods
             </Text>
 
-            <Text className="mt-2 font-semibold text-slate-700">
+            <Text className={themeClass("mt-2 font-semibold text-slate-700")}>
               {user?.authProviders?.join(
                 ", "
               ) || "LOCAL"}
@@ -755,22 +762,22 @@ export default function ProfileScreen() {
                 "/(app)/change-password"
               )
             }
-            className="mb-3 flex-row items-center rounded-2xl border border-slate-200 p-4"
+            className={themeClass("mb-3 flex-row items-center rounded-2xl border border-slate-200 p-4")}
           >
-            <View className="h-10 w-10 items-center justify-center rounded-xl bg-indigo-50">
+            <View className={themeClass("h-10 w-10 items-center justify-center rounded-xl bg-indigo-50")}>
               <Ionicons
                 name="key-outline"
                 size={21}
-                color="#0E7C86"
+                color={themeTone("#0E7C86", "color")}
               />
             </View>
 
-            <View className="ml-3 flex-1">
-              <Text className="font-bold text-slate-800">
+            <View className={themeClass("ml-3 flex-1")}>
+              <Text className={themeClass("font-bold text-slate-800")}>
                 Change Password
               </Text>
 
-              <Text className="mt-1 text-xs text-slate-500">
+              <Text className={themeClass("mt-1 text-xs text-slate-500")}>
                 Update your account
                 password
               </Text>
@@ -779,7 +786,7 @@ export default function ProfileScreen() {
             <Ionicons
               name="chevron-forward"
               size={20}
-              color="#8BA3AB"
+              color={themeTone("#8BA3AB", "color")}
             />
           </Pressable>
 
@@ -787,23 +794,23 @@ export default function ProfileScreen() {
             onPress={
               handleLogoutAll
             }
-            className="mb-3 flex-row items-center rounded-2xl border border-orange-200 bg-orange-50 p-4"
+            className={themeClass("mb-3 flex-row items-center rounded-2xl border border-orange-200 bg-orange-50 p-4")}
           >
-            <View className="h-10 w-10 items-center justify-center rounded-xl bg-orange-100">
+            <View className={themeClass("h-10 w-10 items-center justify-center rounded-xl bg-orange-100")}>
               <Ionicons
                 name="phone-portrait-outline"
                 size={21}
-                color="#c2410c"
+                color={themeTone("#c2410c", "color")}
               />
             </View>
 
-            <View className="ml-3 flex-1">
-              <Text className="font-bold text-orange-800">
+            <View className={themeClass("ml-3 flex-1")}>
+              <Text className={themeClass("font-bold text-orange-800")}>
                 Logout From All
                 Devices
               </Text>
 
-              <Text className="mt-1 text-xs text-orange-600">
+              <Text className={themeClass("mt-1 text-xs text-orange-600")}>
                 End every active
                 session
               </Text>
@@ -814,22 +821,22 @@ export default function ProfileScreen() {
             onPress={
               handleLogout
             }
-            className="flex-row items-center rounded-2xl border border-red-200 bg-red-50 p-4"
+            className={themeClass("flex-row items-center rounded-2xl border border-red-200 bg-red-50 p-4")}
           >
-            <View className="h-10 w-10 items-center justify-center rounded-xl bg-red-100">
+            <View className={themeClass("h-10 w-10 items-center justify-center rounded-xl bg-red-100")}>
               <Ionicons
                 name="log-out-outline"
                 size={21}
-                color="#dc2626"
+                color={themeTone("#dc2626", "color")}
               />
             </View>
 
-            <View className="ml-3 flex-1">
-              <Text className="font-bold text-red-700">
+            <View className={themeClass("ml-3 flex-1")}>
+              <Text className={themeClass("font-bold text-red-700")}>
                 Sign Out
               </Text>
 
-              <Text className="mt-1 text-xs text-red-500">
+              <Text className={themeClass("mt-1 text-xs text-red-500")}>
                 Sign out from this
                 device
               </Text>
@@ -844,10 +851,10 @@ export default function ProfileScreen() {
                 "/(admin)/users"
               )
             }
-            className="mt-6 rounded-3xl bg-slate-900 p-6"
+            className={themeClass("mt-6 rounded-3xl bg-slate-900 p-6")}
           >
-            <View className="flex-row items-center">
-              <View className="h-12 w-12 items-center justify-center rounded-2xl bg-white/10">
+            <View className={themeClass("flex-row items-center")}>
+              <View className={themeClass("h-12 w-12 items-center justify-center rounded-2xl bg-white/10")}>
                 <Ionicons
                   name="settings-outline"
                   size={24}
@@ -855,13 +862,13 @@ export default function ProfileScreen() {
                 />
               </View>
 
-              <View className="ml-4 flex-1">
-                <Text className="text-lg font-bold text-white">
+              <View className={themeClass("ml-4 flex-1")}>
+                <Text className={themeClass("text-lg font-bold text-white")}>
                   Admin User
                   Management
                 </Text>
 
-                <Text className="mt-1 text-sm leading-5 text-slate-300">
+                <Text className={themeClass("mt-1 text-sm leading-5 text-slate-300")}>
                   Manage users, roles
                   and account access.
                 </Text>
@@ -870,7 +877,7 @@ export default function ProfileScreen() {
               <Ionicons
                 name="chevron-forward"
                 size={20}
-                color="#C4D8DA"
+                color={themeTone("#C4D8DA", "color")}
               />
             </View>
           </Pressable>

@@ -1,3 +1,4 @@
+import { useThemeTone, useThemedStyles } from '@/theme/useAlyvenAppearance';
 import {
   useCallback,
   useMemo,
@@ -68,6 +69,9 @@ interface SelectedReview {
 }
 
 export default function PeerSupporterJoinRequestsScreen() {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   const params =
     useLocalSearchParams();
 
@@ -405,7 +409,7 @@ export default function PeerSupporterJoinRequestsScreen() {
   return (
     <SafeAreaView
       style={
-        styles.safeArea
+        themeStyles.safeArea
       }
       edges={[
         "top",
@@ -414,16 +418,16 @@ export default function PeerSupporterJoinRequestsScreen() {
       ]}
     >
       {/* ── Header ── */}
-      <View style={styles.header}>
+      <View style={themeStyles.header}>
         <Pressable
           onPress={() => router.back()}
-          style={styles.backBtn}
+          style={themeStyles.backBtn}
           hitSlop={10}
         >
-          <Ionicons name="arrow-back" size={22} color="#0E2A47" />
+          <Ionicons name="arrow-back" size={22} color={themeTone("#0E2A47", "color")} />
         </Pressable>
         <View style={{ flex: 1, alignItems: "center" }}>
-          <Text style={styles.heading}>Join Requests</Text>
+          <Text style={themeStyles.heading}>Join Requests</Text>
         </View>
         <View style={{ width: 40 }} />
       </View>
@@ -433,7 +437,7 @@ export default function PeerSupporterJoinRequestsScreen() {
           flex: 1,
         }}
         contentContainerStyle={
-          styles.content
+          themeStyles.content
         }
         showsVerticalScrollIndicator={
           false
@@ -451,12 +455,12 @@ export default function PeerSupporterJoinRequestsScreen() {
       >
         <View
           style={
-            styles.headingArea
+            themeStyles.headingArea
           }
         >
           <Text
             style={
-              styles.headingDescription
+              themeStyles.headingDescription
             }
           >
             Review membership requests only for groups assigned to you.
@@ -465,7 +469,7 @@ export default function PeerSupporterJoinRequestsScreen() {
 
         <View
           style={
-            styles.summaryRow
+            themeStyles.summaryRow
           }
         >
           <SummaryCard
@@ -489,12 +493,12 @@ export default function PeerSupporterJoinRequestsScreen() {
           0 && (
           <View
             style={
-              styles.filterSection
+              themeStyles.filterSection
             }
           >
             <Text
               style={
-                styles.filterTitle
+                themeStyles.filterTitle
               }
             >
               Filter by Group
@@ -550,13 +554,13 @@ export default function PeerSupporterJoinRequestsScreen() {
         {error && (
           <View
             style={
-              styles.errorBox
+              themeStyles.errorBox
             }
           >
             <Ionicons
               name="alert-circle-outline"
               size={20}
-              color="#b91c1c"
+              color={themeTone("#b91c1c", "color")}
             />
 
             <View
@@ -567,7 +571,7 @@ export default function PeerSupporterJoinRequestsScreen() {
             >
               <Text
                 style={
-                  styles.errorText
+                  themeStyles.errorText
                 }
               >
                 {error}
@@ -580,7 +584,7 @@ export default function PeerSupporterJoinRequestsScreen() {
               >
                 <Text
                   style={
-                    styles.retryText
+                    themeStyles.retryText
                   }
                 >
                   Try Again
@@ -593,17 +597,17 @@ export default function PeerSupporterJoinRequestsScreen() {
         {loading ? (
           <View
             style={
-              styles.loadingArea
+              themeStyles.loadingArea
             }
           >
             <ActivityIndicator
               size="large"
-              color="#0E7C86"
+              color={themeTone("#0E7C86", "color")}
             />
 
             <Text
               style={
-                styles.loadingText
+                themeStyles.loadingText
               }
             >
               Loading join
@@ -627,7 +631,7 @@ export default function PeerSupporterJoinRequestsScreen() {
         ) : (
           <View
             style={
-              styles.requestList
+              themeStyles.requestList
             }
           >
             {filteredRequests.map(
@@ -698,27 +702,30 @@ function SummaryCard({
   label: string;
   value: number;
 }) {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   return (
     <View
       style={
-        styles.summaryCard
+        themeStyles.summaryCard
       }
     >
       <View
         style={
-          styles.summaryIcon
+          themeStyles.summaryIcon
         }
       >
         <Ionicons
           name={icon}
           size={21}
-          color="#0E7C86"
+          color={themeTone("#0E7C86", "color")}
         />
       </View>
 
       <Text
         style={
-          styles.summaryValue
+          themeStyles.summaryValue
         }
       >
         {value}
@@ -726,7 +733,7 @@ function SummaryCard({
 
       <Text
         style={
-          styles.summaryLabel
+          themeStyles.summaryLabel
         }
       >
         {label}
@@ -744,25 +751,27 @@ function FilterChip({
   selected: boolean;
   onPress: () => void;
 }) {
+  const themeStyles = useThemedStyles(styles);
+
   return (
     <Pressable
       onPress={
         onPress
       }
       style={[
-        styles.filterChip,
+        themeStyles.filterChip,
 
         selected &&
-          styles.filterChipSelected,
+          themeStyles.filterChipSelected,
       ]}
     >
       <Text
         numberOfLines={1}
         style={[
-          styles.filterChipText,
+          themeStyles.filterChipText,
 
           selected &&
-            styles.filterChipTextSelected,
+            themeStyles.filterChipTextSelected,
         ]}
       >
         {label}
@@ -782,6 +791,9 @@ function RequestCard({
 
   onReject: () => void;
 }) {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   const user =
     getRequestUser(
       item.request.user
@@ -790,22 +802,22 @@ function RequestCard({
   return (
     <View
       style={
-        styles.requestCard
+        themeStyles.requestCard
       }
     >
       <View
         style={
-          styles.requestTop
+          themeStyles.requestTop
         }
       >
         <View
           style={
-            styles.avatar
+            themeStyles.avatar
           }
         >
           <Text
             style={
-              styles.avatarText
+              themeStyles.avatarText
             }
           >
             {getInitials(
@@ -816,12 +828,12 @@ function RequestCard({
 
         <View
           style={
-            styles.userArea
+            themeStyles.userArea
           }
         >
           <Text
             style={
-              styles.userName
+              themeStyles.userName
             }
           >
             {user.fullName}
@@ -829,7 +841,7 @@ function RequestCard({
 
           <Text
             style={
-              styles.userEmail
+              themeStyles.userEmail
             }
           >
             {user.email}
@@ -838,18 +850,18 @@ function RequestCard({
 
         <View
           style={
-            styles.pendingBadge
+            themeStyles.pendingBadge
           }
         >
           <Ionicons
             name="time-outline"
             size={12}
-            color="#c2410c"
+            color={themeTone("#c2410c", "color")}
           />
 
           <Text
             style={
-              styles.pendingText
+              themeStyles.pendingText
             }
           >
             Pending
@@ -859,19 +871,19 @@ function RequestCard({
 
       <View
         style={
-          styles.groupTag
+          themeStyles.groupTag
         }
       >
         <Ionicons
           name="people-outline"
           size={15}
-          color="#0E7C86"
+          color={themeTone("#0E7C86", "color")}
         />
 
         <Text
           numberOfLines={1}
           style={
-            styles.groupTagText
+            themeStyles.groupTagText
           }
         >
           {
@@ -882,7 +894,7 @@ function RequestCard({
 
       <Text
         style={
-          styles.reasonLabel
+          themeStyles.reasonLabel
         }
       >
         Reason for joining
@@ -890,7 +902,7 @@ function RequestCard({
 
       <Text
         style={
-          styles.reasonText
+          themeStyles.reasonText
         }
       >
         {
@@ -901,7 +913,7 @@ function RequestCard({
 
       <Text
         style={
-          styles.requestDate
+          themeStyles.requestDate
         }
       >
         Requested{" "}
@@ -913,7 +925,7 @@ function RequestCard({
 
       <View
         style={
-          styles.actions
+          themeStyles.actions
         }
       >
         <Pressable
@@ -923,7 +935,7 @@ function RequestCard({
           style={({
             pressed,
           }) => [
-            styles.rejectButton,
+            themeStyles.rejectButton,
 
             pressed && {
               opacity: 0.8,
@@ -933,12 +945,12 @@ function RequestCard({
           <Ionicons
             name="close-outline"
             size={19}
-            color="#b91c1c"
+            color={themeTone("#b91c1c", "color")}
           />
 
           <Text
             style={
-              styles.rejectButtonText
+              themeStyles.rejectButtonText
             }
           >
             Reject
@@ -952,7 +964,7 @@ function RequestCard({
           style={({
             pressed,
           }) => [
-            styles.approveButton,
+            themeStyles.approveButton,
 
             pressed && {
               opacity: 0.82,
@@ -962,12 +974,12 @@ function RequestCard({
           <Ionicons
             name="checkmark-outline"
             size={19}
-            color="#ffffff"
+            color={themeTone("#ffffff", "color")}
           />
 
           <Text
             style={
-              styles.approveButtonText
+              themeStyles.approveButtonText
             }
           >
             Approve
@@ -990,27 +1002,30 @@ function EmptyState({
   title: string;
   description: string;
 }) {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   return (
     <View
       style={
-        styles.emptyCard
+        themeStyles.emptyCard
       }
     >
       <View
         style={
-          styles.emptyIcon
+          themeStyles.emptyIcon
         }
       >
         <Ionicons
           name={icon}
           size={30}
-          color="#8BA3AB"
+          color={themeTone("#8BA3AB", "color")}
         />
       </View>
 
       <Text
         style={
-          styles.emptyTitle
+          themeStyles.emptyTitle
         }
       >
         {title}
@@ -1018,7 +1033,7 @@ function EmptyState({
 
       <Text
         style={
-          styles.emptyDescription
+          themeStyles.emptyDescription
         }
       >
         {description}
@@ -1056,6 +1071,9 @@ function ReviewModal({
 
   onSubmit: () => void;
 }) {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   if (
     !selectedReview
   ) {
@@ -1094,7 +1112,7 @@ function ReviewModal({
       >
         <View
           style={
-            styles.modalOverlay
+            themeStyles.modalOverlay
           }
         >
           <Pressable
@@ -1108,12 +1126,12 @@ function ReviewModal({
 
           <View
             style={
-              styles.modalContainer
+              themeStyles.modalContainer
             }
           >
             <View
               style={
-                styles.modalHeader
+                themeStyles.modalHeader
               }
             >
               <View
@@ -1123,7 +1141,7 @@ function ReviewModal({
               >
                 <Text
                   style={
-                    styles.modalTitle
+                    themeStyles.modalTitle
                   }
                 >
                   {approving
@@ -1133,7 +1151,7 @@ function ReviewModal({
 
                 <Text
                   style={
-                    styles.modalSubtitle
+                    themeStyles.modalSubtitle
                   }
                 >
                   {user.fullName} •{" "}
@@ -1157,7 +1175,7 @@ function ReviewModal({
                 <Ionicons
                   name="close"
                   size={26}
-                  color="#4D6C78"
+                  color={themeTone("#4D6C78", "color")}
                 />
               </Pressable>
             </View>
@@ -1165,16 +1183,16 @@ function ReviewModal({
             <ScrollView
               keyboardShouldPersistTaps="handled"
               contentContainerStyle={
-                styles.modalContent
+                themeStyles.modalContent
               }
             >
               <View
                 style={[
-                  styles.confirmBox,
+                  themeStyles.confirmBox,
 
                   approving
-                    ? styles.approveConfirmBox
-                    : styles.rejectConfirmBox,
+                    ? themeStyles.approveConfirmBox
+                    : themeStyles.rejectConfirmBox,
                 ]}
               >
                 <Ionicons
@@ -1193,7 +1211,7 @@ function ReviewModal({
 
                 <Text
                   style={
-                    styles.confirmText
+                    themeStyles.confirmText
                   }
                 >
                   {approving
@@ -1204,7 +1222,7 @@ function ReviewModal({
 
               <Text
                 style={
-                  styles.noteLabel
+                  themeStyles.noteLabel
                 }
               >
                 Review Note
@@ -1229,15 +1247,15 @@ function ReviewModal({
                     ? "Optional message for the member..."
                     : "Optional reason for rejection..."
                 }
-                placeholderTextColor="#8BA3AB"
+                placeholderTextColor={themeTone("#8BA3AB", "placeholderTextColor")}
                 style={
-                  styles.noteInput
+                  themeStyles.noteInput
                 }
               />
 
               <Text
                 style={
-                  styles.characterCount
+                  themeStyles.characterCount
                 }
               >
                 {reviewNote.length}
@@ -1247,12 +1265,12 @@ function ReviewModal({
               {error && (
                 <View
                   style={
-                    styles.reviewErrorBox
+                    themeStyles.reviewErrorBox
                   }
                 >
                   <Text
                     style={
-                      styles.reviewErrorText
+                      themeStyles.reviewErrorText
                     }
                   >
                     {error}
@@ -1268,11 +1286,11 @@ function ReviewModal({
                   onSubmit
                 }
                 style={[
-                  styles.confirmButton,
+                  themeStyles.confirmButton,
 
                   approving
-                    ? styles.confirmApproveButton
-                    : styles.confirmRejectButton,
+                    ? themeStyles.confirmApproveButton
+                    : themeStyles.confirmRejectButton,
 
                   processing && {
                     opacity: 0.65,
@@ -1281,7 +1299,7 @@ function ReviewModal({
               >
                 {processing ? (
                   <ActivityIndicator
-                    color="#ffffff"
+                    color={themeTone("#ffffff", "color")}
                   />
                 ) : (
                   <>
@@ -1292,12 +1310,12 @@ function ReviewModal({
                           : "close-outline"
                       }
                       size={21}
-                      color="#ffffff"
+                      color={themeTone("#ffffff", "color")}
                     />
 
                     <Text
                       style={
-                        styles.confirmButtonText
+                        themeStyles.confirmButtonText
                       }
                     >
                       {approving

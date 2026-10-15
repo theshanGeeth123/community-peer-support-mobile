@@ -1,3 +1,4 @@
+import { useThemeTone, useThemedStyles } from '@/theme/useAlyvenAppearance';
 import { useEffect } from "react";
 import {
   ActivityIndicator,
@@ -86,6 +87,9 @@ export default function SubmitReportSheet({
   targetType,
   targetId,
 }: SubmitReportSheetProps) {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   const { submitting, error, success, submitReport, reset } =
     useSubmitReport();
 
@@ -137,61 +141,61 @@ export default function SubmitReportSheet({
       statusBarTranslucent
     >
       {/* Backdrop */}
-      <Pressable style={styles.backdrop} onPress={handleClose} />
+      <Pressable style={themeStyles.backdrop} onPress={handleClose} />
 
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.kvContainer}
+        style={themeStyles.kvContainer}
         pointerEvents="box-none"
       >
         <SafeAreaView
           edges={["bottom"]}
-          style={styles.sheet}
+          style={themeStyles.sheet}
         >
           {/* Handle */}
-          <View style={styles.handle} />
+          <View style={themeStyles.handle} />
 
           {/* Header */}
-          <View style={styles.header}>
+          <View style={themeStyles.header}>
             <View>
-              <Text style={styles.title}>Report {targetType === "POST" ? "Post" : "Comment"}</Text>
-              <Text style={styles.subtitle}>
+              <Text style={themeStyles.title}>Report {targetType === "POST" ? "Post" : "Comment"}</Text>
+              <Text style={themeStyles.subtitle}>
                 Help us keep the community safe.
               </Text>
             </View>
             <Pressable
               onPress={handleClose}
-              style={styles.closeBtn}
+              style={themeStyles.closeBtn}
               hitSlop={12}
             >
-              <Ionicons name="close" size={20} color="#64808C" />
+              <Ionicons name="close" size={20} color={themeTone("#64808C", "color")} />
             </Pressable>
           </View>
 
           <ScrollView
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.scrollContent}
+            contentContainerStyle={themeStyles.scrollContent}
             keyboardShouldPersistTaps="handled"
           >
             {/* Success state */}
             {success ? (
-              <View style={styles.successBox}>
-                <View style={styles.successIcon}>
+              <View style={themeStyles.successBox}>
+                <View style={themeStyles.successIcon}>
                   <Ionicons
                     name="checkmark-circle"
                     size={40}
-                    color="#10b981"
+                    color={themeTone("#10b981", "color")}
                   />
                 </View>
-                <Text style={styles.successTitle}>Report Submitted</Text>
-                <Text style={styles.successSub}>
+                <Text style={themeStyles.successTitle}>Report Submitted</Text>
+                <Text style={themeStyles.successSub}>
                   Thank you. Our moderators will review this shortly.
                 </Text>
               </View>
             ) : (
               <>
                 {/* Reason picker */}
-                <Text style={styles.sectionLabel}>
+                <Text style={themeStyles.sectionLabel}>
                   What is the issue?
                 </Text>
 
@@ -199,7 +203,7 @@ export default function SubmitReportSheet({
                   name="reason"
                   control={control}
                   render={({ field }) => (
-                    <View style={styles.reasonGrid}>
+                    <View style={themeStyles.reasonGrid}>
                       {REASONS.map((r) => {
                         const selected = field.value === r.value;
                         return (
@@ -207,31 +211,31 @@ export default function SubmitReportSheet({
                             key={r.value}
                             onPress={() => field.onChange(r.value)}
                             style={[
-                              styles.reasonChip,
-                              selected && styles.reasonChipSelected,
+                              themeStyles.reasonChip,
+                              selected && themeStyles.reasonChipSelected,
                             ]}
                           >
-                            <View style={styles.reasonChipInner}>
+                            <View style={themeStyles.reasonChipInner}>
                               <View
                                 style={[
-                                  styles.radioOuter,
-                                  selected && styles.radioOuterSelected,
+                                  themeStyles.radioOuter,
+                                  selected && themeStyles.radioOuterSelected,
                                 ]}
                               >
                                 {selected && (
-                                  <View style={styles.radioInner} />
+                                  <View style={themeStyles.radioInner} />
                                 )}
                               </View>
-                              <View style={styles.reasonTextWrap}>
+                              <View style={themeStyles.reasonTextWrap}>
                                 <Text
                                   style={[
-                                    styles.reasonLabel,
-                                    selected && styles.reasonLabelSelected,
+                                    themeStyles.reasonLabel,
+                                    selected && themeStyles.reasonLabelSelected,
                                   ]}
                                 >
                                   {r.label}
                                 </Text>
-                                <Text style={styles.reasonDesc}>
+                                <Text style={themeStyles.reasonDesc}>
                                   {r.description}
                                 </Text>
                               </View>
@@ -244,15 +248,15 @@ export default function SubmitReportSheet({
                 />
 
                 {errors.reason ? (
-                  <Text style={styles.fieldError}>
+                  <Text style={themeStyles.fieldError}>
                     Please select a reason.
                   </Text>
                 ) : null}
 
                 {/* Additional details */}
-                <Text style={[styles.sectionLabel, { marginTop: 20 }]}>
+                <Text style={[themeStyles.sectionLabel, { marginTop: 20 }]}>
                   Additional details{" "}
-                  <Text style={styles.optional}>(optional)</Text>
+                  <Text style={themeStyles.optional}>(optional)</Text>
                 </Text>
 
                 <Controller
@@ -261,9 +265,9 @@ export default function SubmitReportSheet({
                   render={({ field }) => (
                     <>
                       <TextInput
-                        style={styles.textArea}
+                        style={themeStyles.textArea}
                         placeholder="Provide any extra context that will help our moderators..."
-                        placeholderTextColor="#8BA3AB"
+                        placeholderTextColor={themeTone("#8BA3AB", "placeholderTextColor")}
                         multiline
                         numberOfLines={4}
                         maxLength={500}
@@ -273,8 +277,8 @@ export default function SubmitReportSheet({
                       />
                       <Text
                         style={[
-                          styles.charCounter,
-                          (field.value?.length ?? 0) > 450 && { color: "#e11d48" },
+                          themeStyles.charCounter,
+                          (field.value?.length ?? 0) > 450 && { color: themeTone("#e11d48", "color") },
                         ]}
                       >
                         {field.value?.length ?? 0} / 500
@@ -285,13 +289,13 @@ export default function SubmitReportSheet({
 
                 {/* API error */}
                 {error ? (
-                  <View style={styles.errorBox}>
+                  <View style={themeStyles.errorBox}>
                     <Ionicons
                       name="alert-circle-outline"
                       size={16}
-                      color="#dc2626"
+                      color={themeTone("#dc2626", "color")}
                     />
-                    <Text style={styles.errorText}>{error}</Text>
+                    <Text style={themeStyles.errorText}>{error}</Text>
                   </View>
                 ) : null}
 
@@ -300,21 +304,21 @@ export default function SubmitReportSheet({
                   onPress={handleSubmit(onSubmit)}
                   disabled={submitting}
                   style={({ pressed }) => [
-                    styles.submitBtn,
-                    pressed && styles.submitBtnPressed,
-                    submitting && styles.submitBtnDisabled,
+                    themeStyles.submitBtn,
+                    pressed && themeStyles.submitBtnPressed,
+                    submitting && themeStyles.submitBtnDisabled,
                   ]}
                 >
                   {submitting ? (
-                    <ActivityIndicator color="#fff" size="small" />
+                    <ActivityIndicator color={themeTone("#fff", "color")} size="small" />
                   ) : (
                     <>
                       <Ionicons
                         name="flag"
                         size={16}
-                        color="#fff"
+                        color={themeTone("#fff", "color")}
                       />
-                      <Text style={styles.submitLabel}>
+                      <Text style={themeStyles.submitLabel}>
                         Submit Report
                       </Text>
                     </>

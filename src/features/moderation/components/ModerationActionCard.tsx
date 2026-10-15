@@ -1,3 +1,4 @@
+import { useThemeTone, useThemedStyles } from '@/theme/useAlyvenAppearance';
 ﻿import { StyleSheet, Text, View } from "react-native";
 
 import { Ionicons } from "@expo/vector-icons";
@@ -48,6 +49,9 @@ function formatDate(iso: string) {
 export default function ModerationActionCard({
   action,
 }: ModerationActionCardProps) {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   const cfg = actionConfig[action.action];
 
   const targetType =
@@ -61,11 +65,11 @@ export default function ModerationActionCard({
       : action.group.name;
 
   return (
-    <View style={styles.card}>
+    <View style={themeStyles.card}>
       {/* Header row */}
-      <View style={styles.header}>
+      <View style={themeStyles.header}>
         <View
-          style={[styles.iconWrap, { backgroundColor: cfg.bg }]}
+          style={[themeStyles.iconWrap, { backgroundColor: cfg.bg }]}
         >
           <Ionicons
             name={cfg.icon}
@@ -74,34 +78,34 @@ export default function ModerationActionCard({
           />
         </View>
 
-        <View style={styles.headerText}>
-          <Text style={[styles.actionLabel, { color: cfg.color }]}>
+        <View style={themeStyles.headerText}>
+          <Text style={[themeStyles.actionLabel, { color: cfg.color }]}>
             {cfg.label}
           </Text>
-          <Text style={styles.meta}>
+          <Text style={themeStyles.meta}>
             {targetType} · {groupName}
           </Text>
         </View>
 
-        <Text style={styles.date}>
+        <Text style={themeStyles.date}>
           {formatDate(action.createdAt)}
         </Text>
       </View>
 
       {/* Reason */}
-      <View style={styles.reasonWrap}>
-        <Text style={styles.reasonLabel}>Reason</Text>
-        <Text style={styles.reasonText}>{action.reason}</Text>
+      <View style={themeStyles.reasonWrap}>
+        <Text style={themeStyles.reasonLabel}>Reason</Text>
+        <Text style={themeStyles.reasonText}>{action.reason}</Text>
       </View>
 
       {/* Moderator */}
-      <View style={styles.footer}>
+      <View style={themeStyles.footer}>
         <Ionicons
           name="shield-checkmark-outline"
           size={12}
-          color="#8BA3AB"
+          color={themeTone("#8BA3AB", "color")}
         />
-        <Text style={styles.footerText}>
+        <Text style={themeStyles.footerText}>
           {action.moderator.fullName}
         </Text>
       </View>

@@ -1,3 +1,4 @@
+import { useThemeTone, useThemedClassName } from '@/theme/useAlyvenAppearance';
 import {
   useCallback,
   useEffect,
@@ -130,6 +131,9 @@ const formatDate = (
 };
 
 export default function AdminUserDetailsScreen() {
+  const themeClass = useThemedClassName();
+  const themeTone = useThemeTone();
+
   const {
     user: currentAdmin,
   } = useAuth();
@@ -452,15 +456,15 @@ export default function AdminUserDetailsScreen() {
           justifyContent:
             "center",
           backgroundColor:
-            "#F5FAF9",
+            themeTone("#F5FAF9", "backgroundColor"),
         }}
       >
         <ActivityIndicator
           size="large"
-          color="#0E7C86"
+          color={themeTone("#0E7C86", "color")}
         />
 
-        <Text className="mt-4 text-slate-500">
+        <Text className={themeClass("mt-4 text-slate-500")}>
           Loading user...
         </Text>
       </SafeAreaView>
@@ -471,7 +475,7 @@ export default function AdminUserDetailsScreen() {
     <SafeAreaView
       style={{
         flex: 1,
-        backgroundColor: "#F5FAF9",
+        backgroundColor: themeTone("#F5FAF9", "backgroundColor"),
       }}
       edges={[
         "top",
@@ -492,57 +496,57 @@ export default function AdminUserDetailsScreen() {
           false
         }
       >
-        <View className="mb-6 flex-row items-center">
+        <View className={themeClass("mb-6 flex-row items-center")}>
           <Pressable
             onPress={() =>
               router.back()
             }
-            className="mr-4 h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white"
+            className={themeClass("mr-4 h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white")}
           >
             <Ionicons
               name="arrow-back"
               size={22}
-              color="#0E2A47"
+              color={themeTone("#0E2A47", "color")}
             />
           </Pressable>
 
-          <View className="flex-1">
-            <Text className="text-3xl font-bold text-slate-900">
+          <View className={themeClass("flex-1")}>
+            <Text className={themeClass("text-3xl font-bold text-slate-900")}>
               User Details
             </Text>
 
-            <Text className="mt-1 text-sm text-slate-500">
+            <Text className={themeClass("mt-1 text-sm text-slate-500")}>
               Manage permissions and access
             </Text>
           </View>
         </View>
 
         {error && (
-          <View className="mb-5 rounded-2xl border border-red-200 bg-red-50 p-4">
-            <Text className="text-red-700">
+          <View className={themeClass("mb-5 rounded-2xl border border-red-200 bg-red-50 p-4")}>
+            <Text className={themeClass("text-red-700")}>
               {error}
             </Text>
           </View>
         )}
 
         {!user ? (
-          <View className="items-center rounded-3xl border border-slate-200 bg-white py-12">
+          <View className={themeClass("items-center rounded-3xl border border-slate-200 bg-white py-12")}>
             <Ionicons
               name="person-outline"
               size={36}
-              color="#8BA3AB"
+              color={themeTone("#8BA3AB", "color")}
             />
 
-            <Text className="mt-4 font-bold text-slate-900">
+            <Text className={themeClass("mt-4 font-bold text-slate-900")}>
               User not available
             </Text>
           </View>
         ) : (
           <>
-            <View className="rounded-3xl bg-slate-900 p-6">
-              <View className="flex-row items-center">
-                <View className="h-16 w-16 items-center justify-center rounded-full bg-white/10">
-                  <Text className="text-2xl font-bold text-white">
+            <View className={themeClass("rounded-3xl bg-slate-900 p-6")}>
+              <View className={themeClass("flex-row items-center")}>
+                <View className={themeClass("h-16 w-16 items-center justify-center rounded-full bg-white/10")}>
+                  <Text className={themeClass("text-2xl font-bold text-white")}>
                     {user.fullName
                       ?.charAt(0)
                       .toUpperCase() ||
@@ -550,28 +554,28 @@ export default function AdminUserDetailsScreen() {
                   </Text>
                 </View>
 
-                <View className="ml-4 flex-1">
-                  <Text className="text-xl font-bold text-white">
+                <View className={themeClass("ml-4 flex-1")}>
+                  <Text className={themeClass("text-xl font-bold text-white")}>
                     {
                       user.fullName
                     }
                   </Text>
 
-                  <Text className="mt-1 text-slate-300">
+                  <Text className={themeClass("mt-1 text-slate-300")}>
                     {user.email}
                   </Text>
                 </View>
               </View>
 
-              <View className="mt-5 flex-row flex-wrap gap-2">
-                <View className="rounded-full bg-white/10 px-4 py-2">
-                  <Text className="text-xs font-bold text-white">
+              <View className={themeClass("mt-5 flex-row flex-wrap gap-2")}>
+                <View className={themeClass("rounded-full bg-white/10 px-4 py-2")}>
+                  <Text className={themeClass("text-xs font-bold text-white")}>
                     {user.role}
                   </Text>
                 </View>
 
-                <View className="rounded-full bg-white/10 px-4 py-2">
-                  <Text className="text-xs font-bold text-white">
+                <View className={themeClass("rounded-full bg-white/10 px-4 py-2")}>
+                  <Text className={themeClass("text-xs font-bold text-white")}>
                     {
                       user.accountStatus
                     }
@@ -579,8 +583,8 @@ export default function AdminUserDetailsScreen() {
                 </View>
 
                 {isCurrentAdmin && (
-                  <View className="rounded-full bg-indigo-500 px-4 py-2">
-                    <Text className="text-xs font-bold text-white">
+                  <View className={themeClass("rounded-full bg-indigo-500 px-4 py-2")}>
+                    <Text className={themeClass("text-xs font-bold text-white")}>
                       YOUR ACCOUNT
                     </Text>
                   </View>
@@ -588,27 +592,27 @@ export default function AdminUserDetailsScreen() {
               </View>
             </View>
 
-            <View className="mt-6 rounded-3xl border border-slate-200 bg-white p-6">
-              <Text className="text-lg font-bold text-slate-900">
+            <View className={themeClass("mt-6 rounded-3xl border border-slate-200 bg-white p-6")}>
+              <Text className={themeClass("text-lg font-bold text-slate-900")}>
                 Account Information
               </Text>
 
-              <View className="mt-5">
-                <Text className="text-xs font-semibold uppercase text-slate-400">
+              <View className={themeClass("mt-5")}>
+                <Text className={themeClass("text-xs font-semibold uppercase text-slate-400")}>
                   Email
                 </Text>
 
-                <Text className="mt-2 font-semibold text-slate-700">
+                <Text className={themeClass("mt-2 font-semibold text-slate-700")}>
                   {user.email}
                 </Text>
               </View>
 
-              <View className="mt-5">
-                <Text className="text-xs font-semibold uppercase text-slate-400">
+              <View className={themeClass("mt-5")}>
+                <Text className={themeClass("text-xs font-semibold uppercase text-slate-400")}>
                   Email Verification
                 </Text>
 
-                <View className="mt-2 flex-row items-center">
+                <View className={themeClass("mt-2 flex-row items-center")}>
                   <Ionicons
                     name={
                       user.isEmailVerified
@@ -623,7 +627,7 @@ export default function AdminUserDetailsScreen() {
                     }
                   />
 
-                  <Text className="ml-2 font-semibold text-slate-700">
+                  <Text className={themeClass("ml-2 font-semibold text-slate-700")}>
                     {user.isEmailVerified
                       ? "Verified"
                       : "Not Verified"}
@@ -631,12 +635,12 @@ export default function AdminUserDetailsScreen() {
                 </View>
               </View>
 
-              <View className="mt-5">
-                <Text className="text-xs font-semibold uppercase text-slate-400">
+              <View className={themeClass("mt-5")}>
+                <Text className={themeClass("text-xs font-semibold uppercase text-slate-400")}>
                   Login Methods
                 </Text>
 
-                <View className="mt-3 flex-row flex-wrap gap-2">
+                <View className={themeClass("mt-3 flex-row flex-wrap gap-2")}>
                   {user.authProviders?.map(
                     (
                       provider
@@ -645,9 +649,9 @@ export default function AdminUserDetailsScreen() {
                         key={
                           provider
                         }
-                        className="rounded-full bg-indigo-50 px-4 py-2"
+                        className={themeClass("rounded-full bg-indigo-50 px-4 py-2")}
                       >
-                        <Text className="text-xs font-bold text-indigo-700">
+                        <Text className={themeClass("text-xs font-bold text-indigo-700")}>
                           {
                             provider
                           }
@@ -658,24 +662,24 @@ export default function AdminUserDetailsScreen() {
                 </View>
               </View>
 
-              <View className="mt-5">
-                <Text className="text-xs font-semibold uppercase text-slate-400">
+              <View className={themeClass("mt-5")}>
+                <Text className={themeClass("text-xs font-semibold uppercase text-slate-400")}>
                   Created
                 </Text>
 
-                <Text className="mt-2 font-medium text-slate-700">
+                <Text className={themeClass("mt-2 font-medium text-slate-700")}>
                   {formatDate(
                     user.createdAt
                   )}
                 </Text>
               </View>
 
-              <View className="mt-5">
-                <Text className="text-xs font-semibold uppercase text-slate-400">
+              <View className={themeClass("mt-5")}>
+                <Text className={themeClass("text-xs font-semibold uppercase text-slate-400")}>
                   Last Login
                 </Text>
 
-                <Text className="mt-2 font-medium text-slate-700">
+                <Text className={themeClass("mt-2 font-medium text-slate-700")}>
                   {formatDate(
                     user.lastLoginAt
                   )}
@@ -683,37 +687,37 @@ export default function AdminUserDetailsScreen() {
               </View>
             </View>
 
-            <View className="mt-6 rounded-3xl border border-slate-200 bg-white p-6">
-              <View className="flex-row items-center">
-                <View className="h-10 w-10 items-center justify-center rounded-xl bg-indigo-50">
+            <View className={themeClass("mt-6 rounded-3xl border border-slate-200 bg-white p-6")}>
+              <View className={themeClass("flex-row items-center")}>
+                <View className={themeClass("h-10 w-10 items-center justify-center rounded-xl bg-indigo-50")}>
                   <Ionicons
                     name="shield-outline"
                     size={21}
-                    color="#0E7C86"
+                    color={themeTone("#0E7C86", "color")}
                   />
                 </View>
 
-                <View className="ml-3 flex-1">
-                  <Text className="text-lg font-bold text-slate-900">
+                <View className={themeClass("ml-3 flex-1")}>
+                  <Text className={themeClass("text-lg font-bold text-slate-900")}>
                     User Role
                   </Text>
 
-                  <Text className="mt-1 text-sm text-slate-500">
+                  <Text className={themeClass("mt-1 text-sm text-slate-500")}>
                     Manage platform permissions
                   </Text>
                 </View>
               </View>
 
               {isCurrentAdmin && (
-                <View className="mt-5 rounded-2xl border border-orange-200 bg-orange-50 p-4">
-                  <Text className="text-sm leading-5 text-orange-700">
+                <View className={themeClass("mt-5 rounded-2xl border border-orange-200 bg-orange-50 p-4")}>
+                  <Text className={themeClass("text-sm leading-5 text-orange-700")}>
                     You cannot modify your own
                     administrator role.
                   </Text>
                 </View>
               )}
 
-              <View className="mt-5 gap-3">
+              <View className={themeClass("mt-5 gap-3")}>
                 {ROLES.map(
                   (role) => {
                     const selected =
@@ -734,27 +738,27 @@ export default function AdminUserDetailsScreen() {
                             role.value
                           )
                         }
-                        className={`rounded-2xl border p-4 ${
+                        className={themeClass(`rounded-2xl border p-4 ${
                           selected
                             ? "border-indigo-600 bg-indigo-50"
                             : "border-slate-200 bg-white"
-                        }`}
+                        }`)}
                       >
-                        <View className="flex-row items-center">
-                          <View className="flex-1">
+                        <View className={themeClass("flex-row items-center")}>
+                          <View className={themeClass("flex-1")}>
                             <Text
-                              className={`font-bold ${
+                              className={themeClass(`font-bold ${
                                 selected
                                   ? "text-indigo-700"
                                   : "text-slate-800"
-                              }`}
+                              }`)}
                             >
                               {
                                 role.label
                               }
                             </Text>
 
-                            <Text className="mt-1 text-xs leading-5 text-slate-500">
+                            <Text className={themeClass("mt-1 text-xs leading-5 text-slate-500")}>
                               {
                                 role.description
                               }
@@ -765,7 +769,7 @@ export default function AdminUserDetailsScreen() {
                             <Ionicons
                               name="checkmark-circle"
                               size={22}
-                              color="#0E7C86"
+                              color={themeTone("#0E7C86", "color")}
                             />
                           )}
                         </View>
@@ -776,37 +780,37 @@ export default function AdminUserDetailsScreen() {
               </View>
             </View>
 
-            <View className="mt-6 rounded-3xl border border-slate-200 bg-white p-6">
-              <View className="flex-row items-center">
-                <View className="h-10 w-10 items-center justify-center rounded-xl bg-emerald-50">
+            <View className={themeClass("mt-6 rounded-3xl border border-slate-200 bg-white p-6")}>
+              <View className={themeClass("flex-row items-center")}>
+                <View className={themeClass("h-10 w-10 items-center justify-center rounded-xl bg-emerald-50")}>
                   <Ionicons
                     name="pulse-outline"
                     size={21}
-                    color="#059669"
+                    color={themeTone("#059669", "color")}
                   />
                 </View>
 
-                <View className="ml-3 flex-1">
-                  <Text className="text-lg font-bold text-slate-900">
+                <View className={themeClass("ml-3 flex-1")}>
+                  <Text className={themeClass("text-lg font-bold text-slate-900")}>
                     Account Status
                   </Text>
 
-                  <Text className="mt-1 text-sm text-slate-500">
+                  <Text className={themeClass("mt-1 text-sm text-slate-500")}>
                     Control account access
                   </Text>
                 </View>
               </View>
 
               {isCurrentAdmin && (
-                <View className="mt-5 rounded-2xl border border-orange-200 bg-orange-50 p-4">
-                  <Text className="text-sm leading-5 text-orange-700">
+                <View className={themeClass("mt-5 rounded-2xl border border-orange-200 bg-orange-50 p-4")}>
+                  <Text className={themeClass("text-sm leading-5 text-orange-700")}>
                     You cannot change your own
                     administrator account status.
                   </Text>
                 </View>
               )}
 
-              <View className="mt-5 gap-3">
+              <View className={themeClass("mt-5 gap-3")}>
                 {STATUSES.map(
                   (status) => {
                     const selected =
@@ -827,7 +831,7 @@ export default function AdminUserDetailsScreen() {
                             status.value
                           )
                         }
-                        className={`rounded-2xl border p-4 ${
+                        className={themeClass(`rounded-2xl border p-4 ${
                           selected
                             ? status.value ===
                               "ACTIVE"
@@ -837,17 +841,17 @@ export default function AdminUserDetailsScreen() {
                                 ? "border-orange-500 bg-orange-50"
                                 : "border-red-500 bg-red-50"
                             : "border-slate-200 bg-white"
-                        }`}
+                        }`)}
                       >
-                        <View className="flex-row items-center">
-                          <View className="flex-1">
-                            <Text className="font-bold text-slate-800">
+                        <View className={themeClass("flex-row items-center")}>
+                          <View className={themeClass("flex-1")}>
+                            <Text className={themeClass("font-bold text-slate-800")}>
                               {
                                 status.label
                               }
                             </Text>
 
-                            <Text className="mt-1 text-xs leading-5 text-slate-500">
+                            <Text className={themeClass("mt-1 text-xs leading-5 text-slate-500")}>
                               {
                                 status.description
                               }
@@ -877,28 +881,28 @@ export default function AdminUserDetailsScreen() {
               </View>
             </View>
 
-            <View className="mt-6 rounded-3xl border border-red-200 bg-white p-6">
-              <View className="flex-row items-center">
-                <View className="h-10 w-10 items-center justify-center rounded-xl bg-red-50">
+            <View className={themeClass("mt-6 rounded-3xl border border-red-200 bg-white p-6")}>
+              <View className={themeClass("flex-row items-center")}>
+                <View className={themeClass("h-10 w-10 items-center justify-center rounded-xl bg-red-50")}>
                   <Ionicons
                     name="log-out-outline"
                     size={21}
-                    color="#dc2626"
+                    color={themeTone("#dc2626", "color")}
                   />
                 </View>
 
-                <View className="ml-3 flex-1">
-                  <Text className="text-lg font-bold text-slate-900">
+                <View className={themeClass("ml-3 flex-1")}>
+                  <Text className={themeClass("text-lg font-bold text-slate-900")}>
                     Session Management
                   </Text>
 
-                  <Text className="mt-1 text-sm text-slate-500">
+                  <Text className={themeClass("mt-1 text-sm text-slate-500")}>
                     End active sessions
                   </Text>
                 </View>
               </View>
 
-              <Text className="mt-5 text-sm leading-6 text-slate-500">
+              <Text className={themeClass("mt-5 text-sm leading-6 text-slate-500")}>
                 Revoking sessions signs this user
                 out from every active device.
               </Text>
@@ -910,11 +914,11 @@ export default function AdminUserDetailsScreen() {
                 onPress={
                   confirmRevokeSessions
                 }
-                className={`mt-5 min-h-14 flex-row items-center justify-center rounded-2xl ${
+                className={themeClass(`mt-5 min-h-14 flex-row items-center justify-center rounded-2xl ${
                   working
                     ? "bg-red-300"
                     : "bg-red-600"
-                }`}
+                }`)}
               >
                 {working ? (
                   <ActivityIndicator
@@ -928,7 +932,7 @@ export default function AdminUserDetailsScreen() {
                       color="white"
                     />
 
-                    <Text className="ml-2 font-bold text-white">
+                    <Text className={themeClass("ml-2 font-bold text-white")}>
                       Revoke All Sessions
                     </Text>
                   </>

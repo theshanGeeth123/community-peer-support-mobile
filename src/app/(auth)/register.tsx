@@ -1,3 +1,4 @@
+import { useThemedClassName } from '@/theme/useAlyvenAppearance';
 import { useState } from "react";
 
 import {
@@ -32,6 +33,8 @@ import {
 } from "@/services/api/apiError";
 
 export default function RegisterScreen() {
+  const themeClass = useThemedClassName();
+
   const [apiError, setApiError] =
     useState<string | null>(null);
 
@@ -154,7 +157,7 @@ export default function RegisterScreen() {
         )}
       />
 
-      <Text className="mb-5 text-xs leading-5 text-slate-400">
+      <Text className={themeClass("mb-5 text-xs leading-5 text-slate-400")}>
         Use at least 8 characters including uppercase,
         lowercase, a number and a special character.
       </Text>
@@ -167,8 +170,8 @@ export default function RegisterScreen() {
         )}
       />
 
-      <View className="mt-6 flex-row justify-center">
-        <Text className="text-slate-500">
+      <View className={themeClass("mt-6 flex-row justify-center")}>
+        <Text className={themeClass("text-slate-500")}>
           Already have an account?{" "}
         </Text>
 
@@ -177,7 +180,7 @@ export default function RegisterScreen() {
             router.replace("/(auth)/login")
           }
         >
-          <Text className="font-bold text-indigo-600">
+          <Text className={themeClass("font-bold text-indigo-600")}>
             Sign in
           </Text>
         </Pressable>

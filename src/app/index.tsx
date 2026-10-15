@@ -1,3 +1,4 @@
+import { useThemeTone, useThemedStyles } from '@/theme/useAlyvenAppearance';
 import {
   ActivityIndicator,
   StyleSheet,
@@ -17,6 +18,9 @@ import {
 } from "@/features/navigation/roleNavigation";
 
 export default function IndexScreen() {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   const {
     user,
     isAuthenticated,
@@ -25,10 +29,10 @@ export default function IndexScreen() {
 
   if (isInitializing) {
     return (
-      <View style={styles.container}>
+      <View style={themeStyles.container}>
         <ActivityIndicator
           size="large"
-          color="#0E7C86"
+          color={themeTone("#0E7C86", "color")}
         />
       </View>
     );

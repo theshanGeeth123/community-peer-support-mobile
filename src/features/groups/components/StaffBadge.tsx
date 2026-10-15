@@ -1,3 +1,4 @@
+import { useThemedStyles } from '@/theme/useAlyvenAppearance';
 import { StyleSheet, Text, View } from "react-native";
 
 import { Ionicons } from "@expo/vector-icons";
@@ -42,6 +43,8 @@ export default function StaffBadge({
 }: {
   badge?: StaffBadgeType | null;
 }) {
+  const themeStyles = useThemedStyles(styles);
+
   if (!badge) {
     return null;
   }
@@ -53,10 +56,10 @@ export default function StaffBadge({
   }
 
   return (
-    <View style={[styles.badge, { backgroundColor: config.background }]}>
+    <View style={[themeStyles.badge, { backgroundColor: config.background }]}>
       <Ionicons name={config.icon} size={10} color={config.color} />
 
-      <Text style={[styles.label, { color: config.color }]}>
+      <Text style={[themeStyles.label, { color: config.color }]}>
         {config.label}
       </Text>
     </View>

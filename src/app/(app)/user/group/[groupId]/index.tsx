@@ -1,3 +1,4 @@
+import { useThemeTone, useThemedStyles } from '@/theme/useAlyvenAppearance';
 import {
     useCallback,
     useState,
@@ -53,6 +54,9 @@ import {
 } from "@/services/api/apiError";
 
 export default function UserGroupDetailsScreen() {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   const params =
     useLocalSearchParams();
 
@@ -362,22 +366,22 @@ export default function UserGroupDetailsScreen() {
     return (
       <SafeAreaView
         style={
-          styles.safeArea
+          themeStyles.safeArea
         }
       >
         <View
           style={
-            styles.centerArea
+            themeStyles.centerArea
           }
         >
           <ActivityIndicator
             size="large"
-            color="#0E7C86"
+            color={themeTone("#0E7C86", "color")}
           />
 
           <Text
             style={
-              styles.loadingText
+              themeStyles.loadingText
             }
           >
             {redirecting
@@ -396,23 +400,23 @@ export default function UserGroupDetailsScreen() {
     return (
       <SafeAreaView
         style={
-          styles.safeArea
+          themeStyles.safeArea
         }
       >
         <View
           style={
-            styles.errorPage
+            themeStyles.errorPage
           }
         >
           <Ionicons
             name="alert-circle-outline"
             size={48}
-            color="#dc2626"
+            color={themeTone("#dc2626", "color")}
           />
 
           <Text
             style={
-              styles.errorPageTitle
+              themeStyles.errorPageTitle
             }
           >
             Unable to load
@@ -421,7 +425,7 @@ export default function UserGroupDetailsScreen() {
 
           <Text
             style={
-              styles.errorPageText
+              themeStyles.errorPageText
             }
           >
             {error ??
@@ -430,7 +434,7 @@ export default function UserGroupDetailsScreen() {
 
           <Pressable
             style={
-              styles.backButtonLarge
+              themeStyles.backButtonLarge
             }
             onPress={() =>
               router.back()
@@ -438,7 +442,7 @@ export default function UserGroupDetailsScreen() {
           >
             <Text
               style={
-                styles.backButtonLargeText
+                themeStyles.backButtonLargeText
               }
             >
               Go Back
@@ -465,7 +469,7 @@ export default function UserGroupDetailsScreen() {
   return (
     <SafeAreaView
       style={
-        styles.safeArea
+        themeStyles.safeArea
       }
       edges={[
         "top",
@@ -475,7 +479,7 @@ export default function UserGroupDetailsScreen() {
     >
       <View
         style={
-          styles.header
+          themeStyles.header
         }
       >
         <Pressable
@@ -483,20 +487,20 @@ export default function UserGroupDetailsScreen() {
             router.back()
           }
           style={
-            styles.backButton
+            themeStyles.backButton
           }
         >
           <Ionicons
             name="arrow-back"
             size={22}
-            color="#0E2A47"
+            color={themeTone("#0E2A47", "color")}
           />
         </Pressable>
 
         <Text
           numberOfLines={1}
           style={
-            styles.headerTitle
+            themeStyles.headerTitle
           }
         >
           Group Details
@@ -514,29 +518,29 @@ export default function UserGroupDetailsScreen() {
           false
         }
         contentContainerStyle={
-          styles.content
+          themeStyles.content
         }
       >
         <View
           style={
-            styles.hero
+            themeStyles.hero
           }
         >
           <View
             style={
-              styles.heroIcon
+              themeStyles.heroIcon
             }
           >
             <Ionicons
               name="people"
               size={34}
-              color="#0E7C86"
+              color={themeTone("#0E7C86", "color")}
             />
           </View>
 
           <Text
             style={
-              styles.groupName
+              themeStyles.groupName
             }
           >
             {group.name}
@@ -544,7 +548,7 @@ export default function UserGroupDetailsScreen() {
 
           <Text
             style={
-              styles.category
+              themeStyles.category
             }
           >
             {group.category}
@@ -553,18 +557,18 @@ export default function UserGroupDetailsScreen() {
           {group.communityLocation && (
             <View
               style={
-                styles.locationRow
+                themeStyles.locationRow
               }
             >
               <Ionicons
                 name="location-outline"
                 size={16}
-                color="#64808C"
+                color={themeTone("#64808C", "color")}
               />
 
               <Text
                 style={
-                  styles.locationText
+                  themeStyles.locationText
                 }
               >
                 {
@@ -602,7 +606,7 @@ export default function UserGroupDetailsScreen() {
         >
           <Text
             style={
-              styles.bodyText
+              themeStyles.bodyText
             }
           >
             {
@@ -617,18 +621,18 @@ export default function UserGroupDetailsScreen() {
         >
           <View
             style={
-              styles.teamRow
+              themeStyles.teamRow
             }
           >
             <View
               style={
-                styles.teamIcon
+                themeStyles.teamIcon
               }
             >
               <Ionicons
                 name="heart-outline"
                 size={20}
-                color="#0E7C86"
+                color={themeTone("#0E7C86", "color")}
               />
             </View>
 
@@ -639,7 +643,7 @@ export default function UserGroupDetailsScreen() {
             >
               <Text
                 style={
-                  styles.teamTitle
+                  themeStyles.teamTitle
                 }
               >
                 Peer Supporters
@@ -647,7 +651,7 @@ export default function UserGroupDetailsScreen() {
 
               <Text
                 style={
-                  styles.teamDescription
+                  themeStyles.teamDescription
                 }
               >
                 {
@@ -663,7 +667,7 @@ export default function UserGroupDetailsScreen() {
 
           <View
             style={[
-              styles.teamRow,
+              themeStyles.teamRow,
               {
                 marginTop: 10,
               },
@@ -671,13 +675,13 @@ export default function UserGroupDetailsScreen() {
           >
             <View
               style={
-                styles.teamIcon
+                themeStyles.teamIcon
               }
             >
               <Ionicons
                 name="shield-checkmark-outline"
                 size={20}
-                color="#0E7C86"
+                color={themeTone("#0E7C86", "color")}
               />
             </View>
 
@@ -688,7 +692,7 @@ export default function UserGroupDetailsScreen() {
             >
               <Text
                 style={
-                  styles.teamTitle
+                  themeStyles.teamTitle
                 }
               >
                 Moderators
@@ -696,7 +700,7 @@ export default function UserGroupDetailsScreen() {
 
               <Text
                 style={
-                  styles.teamDescription
+                  themeStyles.teamDescription
                 }
               >
                 {
@@ -719,7 +723,7 @@ export default function UserGroupDetailsScreen() {
           0 ? (
             <Text
               style={
-                styles.mutedText
+                themeStyles.mutedText
               }
             >
               No specific group
@@ -735,17 +739,17 @@ export default function UserGroupDetailsScreen() {
                 <View
                   key={`${rule}-${index}`}
                   style={
-                    styles.ruleRow
+                    themeStyles.ruleRow
                   }
                 >
                   <View
                     style={
-                      styles.ruleNumber
+                      themeStyles.ruleNumber
                     }
                   >
                     <Text
                       style={
-                        styles.ruleNumberText
+                        themeStyles.ruleNumberText
                       }
                     >
                       {index +
@@ -755,7 +759,7 @@ export default function UserGroupDetailsScreen() {
 
                   <Text
                     style={
-                      styles.ruleText
+                      themeStyles.ruleText
                     }
                   >
                     {rule}
@@ -775,7 +779,7 @@ export default function UserGroupDetailsScreen() {
               style={({
                 pressed,
               }) => [
-                styles.requestButton,
+                themeStyles.requestButton,
 
                 pressed && {
                   opacity: 0.85,
@@ -785,12 +789,12 @@ export default function UserGroupDetailsScreen() {
               <Ionicons
                 name="person-add-outline"
                 size={21}
-                color="#ffffff"
+                color={themeTone("#ffffff", "color")}
               />
 
               <Text
                 style={
-                  styles.requestButtonText
+                  themeStyles.requestButtonText
                 }
               >
                 {rejected
@@ -803,18 +807,18 @@ export default function UserGroupDetailsScreen() {
         {pending && (
           <View
             style={
-              styles.disabledButton
+              themeStyles.disabledButton
             }
           >
             <Ionicons
               name="time-outline"
               size={21}
-              color="#92400e"
+              color={themeTone("#92400e", "color")}
             />
 
             <Text
               style={
-                styles.disabledButtonText
+                themeStyles.disabledButtonText
               }
             >
               Awaiting Review
@@ -847,7 +851,7 @@ export default function UserGroupDetailsScreen() {
         >
           <View
             style={
-              styles.modalOverlay
+              themeStyles.modalOverlay
             }
           >
             <Pressable
@@ -861,12 +865,12 @@ export default function UserGroupDetailsScreen() {
 
             <View
               style={
-                styles.modalContainer
+                themeStyles.modalContainer
               }
             >
               <View
                 style={
-                  styles.modalHeader
+                  themeStyles.modalHeader
                 }
               >
                 <View
@@ -876,7 +880,7 @@ export default function UserGroupDetailsScreen() {
                 >
                   <Text
                     style={
-                      styles.modalTitle
+                      themeStyles.modalTitle
                     }
                   >
                     Request to Join
@@ -884,7 +888,7 @@ export default function UserGroupDetailsScreen() {
 
                   <Text
                     style={
-                      styles.modalSubtitle
+                      themeStyles.modalSubtitle
                     }
                   >
                     {group.name}
@@ -903,7 +907,7 @@ export default function UserGroupDetailsScreen() {
                   <Ionicons
                     name="close"
                     size={26}
-                    color="#4D6C78"
+                    color={themeTone("#4D6C78", "color")}
                   />
                 </Pressable>
               </View>
@@ -911,23 +915,23 @@ export default function UserGroupDetailsScreen() {
               <ScrollView
                 keyboardShouldPersistTaps="handled"
                 contentContainerStyle={
-                  styles.modalContent
+                  themeStyles.modalContent
                 }
               >
                 <View
                   style={
-                    styles.privacyNotice
+                    themeStyles.privacyNotice
                   }
                 >
                   <Ionicons
                     name="lock-closed-outline"
                     size={19}
-                    color="#0E7C86"
+                    color={themeTone("#0E7C86", "color")}
                   />
 
                   <Text
                     style={
-                      styles.privacyText
+                      themeStyles.privacyText
                     }
                   >
                     Your join
@@ -941,7 +945,7 @@ export default function UserGroupDetailsScreen() {
 
                 <Text
                   style={
-                    styles.inputLabel
+                    themeStyles.inputLabel
                   }
                 >
                   Why would you
@@ -960,15 +964,15 @@ export default function UserGroupDetailsScreen() {
                   textAlignVertical="top"
                   maxLength={500}
                   placeholder="Briefly explain why this support group would be helpful for you..."
-                  placeholderTextColor="#8BA3AB"
+                  placeholderTextColor={themeTone("#8BA3AB", "placeholderTextColor")}
                   style={
-                    styles.reasonInput
+                    themeStyles.reasonInput
                   }
                 />
 
                 <Text
                   style={
-                    styles.characterCount
+                    themeStyles.characterCount
                   }
                 >
                   {
@@ -980,12 +984,12 @@ export default function UserGroupDetailsScreen() {
                 {requestError && (
                   <View
                     style={
-                      styles.requestError
+                      themeStyles.requestError
                     }
                   >
                     <Text
                       style={
-                        styles.requestErrorText
+                        themeStyles.requestErrorText
                       }
                     >
                       {
@@ -1003,7 +1007,7 @@ export default function UserGroupDetailsScreen() {
                     void submitJoinRequest()
                   }
                   style={[
-                    styles.submitButton,
+                    themeStyles.submitButton,
 
                     submitting && {
                       opacity:
@@ -1013,19 +1017,19 @@ export default function UserGroupDetailsScreen() {
                 >
                   {submitting ? (
                     <ActivityIndicator
-                      color="#ffffff"
+                      color={themeTone("#ffffff", "color")}
                     />
                   ) : (
                     <>
                       <Ionicons
                         name="send-outline"
                         size={20}
-                        color="#ffffff"
+                        color={themeTone("#ffffff", "color")}
                       />
 
                       <Text
                         style={
-                          styles.submitButtonText
+                          themeStyles.submitButtonText
                         }
                       >
                         Send Request
@@ -1057,26 +1061,29 @@ function InfoSection({
   children:
     React.ReactNode;
 }) {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   return (
     <View
       style={
-        styles.section
+        themeStyles.section
       }
     >
       <View
         style={
-          styles.sectionHeader
+          themeStyles.sectionHeader
         }
       >
         <Ionicons
           name={icon}
           size={20}
-          color="#0E7C86"
+          color={themeTone("#0E7C86", "color")}
         />
 
         <Text
           style={
-            styles.sectionTitle
+            themeStyles.sectionTitle
           }
         >
           {title}
@@ -1101,6 +1108,8 @@ function StatusMessage({
   title: string;
   description: string;
 }) {
+  const themeStyles = useThemedStyles(styles);
+
   const config = {
     success: {
       background:
@@ -1148,7 +1157,7 @@ function StatusMessage({
   return (
     <View
       style={[
-        styles.statusMessage,
+        themeStyles.statusMessage,
 
         {
           backgroundColor:
@@ -1177,7 +1186,7 @@ function StatusMessage({
       >
         <Text
           style={[
-            styles.statusMessageTitle,
+            themeStyles.statusMessageTitle,
 
             {
               color:
@@ -1190,7 +1199,7 @@ function StatusMessage({
 
         <Text
           style={
-            styles.statusMessageDescription
+            themeStyles.statusMessageDescription
           }
         >
           {description}

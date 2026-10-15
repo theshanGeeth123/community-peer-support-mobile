@@ -1,3 +1,4 @@
+import { useThemeTone, useThemedStyles } from '@/theme/useAlyvenAppearance';
 import {
     useCallback,
     useEffect,
@@ -85,6 +86,9 @@ export default function GroupStaffAssignmentModal({
   onClose,
   onGroupUpdated,
 }: GroupStaffAssignmentModalProps) {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   const [
     workingGroup,
     setWorkingGroup,
@@ -326,11 +330,11 @@ export default function GroupStaffAssignmentModal({
     >
       <View
         style={
-          styles.overlay
+          themeStyles.overlay
         }
       >
         <Pressable
-          style={styles.backdrop}
+          style={themeStyles.backdrop}
           onPress={
             handleClose
           }
@@ -338,12 +342,12 @@ export default function GroupStaffAssignmentModal({
 
         <View
           style={
-            styles.container
+            themeStyles.container
           }
         >
           <View
             style={
-              styles.header
+              themeStyles.header
             }
           >
             <View
@@ -353,7 +357,7 @@ export default function GroupStaffAssignmentModal({
             >
               <Text
                 style={
-                  styles.title
+                  themeStyles.title
                 }
               >
                 Manage Staff
@@ -362,7 +366,7 @@ export default function GroupStaffAssignmentModal({
               <Text
                 numberOfLines={1}
                 style={
-                  styles.subtitle
+                  themeStyles.subtitle
                 }
               >
                 {workingGroup
@@ -380,7 +384,7 @@ export default function GroupStaffAssignmentModal({
               <Ionicons
                 name="close"
                 size={26}
-                color="#4D6C78"
+                color={themeTone("#4D6C78", "color")}
               />
             </Pressable>
           </View>
@@ -388,18 +392,18 @@ export default function GroupStaffAssignmentModal({
           {error && (
             <View
               style={
-                styles.errorBox
+                themeStyles.errorBox
               }
             >
               <Ionicons
                 name="alert-circle-outline"
                 size={19}
-                color="#b91c1c"
+                color={themeTone("#b91c1c", "color")}
               />
 
               <Text
                 style={
-                  styles.errorText
+                  themeStyles.errorText
                 }
               >
                 {error}
@@ -410,17 +414,17 @@ export default function GroupStaffAssignmentModal({
           {loading ? (
             <View
               style={
-                styles.loadingArea
+                themeStyles.loadingArea
               }
             >
               <ActivityIndicator
                 size="large"
-                color="#0E7C86"
+                color={themeTone("#0E7C86", "color")}
               />
 
               <Text
                 style={
-                  styles.loadingText
+                  themeStyles.loadingText
                 }
               >
                 Loading available
@@ -433,7 +437,7 @@ export default function GroupStaffAssignmentModal({
                 false
               }
               contentContainerStyle={
-                styles.scrollContent
+                themeStyles.scrollContent
               }
             >
               <StaffSection
@@ -520,26 +524,29 @@ function StaffSection({
   processingKey,
   onToggle,
 }: StaffSectionProps) {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   return (
     <View
       style={
-        styles.section
+        themeStyles.section
       }
     >
       <View
         style={
-          styles.sectionHeader
+          themeStyles.sectionHeader
         }
       >
         <View
           style={
-            styles.sectionIcon
+            themeStyles.sectionIcon
           }
         >
           <Ionicons
             name={icon}
             size={21}
-            color="#0E7C86"
+            color={themeTone("#0E7C86", "color")}
           />
         </View>
 
@@ -550,7 +557,7 @@ function StaffSection({
         >
           <Text
             style={
-              styles.sectionTitle
+              themeStyles.sectionTitle
             }
           >
             {title}
@@ -558,7 +565,7 @@ function StaffSection({
 
           <Text
             style={
-              styles.sectionDescription
+              themeStyles.sectionDescription
             }
           >
             {description}
@@ -570,18 +577,18 @@ function StaffSection({
       0 ? (
         <View
           style={
-            styles.emptyBox
+            themeStyles.emptyBox
           }
         >
           <Ionicons
             name="person-add-outline"
             size={25}
-            color="#8BA3AB"
+            color={themeTone("#8BA3AB", "color")}
           />
 
           <Text
             style={
-              styles.emptyText
+              themeStyles.emptyText
             }
           >
             No active{" "}
@@ -591,7 +598,7 @@ function StaffSection({
 
           <Text
             style={
-              styles.emptySubText
+              themeStyles.emptySubText
             }
           >
             Create or change a
@@ -626,17 +633,17 @@ function StaffSection({
                   user.id
                 }
                 style={
-                  styles.staffRow
+                  themeStyles.staffRow
                 }
               >
                 <View
                   style={
-                    styles.avatar
+                    themeStyles.avatar
                   }
                 >
                   <Text
                     style={
-                      styles.avatarText
+                      themeStyles.avatarText
                     }
                   >
                     {getInitials(
@@ -647,7 +654,7 @@ function StaffSection({
 
                 <View
                   style={
-                    styles.staffInfo
+                    themeStyles.staffInfo
                   }
                 >
                   <Text
@@ -655,7 +662,7 @@ function StaffSection({
                       1
                     }
                     style={
-                      styles.staffName
+                      themeStyles.staffName
                     }
                   >
                     {
@@ -668,7 +675,7 @@ function StaffSection({
                       1
                     }
                     style={
-                      styles.staffEmail
+                      themeStyles.staffEmail
                     }
                   >
                     {
@@ -679,18 +686,18 @@ function StaffSection({
                   {assigned && (
                     <View
                       style={
-                        styles.assignedBadge
+                        themeStyles.assignedBadge
                       }
                     >
                       <Ionicons
                         name="checkmark-circle"
                         size={13}
-                        color="#047857"
+                        color={themeTone("#047857", "color")}
                       />
 
                       <Text
                         style={
-                          styles.assignedText
+                          themeStyles.assignedText
                         }
                       >
                         Assigned
@@ -713,18 +720,18 @@ function StaffSection({
                   style={({
                     pressed,
                   }) => [
-                    styles.actionButton,
+                    themeStyles.actionButton,
 
                     assigned
-                      ? styles.removeButton
-                      : styles.assignButton,
+                      ? themeStyles.removeButton
+                      : themeStyles.assignButton,
 
                     pressed &&
                       !processing &&
-                      styles.pressedButton,
+                      themeStyles.pressedButton,
 
                     disabled &&
-                      styles.disabledButton,
+                      themeStyles.disabledButton,
                   ]}
                 >
                   {processing ? (
@@ -739,11 +746,11 @@ function StaffSection({
                   ) : (
                     <Text
                       style={[
-                        styles.actionText,
+                        themeStyles.actionText,
 
                         assigned
-                          ? styles.removeText
-                          : styles.assignText,
+                          ? themeStyles.removeText
+                          : themeStyles.assignText,
                       ]}
                     >
                       {assigned

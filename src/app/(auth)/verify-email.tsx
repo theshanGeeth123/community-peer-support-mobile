@@ -1,3 +1,4 @@
+import { useThemedClassName } from '@/theme/useAlyvenAppearance';
 import { useState } from "react";
 
 import {
@@ -34,6 +35,8 @@ import {
 } from "@/services/api/apiError";
 
 export default function VerifyEmailScreen() {
+  const themeClass = useThemedClassName();
+
   const params =
     useLocalSearchParams<{
       email?: string;
@@ -170,11 +173,11 @@ export default function VerifyEmailScreen() {
       />
 
       <Pressable
-        className="mt-5"
+        className={themeClass("mt-5")}
         disabled={isResending}
         onPress={handleResend}
       >
-        <Text className="text-center font-semibold text-indigo-600">
+        <Text className={themeClass("text-center font-semibold text-indigo-600")}>
           {isResending
             ? "Sending..."
             : "Didn't receive a code? Resend"}

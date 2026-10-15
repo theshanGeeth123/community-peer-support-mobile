@@ -1,3 +1,4 @@
+import { useThemeTone, useThemedStyles } from '@/theme/useAlyvenAppearance';
 import {
   ActivityIndicator,
   StyleSheet,
@@ -18,6 +19,9 @@ import {
 } from "@/features/navigation/roleNavigation";
 
 export default function AdminLayout() {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   const {
     user,
     isAuthenticated,
@@ -26,10 +30,10 @@ export default function AdminLayout() {
 
   if (isInitializing) {
     return (
-      <View style={styles.loadingContainer}>
+      <View style={themeStyles.loadingContainer}>
         <ActivityIndicator
           size="large"
-          color="#0E7C86"
+          color={themeTone("#0E7C86", "color")}
         />
       </View>
     );
@@ -61,7 +65,7 @@ export default function AdminLayout() {
         animation: "slide_from_right",
 
         contentStyle: {
-          backgroundColor: "#F5FAF9",
+          backgroundColor: themeTone("#F5FAF9", "backgroundColor"),
         },
       }}
     />

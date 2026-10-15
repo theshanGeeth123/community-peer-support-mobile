@@ -1,3 +1,4 @@
+import { useThemeTone, useThemedStyles } from '@/theme/useAlyvenAppearance';
 import { StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Brand } from '@/theme/brand';
@@ -13,17 +14,20 @@ type SectionBannerProps = {
 
 /** Compact section introduction for feed, discovery, and community screens. */
 export default function SectionBanner({ eyebrow, title, description, icon = 'leaf-outline' }: SectionBannerProps) {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   return (
-    <View style={styles.panel}>
-      <View pointerEvents="none" style={styles.accentCircle} />
-      <View style={styles.row}>
-        <View style={styles.iconContainer}>
-          <Ionicons name={icon} size={23} color={Brand.teal} />
+    <View style={themeStyles.panel}>
+      <View pointerEvents="none" style={themeStyles.accentCircle} />
+      <View style={themeStyles.row}>
+        <View style={themeStyles.iconContainer}>
+          <Ionicons name={icon} size={23} color={themeTone(Brand.teal, "color")} />
         </View>
-        <Text style={styles.eyebrow}>{eyebrow}</Text>
+        <Text style={themeStyles.eyebrow}>{eyebrow}</Text>
       </View>
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.description}>{description}</Text>
+      <Text style={themeStyles.title}>{title}</Text>
+      <Text style={themeStyles.description}>{description}</Text>
     </View>
   );
 }

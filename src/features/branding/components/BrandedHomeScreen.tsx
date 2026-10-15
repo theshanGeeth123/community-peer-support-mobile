@@ -1,3 +1,4 @@
+import { useThemeTone, useThemedStyles } from '@/theme/useAlyvenAppearance';
 import { type ReactNode } from 'react';
 import {
   Image,
@@ -91,26 +92,32 @@ const roleSettings: Record<HomeRole, {
 };
 
 function ActionCard({ action, wide }: { action: HomeAction; wide?: boolean }) {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={action.title}
       onPress={() => router.push(action.route as Href)}
-      style={({ pressed }) => [styles.action, wide && styles.actionWide, pressed && styles.pressed]}
+      style={({ pressed }) => [themeStyles.action, wide && themeStyles.actionWide, pressed && themeStyles.pressed]}
     >
-      <View style={[styles.actionIcon, { backgroundColor: action.surface ?? Brand.softBlue }]}>
+      <View style={[themeStyles.actionIcon, { backgroundColor: action.surface ?? Brand.softBlue }]}>
         <Ionicons name={action.icon} size={24} color={action.accent ?? Brand.teal} />
       </View>
-      <Text style={styles.actionTitle}>{action.title}</Text>
-      <Text style={styles.actionDescription}>{action.description}</Text>
-      <View style={styles.actionArrow}>
-        <Ionicons name="arrow-forward" size={17} color={Brand.teal} />
+      <Text style={themeStyles.actionTitle}>{action.title}</Text>
+      <Text style={themeStyles.actionDescription}>{action.description}</Text>
+      <View style={themeStyles.actionArrow}>
+        <Ionicons name="arrow-forward" size={17} color={themeTone(Brand.teal, "color")} />
       </View>
     </Pressable>
   );
 }
 
 export default function BrandedHomeScreen({ role }: { role: HomeRole }) {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   const { user } = useAuth();
   const firstName = user?.fullName?.trim().split(/\s+/)[0] || 'there';
   const settings = roleSettings[role];
@@ -120,93 +127,93 @@ export default function BrandedHomeScreen({ role }: { role: HomeRole }) {
   const showResponse = role === 'MODERATOR' || role === 'PEER_SUPPORTER';
 
   return (
-    <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
+    <SafeAreaView style={themeStyles.safe} edges={['top', 'left', 'right']}>
       <ScrollView
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={themeStyles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.topbar}>
+        <View style={themeStyles.topbar}>
           <BrandMark compact />
           <NotificationBell />
         </View>
 
-        <View style={styles.welcomeRow}>
+        <View style={themeStyles.welcomeRow}>
           <View style={{ flex: 1 }}>
-            <Text style={styles.welcomeLabel}>Good to see you again</Text>
-            <Text style={styles.welcomeName}>Hello, {firstName}<Text style={styles.welcomeDot}>.</Text></Text>
+            <Text style={themeStyles.welcomeLabel}>Good to see you again</Text>
+            <Text style={themeStyles.welcomeName}>Hello, {firstName}<Text style={themeStyles.welcomeDot}>.</Text></Text>
           </View>
-          <View style={styles.welcomeIcon}>
-            <Ionicons name="sparkles-outline" size={21} color={Brand.teal} />
+          <View style={themeStyles.welcomeIcon}>
+            <Ionicons name="sparkles-outline" size={21} color={themeTone(Brand.teal, "color")} />
           </View>
         </View>
 
-        <View style={styles.hero}>
-          <View pointerEvents="none" style={styles.heroOrbitOne} />
-          <View pointerEvents="none" style={styles.heroOrbitTwo} />
-          <View style={styles.heroBadge}>
-            <View style={styles.badgeDot} />
-            <Text style={styles.heroBadgeText}>{settings.badge}</Text>
+        <View style={themeStyles.hero}>
+          <View pointerEvents="none" style={themeStyles.heroOrbitOne} />
+          <View pointerEvents="none" style={themeStyles.heroOrbitTwo} />
+          <View style={themeStyles.heroBadge}>
+            <View style={themeStyles.badgeDot} />
+            <Text style={themeStyles.heroBadgeText}>{settings.badge}</Text>
           </View>
-          <Text style={styles.heroEyebrow}>{settings.eyebrow}</Text>
-          <Text style={styles.heroTitle}>{settings.heading}</Text>
-          <Text style={styles.heroDescription}>{settings.description}</Text>
-          <View style={styles.heroFooter}>
+          <Text style={themeStyles.heroEyebrow}>{settings.eyebrow}</Text>
+          <Text style={themeStyles.heroTitle}>{settings.heading}</Text>
+          <Text style={themeStyles.heroDescription}>{settings.description}</Text>
+          <View style={themeStyles.heroFooter}>
             {settings.highlights.map((item, index) => (
-              <View key={item} style={styles.heroHighlight}>
-                {index > 0 && <View style={styles.highlightDot} />}
-                <Text style={styles.heroHighlightText}>{item}</Text>
+              <View key={item} style={themeStyles.heroHighlight}>
+                {index > 0 && <View style={themeStyles.highlightDot} />}
+                <Text style={themeStyles.heroHighlightText}>{item}</Text>
               </View>
             ))}
           </View>
           <Image
             source={require('../../../../assets/images/logo.png')}
-            style={styles.heroMark}
+            style={themeStyles.heroMark}
             resizeMode="contain"
             accessible={false}
           />
         </View>
 
         {role === 'USER' && (
-          <View style={styles.wellbeingCard}>
-            <View style={styles.wellbeingAnimation}>
+          <View style={themeStyles.wellbeingCard}>
+            <View style={themeStyles.wellbeingAnimation}>
               <LottieView
                 source={require('../../../../assets/animations/breathing-pulse.json')}
                 autoPlay
                 loop
-                style={styles.animation}
+                style={themeStyles.animation}
               />
             </View>
-            <View style={styles.wellbeingCopy}>
-              <Text style={styles.wellbeingLabel}>A GENTLE REMINDER</Text>
-              <Text style={styles.wellbeingTitle}>Make room for yourself.</Text>
-              <Text style={styles.wellbeingDescription}>A little moment of calm can go a long way.</Text>
+            <View style={themeStyles.wellbeingCopy}>
+              <Text style={themeStyles.wellbeingLabel}>A GENTLE REMINDER</Text>
+              <Text style={themeStyles.wellbeingTitle}>Make room for yourself.</Text>
+              <Text style={themeStyles.wellbeingDescription}>A little moment of calm can go a long way.</Text>
             </View>
           </View>
         )}
 
-        <View style={styles.sectionHeading}>
+        <View style={themeStyles.sectionHeading}>
           <View>
-            <Text style={styles.sectionEyebrow}>EXPLORE ALYVEN</Text>
-            <Text style={styles.sectionTitle}>Your quick actions</Text>
+            <Text style={themeStyles.sectionEyebrow}>EXPLORE ALYVEN</Text>
+            <Text style={themeStyles.sectionTitle}>Your quick actions</Text>
           </View>
-          <View style={styles.sectionIcon}><Ionicons name="grid-outline" size={19} color={Brand.teal} /></View>
+          <View style={themeStyles.sectionIcon}><Ionicons name="grid-outline" size={19} color={themeTone(Brand.teal, "color")} /></View>
         </View>
 
         {showResponse && (
-          <View style={styles.responseContainer}>
+          <View style={themeStyles.responseContainer}>
             <NeedsResponseQuickAction href={responseRoute as Href} />
           </View>
         )}
 
-        <View style={styles.actionGrid}>
+        <View style={themeStyles.actionGrid}>
           {settings.actions.map((action) => <ActionCard action={action} key={action.route} />)}
         </View>
 
-        <View style={styles.closingCard}>
-          <View style={styles.closingIcon}><Ionicons name="heart-outline" size={19} color={Brand.teal} /></View>
+        <View style={themeStyles.closingCard}>
+          <View style={themeStyles.closingIcon}><Ionicons name="heart-outline" size={19} color={themeTone(Brand.teal, "color")} /></View>
           <View style={{ flex: 1 }}>
-            <Text style={styles.closingTitle}>Connect. Share. Belong.</Text>
-            <Text style={styles.closingDescription}>Real people. Safer spaces. Brighter tomorrows.</Text>
+            <Text style={themeStyles.closingTitle}>Connect. Share. Belong.</Text>
+            <Text style={themeStyles.closingDescription}>Real people. Safer spaces. Brighter tomorrows.</Text>
           </View>
         </View>
       </ScrollView>

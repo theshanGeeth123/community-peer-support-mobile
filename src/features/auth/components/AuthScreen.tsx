@@ -1,3 +1,5 @@
+import ThemeModeSwitcher from '@/features/theme/components/ThemeModeSwitcher';
+import { useThemedStyles } from '@/theme/useAlyvenAppearance';
 import type { PropsWithChildren } from 'react';
 import {
   KeyboardAvoidingView,
@@ -17,34 +19,39 @@ interface AuthScreenProps extends PropsWithChildren {
 }
 
 export default function AuthScreen({ title, subtitle, children }: AuthScreenProps) {
+  const themeStyles = useThemedStyles(styles);
+
   return (
-    <SafeAreaView edges={['top', 'left', 'right']} style={styles.safe}>
+    <SafeAreaView edges={['top', 'left', 'right']} style={themeStyles.safe}>
       <KeyboardAvoidingView
-        style={styles.flex}
+        style={themeStyles.flex}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <ScrollView
-          contentContainerStyle={styles.content}
+          contentContainerStyle={themeStyles.content}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <View pointerEvents="none" style={styles.topShape} />
-          <View style={styles.brandRow}>
+          <View pointerEvents="none" style={themeStyles.topShape} />
+          <View style={themeStyles.brandRow}>
             <BrandMark />
-            <View style={styles.safetyBadge}>
-              <Text style={styles.safetyText}>SAFE SPACES</Text>
+            <View style={themeStyles.safetyBadge}>
+              <Text style={themeStyles.safetyText}>SAFE SPACES</Text>
             </View>
           </View>
-          <View style={styles.hero}>
-            <Text style={styles.eyebrow}>CONNECT  ·  SHARE  ·  BELONG</Text>
-            <Text style={styles.title}>{title}</Text>
-            <Text style={styles.subtitle}>{subtitle}</Text>
+          <View style={{ alignItems: 'flex-end', marginTop: 10 }}>
+            <ThemeModeSwitcher compact />
           </View>
-          <View style={styles.formCard}>{children}</View>
-          <View style={styles.footer}>
-            <View style={styles.footerRule} />
-            <Text style={styles.footerText}>Real people. Safer spaces. Brighter tomorrows.</Text>
-            <Text style={styles.footerBrand}>ALYVEN  ·  A PLACE TO BE HEARD</Text>
+          <View style={themeStyles.hero}>
+            <Text style={themeStyles.eyebrow}>CONNECT  ·  SHARE  ·  BELONG</Text>
+            <Text style={themeStyles.title}>{title}</Text>
+            <Text style={themeStyles.subtitle}>{subtitle}</Text>
+          </View>
+          <View style={themeStyles.formCard}>{children}</View>
+          <View style={themeStyles.footer}>
+            <View style={themeStyles.footerRule} />
+            <Text style={themeStyles.footerText}>Real people. Safer spaces. Brighter tomorrows.</Text>
+            <Text style={themeStyles.footerBrand}>ALYVEN  ·  A PLACE TO BE HEARD</Text>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

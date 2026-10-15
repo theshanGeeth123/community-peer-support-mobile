@@ -1,3 +1,4 @@
+import { useThemeTone, useThemedStyles } from '@/theme/useAlyvenAppearance';
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import {
@@ -132,6 +133,9 @@ function getSingleParam(value: string | string[] | undefined) {
 const FOCUS_HIGHLIGHT_MS = 2500;
 
 export default function GroupPostsScreen() {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   const params = useLocalSearchParams();
   const rawGroupId = params.groupId;
 
@@ -941,28 +945,28 @@ export default function GroupPostsScreen() {
 
   return (
     <SafeAreaView
-      style={styles.safeArea}
+      style={themeStyles.safeArea}
       edges={[
         "top",
         "left",
         "right",
       ]}
     >
-      <View style={styles.header}>
+      <View style={themeStyles.header}>
         <Pressable
           onPress={() => router.back()}
-          style={styles.backButton}
+          style={themeStyles.backButton}
         >
           <Ionicons
             name="arrow-back"
             size={22}
-            color="#0E2A47"
+            color={themeTone("#0E2A47", "color")}
           />
         </Pressable>
 
         <Text
           numberOfLines={1}
-          style={styles.headerTitle}
+          style={themeStyles.headerTitle}
         >
           {group?.name ?? "Posts"}
         </Text>
@@ -972,7 +976,7 @@ export default function GroupPostsScreen() {
 
       <ScrollView
         ref={scrollRef}
-        contentContainerStyle={styles.content}
+        contentContainerStyle={themeStyles.content}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
         refreshControl={
@@ -986,11 +990,11 @@ export default function GroupPostsScreen() {
       >
         {/* SEARCH */}
 
-        <View style={styles.searchBox}>
+        <View style={themeStyles.searchBox}>
           <Ionicons
             name="search"
             size={17}
-            color="#8BA3AB"
+            color={themeTone("#8BA3AB", "color")}
           />
 
           <TextInput
@@ -999,13 +1003,13 @@ export default function GroupPostsScreen() {
               setSearchText
             }
             placeholder="Search posts in this group"
-            placeholderTextColor="#8BA3AB"
+            placeholderTextColor={themeTone("#8BA3AB", "placeholderTextColor")}
             autoCapitalize="none"
             autoCorrect={false}
             returnKeyType="search"
             maxLength={100}
             style={
-              styles.searchInput
+              themeStyles.searchInput
             }
           />
 
@@ -1020,7 +1024,7 @@ export default function GroupPostsScreen() {
               <Ionicons
                 name="close-circle"
                 size={18}
-                color="#8BA3AB"
+                color={themeTone("#8BA3AB", "color")}
               />
             </Pressable>
           )}
@@ -1028,14 +1032,14 @@ export default function GroupPostsScreen() {
 
         {/* SORT */}
 
-        <View style={styles.sortRow}>
+        <View style={themeStyles.sortRow}>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={
               false
             }
             contentContainerStyle={
-              styles.sortChips
+              themeStyles.sortChips
             }
             keyboardShouldPersistTaps="handled"
           >
@@ -1056,9 +1060,9 @@ export default function GroupPostsScreen() {
                       )
                     }
                     style={[
-                      styles.sortChip,
+                      themeStyles.sortChip,
                       active &&
-                        styles.sortChipActive,
+                        themeStyles.sortChipActive,
                     ]}
                   >
                     <Ionicons
@@ -1075,9 +1079,9 @@ export default function GroupPostsScreen() {
 
                     <Text
                       style={[
-                        styles.sortChipText,
+                        themeStyles.sortChipText,
                         active &&
-                          styles.sortChipTextActive,
+                          themeStyles.sortChipTextActive,
                       ]}
                     >
                       {
@@ -1093,9 +1097,9 @@ export default function GroupPostsScreen() {
           {refetching && (
             <ActivityIndicator
               size="small"
-              color="#0E7C86"
+              color={themeTone("#0E7C86", "color")}
               style={
-                styles.sortSpinner
+                themeStyles.sortSpinner
               }
             />
           )}
@@ -1107,7 +1111,7 @@ export default function GroupPostsScreen() {
           searchResultCount > 0 && (
             <Text
               style={
-                styles.searchSummary
+                themeStyles.searchSummary
               }
             >
               {`${searchResultCount} ${
@@ -1140,12 +1144,12 @@ export default function GroupPostsScreen() {
         {error && (
           <View
             style={
-              styles.errorBox
+              themeStyles.errorBox
             }
           >
             <Text
               style={
-                styles.errorText
+                themeStyles.errorText
               }
             >
               {error}
@@ -1155,16 +1159,16 @@ export default function GroupPostsScreen() {
 
         {loading ? (
           <View
-            style={styles.center}
+            style={themeStyles.center}
           >
             <ActivityIndicator
               size="large"
-              color="#0E7C86"
+              color={themeTone("#0E7C86", "color")}
             />
 
             <Text
               style={
-                styles.loadingText
+                themeStyles.loadingText
               }
             >
               Loading posts...
@@ -1175,24 +1179,24 @@ export default function GroupPostsScreen() {
           isSearchActive ? (
           <View
             style={
-              styles.emptyCard
+              themeStyles.emptyCard
             }
           >
             <View
               style={
-                styles.emptyIcon
+                themeStyles.emptyIcon
               }
             >
               <Ionicons
                 name="search-outline"
                 size={27}
-                color="#0E7C86"
+                color={themeTone("#0E7C86", "color")}
               />
             </View>
 
             <Text
               style={
-                styles.emptyTitle
+                themeStyles.emptyTitle
               }
             >
               No matching posts
@@ -1200,7 +1204,7 @@ export default function GroupPostsScreen() {
 
             <Text
               style={
-                styles.emptyDescription
+                themeStyles.emptyDescription
               }
             >
               Try a different word,
@@ -1212,12 +1216,12 @@ export default function GroupPostsScreen() {
                 clearSearch
               }
               style={
-                styles.clearSearchButton
+                themeStyles.clearSearchButton
               }
             >
               <Text
                 style={
-                  styles.clearSearchButtonText
+                  themeStyles.clearSearchButtonText
                 }
               >
                 Clear search
@@ -1230,24 +1234,24 @@ export default function GroupPostsScreen() {
             "unanswered" ? (
           <View
             style={
-              styles.emptyCard
+              themeStyles.emptyCard
             }
           >
             <View
               style={
-                styles.emptyIcon
+                themeStyles.emptyIcon
               }
             >
               <Ionicons
                 name="checkmark-done-outline"
                 size={28}
-                color="#16a34a"
+                color={themeTone("#16a34a", "color")}
               />
             </View>
 
             <Text
               style={
-                styles.emptyTitle
+                themeStyles.emptyTitle
               }
             >
               Everyone has a reply
@@ -1255,7 +1259,7 @@ export default function GroupPostsScreen() {
 
             <Text
               style={
-                styles.emptyDescription
+                themeStyles.emptyDescription
               }
             >
               Every post in this
@@ -1267,24 +1271,24 @@ export default function GroupPostsScreen() {
           0 ? (
           <View
             style={
-              styles.emptyCard
+              themeStyles.emptyCard
             }
           >
             <View
               style={
-                styles.emptyIcon
+                themeStyles.emptyIcon
               }
             >
               <Ionicons
                 name="chatbubbles-outline"
                 size={29}
-                color="#0E7C86"
+                color={themeTone("#0E7C86", "color")}
               />
             </View>
 
             <Text
               style={
-                styles.emptyTitle
+                themeStyles.emptyTitle
               }
             >
               No posts yet
@@ -1292,7 +1296,7 @@ export default function GroupPostsScreen() {
 
             <Text
               style={
-                styles.emptyDescription
+                themeStyles.emptyDescription
               }
             >
               {canPost

@@ -1,3 +1,4 @@
+import { useThemedStyles } from '@/theme/useAlyvenAppearance';
 ﻿import { StyleSheet, Text, View } from "react-native";
 
 import type { ReportReason } from "../types/moderation.types";
@@ -38,11 +39,13 @@ const config: Record<
 };
 
 export default function ReasonBadge({ reason }: ReasonBadgeProps) {
+  const themeStyles = useThemedStyles(styles);
+
   const c = config[reason];
 
   return (
-    <View style={[styles.badge, { backgroundColor: c.bg }]}>
-      <Text style={[styles.label, { color: c.text }]}>{c.label}</Text>
+    <View style={[themeStyles.badge, { backgroundColor: c.bg }]}>
+      <Text style={[themeStyles.label, { color: c.text }]}>{c.label}</Text>
     </View>
   );
 }

@@ -1,3 +1,4 @@
+import { useThemeTone, useThemedStyles } from '@/theme/useAlyvenAppearance';
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import {
@@ -123,6 +124,9 @@ export default function PostCommentsModal({
 
   onClose: () => void;
 }) {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   const [comments, setComments] = useState<Comment[]>([]);
 
   const [loading, setLoading] = useState(true);
@@ -950,12 +954,12 @@ export default function PostCommentsModal({
     }
 
     return (
-      <View style={styles.mediaPreviewContainer}>
+      <View style={themeStyles.mediaPreviewContainer}>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={
-            styles.mediaPreviewContent
+            themeStyles.mediaPreviewContent
           }
         >
           {selectedMedia.map(
@@ -968,23 +972,23 @@ export default function PostCommentsModal({
               return (
                 <View
                   key={`${media.uri}-${index}`}
-                  style={styles.mediaPreviewItem}
+                  style={themeStyles.mediaPreviewItem}
                 >
                   {isVideo ? (
                     <View
                       style={
-                        styles.videoPreview
+                        themeStyles.videoPreview
                       }
                     >
                       <Ionicons
                         name="play-circle"
                         size={34}
-                        color="#ffffff"
+                        color={themeTone("#ffffff", "color")}
                       />
 
                       <Text
                         style={
-                          styles.videoLabel
+                          themeStyles.videoLabel
                         }
                       >
                         Video
@@ -996,7 +1000,7 @@ export default function PostCommentsModal({
                         uri: media.uri,
                       }}
                       style={
-                        styles.mediaPreviewImage
+                        themeStyles.mediaPreviewImage
                       }
                     />
                   )}
@@ -1008,13 +1012,13 @@ export default function PostCommentsModal({
                       )
                     }
                     style={
-                      styles.removeMediaButton
+                      themeStyles.removeMediaButton
                     }
                   >
                     <Ionicons
                       name="close"
                       size={15}
-                      color="#ffffff"
+                      color={themeTone("#ffffff", "color")}
                     />
                   </Pressable>
                 </View>
@@ -1023,7 +1027,7 @@ export default function PostCommentsModal({
           )}
         </ScrollView>
 
-        <Text style={styles.mediaCountText}>
+        <Text style={themeStyles.mediaCountText}>
           {selectedMedia.length}{" "}
           {selectedMedia.length === 1
             ? "item"
@@ -1053,31 +1057,31 @@ export default function PostCommentsModal({
     }
 
     return (
-      <View style={styles.savedMediaContainer}>
+      <View style={themeStyles.savedMediaContainer}>
         {media.map((item, index) => {
           const isVideo = item.type === "video";
 
           return (
             <View
               key={`${item.url}-${index}`}
-              style={styles.savedMediaItem}
+              style={themeStyles.savedMediaItem}
             >
               {isVideo ? (
-                <View style={styles.savedVideoContainer}>
+                <View style={themeStyles.savedVideoContainer}>
                   <Ionicons
                     name="play-circle"
                     size={42}
-                    color="#ffffff"
+                    color={themeTone("#ffffff", "color")}
                   />
 
-                  <Text style={styles.savedVideoLabel}>
+                  <Text style={themeStyles.savedVideoLabel}>
                     Video
                   </Text>
                 </View>
               ) : (
                 <Image
                   source={{ uri: item.url }}
-                  style={styles.savedMediaImage}
+                  style={themeStyles.savedMediaImage}
                   resizeMode="cover"
                 />
               )}
@@ -1146,16 +1150,16 @@ export default function PostCommentsModal({
       <View
         key={comment.id}
         style={[
-          styles.commentBlock,
+          themeStyles.commentBlock,
           isReply &&
-            styles.replyBlock,
+            themeStyles.replyBlock,
         ]}
       >
-        <View style={styles.commentRow}>
-          <View style={styles.avatar}>
+        <View style={themeStyles.commentRow}>
+          <View style={themeStyles.avatar}>
             <Text
               style={
-                styles.avatarText
+                themeStyles.avatarText
               }
             >
               {getInitials(
@@ -1165,21 +1169,21 @@ export default function PostCommentsModal({
           </View>
 
           <View
-            style={styles.commentMain}
+            style={themeStyles.commentMain}
           >
             <View
               style={
-                styles.commentBubble
+                themeStyles.commentBubble
               }
             >
               <View
                 style={
-                  styles.commentTopRow
+                  themeStyles.commentTopRow
                 }
               >
                 <Text
                   style={
-                    styles.authorName
+                    themeStyles.authorName
                   }
                 >
                   {
@@ -1190,7 +1194,7 @@ export default function PostCommentsModal({
 
                 <Text
                   style={
-                    styles.timeText
+                    themeStyles.timeText
                   }
                 >
                   {formatRelativeTime(
@@ -1203,7 +1207,7 @@ export default function PostCommentsModal({
               comment.id ? (
                 <View
                   style={
-                    styles.editContainer
+                    themeStyles.editContainer
                   }
                 >
                   <TextInput
@@ -1214,15 +1218,15 @@ export default function PostCommentsModal({
                     multiline
                     autoFocus
                     style={
-                      styles.editInput
+                      themeStyles.editInput
                     }
                     placeholder="Edit your comment..."
-                    placeholderTextColor="#8BA3AB"
+                    placeholderTextColor={themeTone("#8BA3AB", "placeholderTextColor")}
                   />
 
                   <View
                     style={
-                      styles.editActions
+                      themeStyles.editActions
                     }
                   >
                     <Pressable
@@ -1230,12 +1234,12 @@ export default function PostCommentsModal({
                         cancelInputMode
                       }
                       style={
-                        styles.cancelButton
+                        themeStyles.cancelButton
                       }
                     >
                       <Text
                         style={
-                          styles.cancelText
+                          themeStyles.cancelText
                         }
                       >
                         Cancel
@@ -1254,24 +1258,24 @@ export default function PostCommentsModal({
                         void handleUpdateComment()
                       }
                       style={[
-                        styles.saveButton,
+                        themeStyles.saveButton,
                         (submitting ||
                           editText
                             .trim()
                             .length ===
                             0) &&
-                          styles.disabledButton,
+                          themeStyles.disabledButton,
                       ]}
                     >
                       {submitting ? (
                         <ActivityIndicator
                           size="small"
-                          color="#ffffff"
+                          color={themeTone("#ffffff", "color")}
                         />
                       ) : (
                         <Text
                           style={
-                            styles.saveText
+                            themeStyles.saveText
                           }
                         >
                           Save
@@ -1284,7 +1288,7 @@ export default function PostCommentsModal({
                 <>
                   <Text
                     style={
-                      styles.commentContent
+                      themeStyles.commentContent
                     }
                   >
                     {comment.content}
@@ -1301,7 +1305,7 @@ export default function PostCommentsModal({
                 {isReactionPickerOpen && (
                   <View
                     style={
-                      styles.reactionPicker
+                      themeStyles.reactionPicker
                     }
                   >
                     {COMMENT_REACTIONS.map(
@@ -1322,14 +1326,14 @@ export default function PostCommentsModal({
                               )
                             }
                             style={[
-                              styles.reactionOption,
+                              themeStyles.reactionOption,
                               selected &&
-                                styles.reactionOptionSelected,
+                                themeStyles.reactionOptionSelected,
                             ]}
                           >
                             <Text
                               style={
-                                styles.reactionEmoji
+                                themeStyles.reactionEmoji
                               }
                             >
                               {
@@ -1345,7 +1349,7 @@ export default function PostCommentsModal({
 
                 <View
                   style={
-                    styles.commentActions
+                    themeStyles.commentActions
                   }
                 >
                   <Pressable
@@ -1357,14 +1361,14 @@ export default function PostCommentsModal({
                       );
                     }}
                     style={[
-                      styles.smallAction,
+                      themeStyles.smallAction,
                       currentReaction.reaction &&
-                        styles.reactedAction,
+                        themeStyles.reactedAction,
                     ]}
                   >
                     <Text
                       style={
-                        styles.selectedReactionEmoji
+                        themeStyles.selectedReactionEmoji
                       }
                     >
                       {reactionEmoji ??
@@ -1373,9 +1377,9 @@ export default function PostCommentsModal({
 
                     <Text
                       style={[
-                        styles.smallActionText,
+                        themeStyles.smallActionText,
                         currentReaction.reaction &&
-                          styles.reactionCountText,
+                          themeStyles.reactionCountText,
                       ]}
                     >
                       {
@@ -1392,18 +1396,18 @@ export default function PostCommentsModal({
                         )
                       }
                       style={
-                        styles.smallAction
+                        themeStyles.smallAction
                       }
                     >
                       <Ionicons
                         name="return-down-forward-outline"
                         size={16}
-                        color="#64808C"
+                        color={themeTone("#64808C", "color")}
                       />
 
                       <Text
                         style={
-                          styles.smallActionText
+                          themeStyles.smallActionText
                         }
                       >
                         Reply
@@ -1419,9 +1423,9 @@ export default function PostCommentsModal({
                         )
                       }
                       style={[
-                        styles.smallAction,
+                        themeStyles.smallAction,
                         isPinned &&
-                          styles.pinnedAction,
+                          themeStyles.pinnedAction,
                       ]}
                     >
                       <Ionicons
@@ -1440,9 +1444,9 @@ export default function PostCommentsModal({
 
                       <Text
                         style={[
-                          styles.smallActionText,
+                          themeStyles.smallActionText,
                           isPinned &&
-                            styles.pinnedActionText,
+                            themeStyles.pinnedActionText,
                         ]}
                       >
                         {isPinned
@@ -1460,18 +1464,18 @@ export default function PostCommentsModal({
                         )
                       }
                       style={
-                        styles.smallAction
+                        themeStyles.smallAction
                       }
                     >
                       <Ionicons
                         name="create-outline"
                         size={16}
-                        color="#64808C"
+                        color={themeTone("#64808C", "color")}
                       />
 
                       <Text
                         style={
-                          styles.smallActionText
+                          themeStyles.smallActionText
                         }
                       >
                         Edit
@@ -1487,18 +1491,18 @@ export default function PostCommentsModal({
                         )
                       }
                       style={
-                        styles.smallAction
+                        themeStyles.smallAction
                       }
                     >
                       <Ionicons
                         name="trash-outline"
                         size={15}
-                        color="#ef4444"
+                        color={themeTone("#ef4444", "color")}
                       />
 
                       <Text
                         style={
-                          styles.deleteText
+                          themeStyles.deleteText
                         }
                       >
                         Delete
@@ -1515,7 +1519,7 @@ export default function PostCommentsModal({
           replies.length > 0 && (
             <View
               style={
-                styles.repliesContainer
+                themeStyles.repliesContainer
               }
             >
               {replies.map(
@@ -1545,7 +1549,7 @@ export default function PostCommentsModal({
       onRequestClose={onClose}
     >
       <KeyboardAvoidingView
-        style={styles.keyboardView}
+        style={themeStyles.keyboardView}
         behavior={
           Platform.OS === "ios"
             ? "padding"
@@ -1553,22 +1557,22 @@ export default function PostCommentsModal({
         }
       >
         <View
-          style={styles.overlay}
+          style={themeStyles.overlay}
         >
           <Pressable
-            style={styles.backdrop}
+            style={themeStyles.backdrop}
             onPress={onClose}
           />
 
           <View
-            style={styles.container}
+            style={themeStyles.container}
           >
             <View
-              style={styles.header}
+              style={themeStyles.header}
             >
               <View>
                 <Text
-                  style={styles.title}
+                  style={themeStyles.title}
                 >
                   Comments
                 </Text>
@@ -1576,7 +1580,7 @@ export default function PostCommentsModal({
                 {!loading && (
                   <Text
                     style={
-                      styles.commentCount
+                      themeStyles.commentCount
                     }
                   >
                     {comments.length}{" "}
@@ -1592,31 +1596,31 @@ export default function PostCommentsModal({
                 hitSlop={10}
                 onPress={onClose}
                 style={
-                  styles.closeButton
+                  themeStyles.closeButton
                 }
               >
                 <Ionicons
                   name="close"
                   size={22}
-                  color="#31515F"
+                  color={themeTone("#31515F", "color")}
                 />
               </Pressable>
             </View>
 
-            <View style={styles.searchSortContainer}>
-              <View style={styles.searchContainer}>
+            <View style={themeStyles.searchSortContainer}>
+              <View style={themeStyles.searchContainer}>
                 <Ionicons
                   name="search-outline"
                   size={18}
-                  color="#8BA3AB"
+                  color={themeTone("#8BA3AB", "color")}
                 />
 
                 <TextInput
                   value={commentSearch}
                   onChangeText={setCommentSearch}
                   placeholder="Search comments..."
-                  placeholderTextColor="#8BA3AB"
-                  style={styles.searchInput}
+                  placeholderTextColor={themeTone("#8BA3AB", "placeholderTextColor")}
+                  style={themeStyles.searchInput}
                   returnKeyType="search"
                   autoCorrect={false}
                 />
@@ -1629,28 +1633,28 @@ export default function PostCommentsModal({
                     <Ionicons
                       name="close-circle"
                       size={18}
-                      color="#8BA3AB"
+                      color={themeTone("#8BA3AB", "color")}
                     />
                   </Pressable>
                 )}
               </View>
 
-              <View style={styles.sortContainer}>
+              <View style={themeStyles.sortContainer}>
                 <Pressable
                   onPress={() =>
                     setShowSortOptions(
                       (previous) => !previous
                     )
                   }
-                  style={styles.sortButton}
+                  style={themeStyles.sortButton}
                 >
                   <Ionicons
                     name="swap-vertical-outline"
                     size={17}
-                    color="#0E7C86"
+                    color={themeTone("#0E7C86", "color")}
                   />
 
-                  <Text style={styles.sortButtonText}>
+                  <Text style={themeStyles.sortButtonText}>
                     {commentSort === "newest"
                       ? "Newest"
                       : commentSort === "oldest"
@@ -1665,12 +1669,12 @@ export default function PostCommentsModal({
                         : "chevron-down"
                     }
                     size={15}
-                    color="#64808C"
+                    color={themeTone("#64808C", "color")}
                   />
                 </Pressable>
 
                 {showSortOptions && (
-                  <View style={styles.sortOptions}>
+                  <View style={themeStyles.sortOptions}>
                     {[
                       {
                         value: "newest" as const,
@@ -1694,18 +1698,18 @@ export default function PostCommentsModal({
                           setShowSortOptions(false);
                         }}
                         style={[
-                          styles.sortOption,
+                          themeStyles.sortOption,
                           commentSort ===
                             option.value &&
-                            styles.sortOptionSelected,
+                            themeStyles.sortOptionSelected,
                         ]}
                       >
                         <Text
                           style={[
-                            styles.sortOptionText,
+                            themeStyles.sortOptionText,
                             commentSort ===
                               option.value &&
-                              styles.sortOptionSelectedText,
+                              themeStyles.sortOptionSelectedText,
                           ]}
                         >
                           {option.label}
@@ -1716,7 +1720,7 @@ export default function PostCommentsModal({
                           <Ionicons
                             name="checkmark"
                             size={16}
-                            color="#0E7C86"
+                            color={themeTone("#0E7C86", "color")}
                           />
                         )}
                       </Pressable>
@@ -1727,9 +1731,9 @@ export default function PostCommentsModal({
             </View>
 
             <ScrollView
-              style={styles.list}
+              style={themeStyles.list}
               contentContainerStyle={
-                styles.listContent
+                themeStyles.listContent
               }
               keyboardShouldPersistTaps="handled"
               showsVerticalScrollIndicator={
@@ -1739,17 +1743,17 @@ export default function PostCommentsModal({
               {loading ? (
                 <View
                   style={
-                    styles.loadingContainer
+                    themeStyles.loadingContainer
                   }
                 >
                   <ActivityIndicator
                     size="large"
-                    color="#0E7C86"
+                    color={themeTone("#0E7C86", "color")}
                   />
 
                   <Text
                     style={
-                      styles.loadingText
+                      themeStyles.loadingText
                     }
                   >
                     Loading comments...
@@ -1759,12 +1763,12 @@ export default function PostCommentsModal({
                 0 ? (
                 <View
                   style={
-                    styles.emptyContainer
+                    themeStyles.emptyContainer
                   }
                 >
                   <View
                     style={
-                      styles.emptyIcon
+                      themeStyles.emptyIcon
                     }
                   >
                     <Ionicons
@@ -1774,13 +1778,13 @@ export default function PostCommentsModal({
                           : "chatbubble-ellipses-outline"
                       }
                       size={32}
-                      color="#168994"
+                      color={themeTone("#168994", "color")}
                     />
                   </View>
 
                   <Text
                     style={
-                      styles.emptyTitle
+                      themeStyles.emptyTitle
                     }
                   >
                     {normalizedSearch
@@ -1790,7 +1794,7 @@ export default function PostCommentsModal({
 
                   <Text
                     style={
-                      styles.emptyText
+                      themeStyles.emptyText
                     }
                   >
                     {normalizedSearch
@@ -1810,18 +1814,18 @@ export default function PostCommentsModal({
               {error && (
                 <View
                   style={
-                    styles.errorContainer
+                    themeStyles.errorContainer
                   }
                 >
                   <Ionicons
                     name="alert-circle-outline"
                     size={18}
-                    color="#b91c1c"
+                    color={themeTone("#b91c1c", "color")}
                   />
 
                   <Text
                     style={
-                      styles.errorText
+                      themeStyles.errorText
                     }
                   >
                     {error}
@@ -1833,30 +1837,30 @@ export default function PostCommentsModal({
             {replyingTo && (
               <View
                 style={
-                  styles.replyingBanner
+                  themeStyles.replyingBanner
                 }
               >
                 <View
                   style={
-                    styles.replyingInfo
+                    themeStyles.replyingInfo
                   }
                 >
                   <Ionicons
                     name="return-down-forward-outline"
                     size={17}
-                    color="#0E7C86"
+                    color={themeTone("#0E7C86", "color")}
                   />
 
                   <Text
                     style={
-                      styles.replyingText
+                      themeStyles.replyingText
                     }
                     numberOfLines={1}
                   >
                     Replying to{" "}
                     <Text
                       style={
-                        styles.replyingName
+                        themeStyles.replyingName
                       }
                     >
                       {
@@ -1877,7 +1881,7 @@ export default function PostCommentsModal({
                   <Ionicons
                     name="close-circle"
                     size={20}
-                    color="#8BA3AB"
+                    color={themeTone("#8BA3AB", "color")}
                   />
                 </Pressable>
               </View>
@@ -1886,9 +1890,9 @@ export default function PostCommentsModal({
             {renderMediaPreview()}
 
             {(aiSuggestions || loadingAiSuggestions) && (
-              <View style={styles.aiSuggestionsContainer}>
-                <View style={styles.aiSuggestionsHeader}>
-                  <Text style={styles.aiSuggestionsTitle}>
+              <View style={themeStyles.aiSuggestionsContainer}>
+                <View style={themeStyles.aiSuggestionsHeader}>
+                  <Text style={themeStyles.aiSuggestionsTitle}>
                     Choose a supportive comment
                   </Text>
 
@@ -1899,18 +1903,18 @@ export default function PostCommentsModal({
                     <Ionicons
                       name="close"
                       size={18}
-                      color="#64808C"
+                      color={themeTone("#64808C", "color")}
                     />
                   </Pressable>
                 </View>
 
                 {loadingAiSuggestions ? (
-                  <View style={styles.aiLoadingRow}>
+                  <View style={themeStyles.aiLoadingRow}>
                     <ActivityIndicator
                       size="small"
-                      color="#0E7C86"
+                      color={themeTone("#0E7C86", "color")}
                     />
-                    <Text style={styles.aiLoadingText}>
+                    <Text style={themeStyles.aiLoadingText}>
                       Generating suggestions...
                     </Text>
                   </View>
@@ -1921,12 +1925,12 @@ export default function PostCommentsModal({
                       onPress={() =>
                         selectAiSuggestion(suggestion)
                       }
-                      style={styles.aiSuggestionCard}
+                      style={themeStyles.aiSuggestionCard}
                     >
-                      <Text style={styles.aiSuggestionText}>
+                      <Text style={themeStyles.aiSuggestionText}>
                         {suggestion}
                       </Text>
-                      <Text style={styles.aiSelectText}>
+                      <Text style={themeStyles.aiSelectText}>
                         Use this
                       </Text>
                     </Pressable>
@@ -1938,14 +1942,14 @@ export default function PostCommentsModal({
                     onPress={() =>
                       void handleGenerateAiSuggestions()
                     }
-                    style={styles.aiRegenerateButton}
+                    style={themeStyles.aiRegenerateButton}
                   >
                     <Ionicons
                       name="refresh-outline"
                       size={16}
-                      color="#0E7C86"
+                      color={themeTone("#0E7C86", "color")}
                     />
-                    <Text style={styles.aiRegenerateText}>
+                    <Text style={themeStyles.aiRegenerateText}>
                       Regenerate
                     </Text>
                   </Pressable>
@@ -1953,7 +1957,7 @@ export default function PostCommentsModal({
               </View>
             )}
 
-            <View style={styles.aiSuggestRow}>
+            <View style={themeStyles.aiSuggestRow}>
               <Pressable
                 disabled={
                   loadingAiSuggestions ||
@@ -1963,18 +1967,18 @@ export default function PostCommentsModal({
                   void handleGenerateAiSuggestions()
                 }
                 style={[
-                  styles.aiSuggestButton,
+                  themeStyles.aiSuggestButton,
                   (loadingAiSuggestions ||
                     !postContent?.trim()) &&
-                    styles.disabledAiSuggestButton,
+                    themeStyles.disabledAiSuggestButton,
                 ]}
               >
                 <Ionicons
                   name="sparkles-outline"
                   size={16}
-                  color="#0E7C86"
+                  color={themeTone("#0E7C86", "color")}
                 />
-                <Text style={styles.aiSuggestText}>
+                <Text style={themeStyles.aiSuggestText}>
                   AI Suggest
                 </Text>
               </Pressable>
@@ -1982,18 +1986,18 @@ export default function PostCommentsModal({
 
             <View
               style={
-                styles.inputContainer
+                themeStyles.inputContainer
               }
             >
               <View
                 style={
-                  styles.inputAvatar
+                  themeStyles.inputAvatar
                 }
               >
                 <Ionicons
                   name="person"
                   size={18}
-                  color="#0E7C86"
+                  color={themeTone("#0E7C86", "color")}
                 />
               </View>
 
@@ -2008,8 +2012,8 @@ export default function PostCommentsModal({
                     ? "Write a reply..."
                     : "Write a comment..."
                 }
-                placeholderTextColor="#8BA3AB"
-                style={styles.input}
+                placeholderTextColor={themeTone("#8BA3AB", "placeholderTextColor")}
+                style={themeStyles.input}
                 multiline
                 maxLength={1000}
               />
@@ -2020,15 +2024,15 @@ export default function PostCommentsModal({
                   void handleSelectMedia()
                 }
                 style={[
-                  styles.mediaButton,
+                  themeStyles.mediaButton,
                   submitting &&
-                    styles.disabledMediaButton,
+                    themeStyles.disabledMediaButton,
                 ]}
               >
                 <Ionicons
                   name="image-outline"
                   size={21}
-                  color="#0E7C86"
+                  color={themeTone("#0E7C86", "color")}
                 />
               </Pressable>
 
@@ -2045,25 +2049,25 @@ export default function PostCommentsModal({
                     : handleAddComment())
                 }
                 style={[
-                  styles.sendButton,
+                  themeStyles.sendButton,
                   (submitting ||
                     newComment
                       .trim()
                       .length ===
                       0) &&
-                    styles.disabledSendButton,
+                    themeStyles.disabledSendButton,
                 ]}
               >
                 {submitting ? (
                   <ActivityIndicator
                     size="small"
-                    color="#ffffff"
+                    color={themeTone("#ffffff", "color")}
                   />
                 ) : (
                   <Ionicons
                     name="arrow-up"
                     size={20}
-                    color="#ffffff"
+                    color={themeTone("#ffffff", "color")}
                   />
                 )}
               </Pressable>

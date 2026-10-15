@@ -1,3 +1,4 @@
+import { useThemedClassName } from '@/theme/useAlyvenAppearance';
 import { useState } from "react";
 
 import { Pressable, Text } from "react-native";
@@ -28,6 +29,8 @@ import {
 } from "@/services/api/apiError";
 
 export default function ForgotPasswordScreen() {
+  const themeClass = useThemedClassName();
+
   const [apiError, setApiError] =
     useState<string | null>(null);
 
@@ -107,12 +110,12 @@ export default function ForgotPasswordScreen() {
       />
 
       <Pressable
-        className="mt-5"
+        className={themeClass("mt-5")}
         onPress={() =>
           router.back()
         }
       >
-        <Text className="text-center font-semibold text-indigo-600">
+        <Text className={themeClass("text-center font-semibold text-indigo-600")}>
           Back to sign in
         </Text>
       </Pressable>

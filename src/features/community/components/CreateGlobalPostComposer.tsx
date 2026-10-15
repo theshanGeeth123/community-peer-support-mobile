@@ -1,3 +1,4 @@
+import { useThemeTone, useThemedStyles } from '@/theme/useAlyvenAppearance';
 import { useRef, useState } from "react";
 
 import {
@@ -38,6 +39,9 @@ export default function CreateGlobalPostComposer({
   canPin: boolean;
   onSubmit: (content: string, isPinned: boolean) => void;
 }) {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   const [expanded, setExpanded] = useState(false);
   const [content, setContent] = useState("");
   const [isPinned, setIsPinned] = useState(false);
@@ -71,10 +75,10 @@ export default function CreateGlobalPostComposer({
   };
 
   return (
-    <View style={styles.card}>
-      <View style={styles.topRow}>
-        <View style={styles.avatar}>
-          <Text style={styles.avatarText}>
+    <View style={themeStyles.card}>
+      <View style={themeStyles.topRow}>
+        <View style={themeStyles.avatar}>
+          <Text style={themeStyles.avatarText}>
             {getInitials(currentUserName)}
           </Text>
         </View>
@@ -89,12 +93,12 @@ export default function CreateGlobalPostComposer({
             textAlignVertical="top"
             maxLength={MAX_CONTENT_LENGTH}
             placeholder="Share an update with the community..."
-            placeholderTextColor="#8BA3AB"
-            style={styles.input}
+            placeholderTextColor={themeTone("#8BA3AB", "placeholderTextColor")}
+            style={themeStyles.input}
           />
         ) : (
-          <Pressable style={styles.trigger} onPress={handleExpand}>
-            <Text style={styles.triggerText}>
+          <Pressable style={themeStyles.trigger} onPress={handleExpand}>
+            <Text style={themeStyles.triggerText}>
               Share an update with the community...
             </Text>
           </Pressable>
@@ -102,48 +106,48 @@ export default function CreateGlobalPostComposer({
       </View>
 
       {expanded && (
-        <View style={styles.footer}>
+        <View style={themeStyles.footer}>
           {canPin ? (
             <Pressable
-              style={styles.pinToggle}
+              style={themeStyles.pinToggle}
               onPress={() => setIsPinned((previous) => !previous)}
             >
               <Ionicons
                 name={isPinned ? "checkbox" : "square-outline"}
                 size={19}
-                color="#0E7C86"
+                color={themeTone("#0E7C86", "color")}
               />
 
-              <Text style={styles.pinLabel}>Pin as announcement</Text>
+              <Text style={themeStyles.pinLabel}>Pin as announcement</Text>
             </Pressable>
           ) : (
             <View />
           )}
 
-          <View style={styles.footerButtons}>
+          <View style={themeStyles.footerButtons}>
             <Pressable
               disabled={submitting}
               onPress={handleCancel}
-              style={styles.cancelButton}
+              style={themeStyles.cancelButton}
             >
-              <Text style={styles.cancelButtonText}>Cancel</Text>
+              <Text style={themeStyles.cancelButtonText}>Cancel</Text>
             </Pressable>
 
             <Pressable
               disabled={!canSubmit}
               onPress={handleSubmit}
               style={[
-                styles.submitButton,
-                !canSubmit && styles.submitDisabled,
+                themeStyles.submitButton,
+                !canSubmit && themeStyles.submitDisabled,
               ]}
             >
               {submitting ? (
-                <ActivityIndicator size="small" color="#ffffff" />
+                <ActivityIndicator size="small" color={themeTone("#ffffff", "color")} />
               ) : (
                 <>
-                  <Ionicons name="send-outline" size={15} color="#ffffff" />
+                  <Ionicons name="send-outline" size={15} color={themeTone("#ffffff", "color")} />
 
-                  <Text style={styles.submitButtonText}>Post</Text>
+                  <Text style={themeStyles.submitButtonText}>Post</Text>
                 </>
               )}
             </Pressable>

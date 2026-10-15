@@ -1,3 +1,4 @@
+import { useThemeTone, useThemedStyles } from '@/theme/useAlyvenAppearance';
 import { useCallback, useState } from "react";
 
 import { Pressable, StyleSheet, Text, View } from "react-native";
@@ -14,6 +15,9 @@ import { notificationApi } from "../api/notification.api";
  * so it updates after returning from the notifications list.
  */
 export default function NotificationBell() {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   const [unreadCount, setUnreadCount] = useState(0);
 
   useFocusEffect(
@@ -49,17 +53,17 @@ export default function NotificationBell() {
           : "Notifications"
       }
       onPress={() => router.push("/(app)/notifications" as Href)}
-      style={styles.button}
+      style={themeStyles.button}
     >
       <Ionicons
         name={unreadCount > 0 ? "notifications" : "notifications-outline"}
         size={23}
-        color="#31515F"
+        color={themeTone("#31515F", "color")}
       />
 
       {unreadCount > 0 && (
-        <View style={styles.badge}>
-          <Text style={styles.badgeText}>
+        <View style={themeStyles.badge}>
+          <Text style={themeStyles.badgeText}>
             {unreadCount > 99 ? "99+" : unreadCount}
           </Text>
         </View>

@@ -1,3 +1,4 @@
+import { useThemeTone, useThemedStyles } from '@/theme/useAlyvenAppearance';
 ﻿import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { Ionicons } from "@expo/vector-icons";
@@ -24,6 +25,9 @@ export default function ReportCard({
   report,
   onPress,
 }: ReportCardProps) {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   const groupName =
     typeof report.group === "string"
       ? report.group
@@ -33,18 +37,18 @@ export default function ReportCard({
     <Pressable
       onPress={() => onPress(report)}
       style={({ pressed }) => [
-        styles.card,
-        pressed && styles.cardPressed,
+        themeStyles.card,
+        pressed && themeStyles.cardPressed,
       ]}
     >
       {/* Top row: target type pill + status badge */}
-      <View style={styles.topRow}>
+      <View style={themeStyles.topRow}>
         <View
           style={[
-            styles.targetPill,
+            themeStyles.targetPill,
             report.targetType === "POST"
-              ? styles.targetPost
-              : styles.targetComment,
+              ? themeStyles.targetPost
+              : themeStyles.targetComment,
           ]}
         >
           <Ionicons
@@ -62,10 +66,10 @@ export default function ReportCard({
           />
           <Text
             style={[
-              styles.targetLabel,
+              themeStyles.targetLabel,
               report.targetType === "POST"
-                ? styles.targetPostLabel
-                : styles.targetCommentLabel,
+                ? themeStyles.targetPostLabel
+                : themeStyles.targetCommentLabel,
             ]}
           >
             {report.targetType}
@@ -76,52 +80,52 @@ export default function ReportCard({
       </View>
 
       {/* Reason */}
-      <View style={styles.reasonRow}>
+      <View style={themeStyles.reasonRow}>
         <ReasonBadge reason={report.reason} />
       </View>
 
       {/* Additional details preview */}
       {report.additionalDetails ? (
-        <Text style={styles.details} numberOfLines={2}>
+        <Text style={themeStyles.details} numberOfLines={2}>
           {report.additionalDetails}
         </Text>
       ) : null}
 
       {/* Footer: reporter + group + date */}
-      <View style={styles.footer}>
-        <View style={styles.footerLeft}>
+      <View style={themeStyles.footer}>
+        <View style={themeStyles.footerLeft}>
           <Ionicons
             name="person-outline"
             size={12}
-            color="#8BA3AB"
+            color={themeTone("#8BA3AB", "color")}
           />
-          <Text style={styles.footerText}>
+          <Text style={themeStyles.footerText}>
             {report.reporter.fullName}
           </Text>
 
-          <Text style={styles.footerSep}>·</Text>
+          <Text style={themeStyles.footerSep}>·</Text>
 
           <Ionicons
             name="people-outline"
             size={12}
-            color="#8BA3AB"
+            color={themeTone("#8BA3AB", "color")}
           />
-          <Text style={styles.footerText} numberOfLines={1}>
+          <Text style={themeStyles.footerText} numberOfLines={1}>
             {groupName}
           </Text>
         </View>
 
-        <Text style={styles.date}>
+        <Text style={themeStyles.date}>
           {formatDate(report.createdAt)}
         </Text>
       </View>
 
       {/* Chevron */}
-      <View style={styles.chevron}>
+      <View style={themeStyles.chevron}>
         <Ionicons
           name="chevron-forward"
           size={16}
-          color="#C4D8DA"
+          color={themeTone("#C4D8DA", "color")}
         />
       </View>
     </Pressable>

@@ -1,3 +1,4 @@
+import { useThemeTone, useThemedStyles } from '@/theme/useAlyvenAppearance';
 import { useCallback, useState } from "react";
 
 import {
@@ -62,6 +63,9 @@ const EMERGENCY_PHONE = "1990";
 */
 
 export default function ShakeQuickActions() {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   const { user } = useAuth();
 
   const [visible, setVisible] = useState(false);
@@ -112,42 +116,42 @@ export default function ShakeQuickActions() {
       animationType="slide"
       onRequestClose={close}
     >
-      <Pressable style={styles.overlay} onPress={close}>
+      <Pressable style={themeStyles.overlay} onPress={close}>
         {/*
          * Inner Pressable stops taps inside the sheet from closing it.
          */}
-        <Pressable style={styles.sheet} onPress={() => undefined}>
+        <Pressable style={themeStyles.sheet} onPress={() => undefined}>
           <ScrollView
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.sheetContent}
+            contentContainerStyle={themeStyles.sheetContent}
           >
-            <View style={styles.handle} />
+            <View style={themeStyles.handle} />
 
-            <Text style={styles.title}>How can we help?</Text>
+            <Text style={themeStyles.title}>How can we help?</Text>
 
-            <Text style={styles.subtitle}>
+            <Text style={themeStyles.subtitle}>
               You shook your phone. Choose an option, or close this if it
               was an accident.
             </Text>
 
             {/* WRITE A POST */}
 
-            <Pressable onPress={handleWritePost} style={styles.postCard}>
-              <View style={styles.postIcon}>
-                <Ionicons name="create-outline" size={24} color="#0E7C86" />
+            <Pressable onPress={handleWritePost} style={themeStyles.postCard}>
+              <View style={themeStyles.postIcon}>
+                <Ionicons name="create-outline" size={24} color={themeTone("#0E7C86", "color")} />
               </View>
 
-              <View style={styles.cardText}>
-                <Text style={styles.cardTitle}>Write a post</Text>
+              <View style={themeStyles.cardText}>
+                <Text style={themeStyles.cardTitle}>Write a post</Text>
 
-                <Text style={styles.cardDescription}>
+                <Text style={themeStyles.cardDescription}>
                   {isMember
                     ? "Share what's on your mind with your group."
                     : "Choose one of your groups to post in."}
                 </Text>
               </View>
 
-              <Ionicons name="chevron-forward" size={20} color="#8BA3AB" />
+              <Ionicons name="chevron-forward" size={20} color={themeTone("#8BA3AB", "color")} />
             </Pressable>
 
             {/* EMERGENCY */}
@@ -155,18 +159,18 @@ export default function ShakeQuickActions() {
             {emergency && (
               <Pressable
                 onPress={() => void handleCall(emergency.phone)}
-                style={styles.emergencyCard}
+                style={themeStyles.emergencyCard}
               >
-                <View style={styles.emergencyIcon}>
-                  <Ionicons name="call" size={24} color="#ffffff" />
+                <View style={themeStyles.emergencyIcon}>
+                  <Ionicons name="call" size={24} color={themeTone("#ffffff", "color")} />
                 </View>
 
-                <View style={styles.cardText}>
-                  <Text style={styles.emergencyTitle}>
+                <View style={themeStyles.cardText}>
+                  <Text style={themeStyles.emergencyTitle}>
                     Call emergency · {emergency.displayPhone}
                   </Text>
 
-                  <Text style={styles.emergencyDescription}>
+                  <Text style={themeStyles.emergencyDescription}>
                     {emergency.name} — if you or someone else is in
                     immediate danger.
                   </Text>
@@ -176,34 +180,34 @@ export default function ShakeQuickActions() {
 
             {/* HELPLINES */}
 
-            <Text style={styles.sectionLabel}>Talk to someone now</Text>
+            <Text style={themeStyles.sectionLabel}>Talk to someone now</Text>
 
             {helplines.map((resource) => (
               <Pressable
                 key={resource.phone}
                 onPress={() => void handleCall(resource.phone)}
-                style={styles.helplineRow}
+                style={themeStyles.helplineRow}
               >
-                <View style={styles.cardText}>
-                  <Text style={styles.helplineName}>{resource.name}</Text>
+                <View style={themeStyles.cardText}>
+                  <Text style={themeStyles.helplineName}>{resource.name}</Text>
 
-                  <Text style={styles.helplineDescription}>
+                  <Text style={themeStyles.helplineDescription}>
                     {resource.description}
                   </Text>
                 </View>
 
-                <View style={styles.callPill}>
-                  <Ionicons name="call" size={13} color="#0E7C86" />
+                <View style={themeStyles.callPill}>
+                  <Ionicons name="call" size={13} color={themeTone("#0E7C86", "color")} />
 
-                  <Text style={styles.callPillText}>
+                  <Text style={themeStyles.callPillText}>
                     {resource.displayPhone}
                   </Text>
                 </View>
               </Pressable>
             ))}
 
-            <Pressable onPress={close} style={styles.closeButton}>
-              <Text style={styles.closeButtonText}>Close</Text>
+            <Pressable onPress={close} style={themeStyles.closeButton}>
+              <Text style={themeStyles.closeButtonText}>Close</Text>
             </Pressable>
           </ScrollView>
         </Pressable>

@@ -1,3 +1,4 @@
+import { useThemeTone, useThemedStyles } from '@/theme/useAlyvenAppearance';
 import SectionBanner from "@/features/branding/components/SectionBanner";
 import { useCallback, useMemo, useState } from "react";
 
@@ -35,6 +36,9 @@ function getGroupReferenceId(reference: GroupReference): string | null {
 }
 
 export default function DiscoverGroupsScreen() {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   const [groups, setGroups] = useState<SupportGroup[]>([]);
   const [joinedGroupIds, setJoinedGroupIds] = useState<Set<string>>(
     new Set()
@@ -131,20 +135,20 @@ export default function DiscoverGroupsScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={["top", "left", "right"]}>
-      <View style={styles.header}>
-        <Pressable onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={22} color="#0E2A47" />
+    <SafeAreaView style={themeStyles.safeArea} edges={["top", "left", "right"]}>
+      <View style={themeStyles.header}>
+        <Pressable onPress={() => router.back()} style={themeStyles.backButton}>
+          <Ionicons name="arrow-back" size={22} color={themeTone("#0E2A47", "color")} />
         </Pressable>
 
-        <Text style={styles.headerTitle}>Discover Groups</Text>
+        <Text style={themeStyles.headerTitle}>Discover Groups</Text>
 
         <View style={{ width: 42 }} />
       </View>
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.content}
+        contentContainerStyle={themeStyles.content}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }
@@ -155,49 +159,49 @@ export default function DiscoverGroupsScreen() {
           description="Explore supportive groups and discover where you feel a sense of belonging."
           icon="compass-outline"
         />
-        <View style={styles.searchBox}>
-          <Ionicons name="search-outline" size={20} color="#8BA3AB" />
+        <View style={themeStyles.searchBox}>
+          <Ionicons name="search-outline" size={20} color={themeTone("#8BA3AB", "color")} />
 
           <TextInput
             value={search}
             onChangeText={setSearch}
             placeholder="Search groups to join..."
-            placeholderTextColor="#8BA3AB"
-            style={styles.searchInput}
+            placeholderTextColor={themeTone("#8BA3AB", "placeholderTextColor")}
+            style={themeStyles.searchInput}
           />
 
           {search.length > 0 && (
             <Pressable hitSlop={10} onPress={() => setSearch("")}>
-              <Ionicons name="close-circle" size={20} color="#8BA3AB" />
+              <Ionicons name="close-circle" size={20} color={themeTone("#8BA3AB", "color")} />
             </Pressable>
           )}
         </View>
 
         {error && (
-          <View style={styles.errorBox}>
-            <Text style={styles.errorText}>{error}</Text>
+          <View style={themeStyles.errorBox}>
+            <Text style={themeStyles.errorText}>{error}</Text>
 
             <Pressable onPress={() => void loadData()}>
-              <Text style={styles.retryText}>Try Again</Text>
+              <Text style={themeStyles.retryText}>Try Again</Text>
             </Pressable>
           </View>
         )}
 
         {loading ? (
-          <View style={styles.loadingArea}>
-            <ActivityIndicator size="large" color="#0E7C86" />
+          <View style={themeStyles.loadingArea}>
+            <ActivityIndicator size="large" color={themeTone("#0E7C86", "color")} />
 
-            <Text style={styles.loadingText}>Loading groups...</Text>
+            <Text style={themeStyles.loadingText}>Loading groups...</Text>
           </View>
         ) : discoverableGroups.length === 0 ? (
-          <View style={styles.emptyCard}>
-            <Ionicons name="compass-outline" size={30} color="#8BA3AB" />
+          <View style={themeStyles.emptyCard}>
+            <Ionicons name="compass-outline" size={30} color={themeTone("#8BA3AB", "color")} />
 
-            <Text style={styles.emptyTitle}>
+            <Text style={themeStyles.emptyTitle}>
               {search ? "No groups found" : "You're in every group already"}
             </Text>
 
-            <Text style={styles.emptyDescription}>
+            <Text style={themeStyles.emptyDescription}>
               {search
                 ? "Try another search term."
                 : "Check back later for new support groups."}
@@ -209,25 +213,25 @@ export default function DiscoverGroupsScreen() {
               key={group.id}
               onPress={() => openGroup(group.id)}
               style={({ pressed }) => [
-                styles.groupCard,
+                themeStyles.groupCard,
                 pressed && { opacity: 0.85 },
               ]}
             >
-              <View style={styles.cardTop}>
-                <View style={styles.groupIcon}>
-                  <Ionicons name="people" size={23} color="#0E7C86" />
+              <View style={themeStyles.cardTop}>
+                <View style={themeStyles.groupIcon}>
+                  <Ionicons name="people" size={23} color={themeTone("#0E7C86", "color")} />
                 </View>
 
-                <View style={styles.groupTitleArea}>
-                  <Text style={styles.groupName}>{group.name}</Text>
+                <View style={themeStyles.groupTitleArea}>
+                  <Text style={themeStyles.groupName}>{group.name}</Text>
 
-                  <Text style={styles.category}>{group.category}</Text>
+                  <Text style={themeStyles.category}>{group.category}</Text>
                 </View>
 
-                <Ionicons name="chevron-forward" size={20} color="#8BA3AB" />
+                <Ionicons name="chevron-forward" size={20} color={themeTone("#8BA3AB", "color")} />
               </View>
 
-              <Text numberOfLines={2} style={styles.groupDescription}>
+              <Text numberOfLines={2} style={themeStyles.groupDescription}>
                 {group.description}
               </Text>
             </Pressable>

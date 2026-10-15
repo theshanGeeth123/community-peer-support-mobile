@@ -1,3 +1,4 @@
+import { useThemeTone, useThemedStyles } from '@/theme/useAlyvenAppearance';
 ﻿import {
   ActivityIndicator,
   FlatList,
@@ -27,6 +28,9 @@ const FILTERS: { label: string; value: ReportStatus | undefined }[] = [
 ];
 
 export default function ModeratorReportsScreen() {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   const {
     reports,
     pagination,
@@ -57,27 +61,27 @@ export default function ModeratorReportsScreen() {
 
   return (
     <SafeAreaView
-      style={styles.container}
+      style={themeStyles.container}
       edges={["top", "left", "right"]}
     >
       {/* ── Header ── */}
-      <View style={styles.header}>
+      <View style={themeStyles.header}>
         <Pressable
           onPress={() => router.back()}
-          style={styles.backBtn}
+          style={themeStyles.backBtn}
           hitSlop={10}
         >
           <Ionicons
             name="arrow-back"
             size={22}
-            color="#0E2A47"
+            color={themeTone("#0E2A47", "color")}
           />
         </Pressable>
 
-        <View style={styles.headerCenter}>
-          <Text style={styles.headerTitle}>Reports</Text>
+        <View style={themeStyles.headerCenter}>
+          <Text style={themeStyles.headerTitle}>Reports</Text>
           {pagination && (
-            <Text style={styles.headerSub}>
+            <Text style={themeStyles.headerSub}>
               {pagination.totalReports} total
             </Text>
           )}
@@ -87,7 +91,7 @@ export default function ModeratorReportsScreen() {
       </View>
 
       {/* ── Filter chips ── */}
-      <View style={styles.filterRow}>
+      <View style={themeStyles.filterRow}>
         {FILTERS.map((f) => {
           const active = statusFilter === f.value;
           return (
@@ -95,14 +99,14 @@ export default function ModeratorReportsScreen() {
               key={String(f.value)}
               onPress={() => changeFilter(f.value)}
               style={[
-                styles.filterChip,
-                active && styles.filterChipActive,
+                themeStyles.filterChip,
+                active && themeStyles.filterChipActive,
               ]}
             >
               <Text
                 style={[
-                  styles.filterLabel,
-                  active && styles.filterLabelActive,
+                  themeStyles.filterLabel,
+                  active && themeStyles.filterLabelActive,
                 ]}
               >
                 {f.label}
@@ -114,33 +118,33 @@ export default function ModeratorReportsScreen() {
 
       {/* ── Content ── */}
       {loading ? (
-        <View style={styles.centered}>
+        <View style={themeStyles.centered}>
           <ActivityIndicator
             size="large"
-            color="#0E7C86"
+            color={themeTone("#0E7C86", "color")}
           />
-          <Text style={styles.loadingText}>
+          <Text style={themeStyles.loadingText}>
             Loading reports…
           </Text>
         </View>
       ) : error ? (
-        <View style={styles.centered}>
-          <View style={styles.errorIcon}>
+        <View style={themeStyles.centered}>
+          <View style={themeStyles.errorIcon}>
             <Ionicons
               name="alert-circle-outline"
               size={36}
-              color="#e11d48"
+              color={themeTone("#e11d48", "color")}
             />
           </View>
-          <Text style={styles.errorTitle}>
+          <Text style={themeStyles.errorTitle}>
             Failed to load reports
           </Text>
-          <Text style={styles.errorSub}>{error}</Text>
+          <Text style={themeStyles.errorSub}>{error}</Text>
           <Pressable
             onPress={() => changeFilter(statusFilter)}
-            style={styles.retryBtn}
+            style={themeStyles.retryBtn}
           >
-            <Text style={styles.retryLabel}>Retry</Text>
+            <Text style={themeStyles.retryLabel}>Retry</Text>
           </Pressable>
         </View>
       ) : (
@@ -153,30 +157,30 @@ export default function ModeratorReportsScreen() {
               onPress={handlePressReport}
             />
           )}
-          contentContainerStyle={styles.listContent}
+          contentContainerStyle={themeStyles.listContent}
           showsVerticalScrollIndicator={false}
           refreshControl={
             <RefreshControl
               refreshing={refreshing}
               onRefresh={() => void refresh()}
-              tintColor="#0E7C86"
+              tintColor={themeTone("#0E7C86", "tintColor")}
             />
           }
           onEndReached={() => void loadMore()}
           onEndReachedThreshold={0.3}
           ListEmptyComponent={
-            <View style={styles.emptyBox}>
-              <View style={styles.emptyIcon}>
+            <View style={themeStyles.emptyBox}>
+              <View style={themeStyles.emptyIcon}>
                 <Ionicons
                   name="flag-outline"
                   size={36}
-                  color="#8BA3AB"
+                  color={themeTone("#8BA3AB", "color")}
                 />
               </View>
-              <Text style={styles.emptyTitle}>
+              <Text style={themeStyles.emptyTitle}>
                 No reports found
               </Text>
-              <Text style={styles.emptySub}>
+              <Text style={themeStyles.emptySub}>
                 {statusFilter
                   ? `No ${statusFilter.toLowerCase()} reports for your groups.`
                   : "No reports have been submitted yet."}
@@ -185,10 +189,10 @@ export default function ModeratorReportsScreen() {
           }
           ListFooterComponent={
             loadingMore ? (
-              <View style={styles.loadingMore}>
+              <View style={themeStyles.loadingMore}>
                 <ActivityIndicator
                   size="small"
-                  color="#0E7C86"
+                  color={themeTone("#0E7C86", "color")}
                 />
               </View>
             ) : null

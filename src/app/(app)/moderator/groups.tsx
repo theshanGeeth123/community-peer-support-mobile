@@ -1,3 +1,4 @@
+import { useThemeTone, useThemedStyles } from '@/theme/useAlyvenAppearance';
 import {
   useCallback,
   useMemo,
@@ -41,6 +42,9 @@ import {
 } from "@/services/api/apiError";
 
 export default function ModeratorGroupsScreen() {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   const [
     groups,
     setGroups,
@@ -154,7 +158,7 @@ export default function ModeratorGroupsScreen() {
   return (
     <SafeAreaView
       style={
-        styles.safeArea
+        themeStyles.safeArea
       }
       edges={[
         "top",
@@ -164,7 +168,7 @@ export default function ModeratorGroupsScreen() {
     >
       <ScrollView
         contentContainerStyle={
-          styles.content
+          themeStyles.content
         }
         showsVerticalScrollIndicator={
           false
@@ -188,12 +192,12 @@ export default function ModeratorGroupsScreen() {
       >
         <View
           style={
-            styles.headingArea
+            themeStyles.headingArea
           }
         >
           <Text
             style={
-              styles.heading
+              themeStyles.heading
             }
           >
             Moderated Groups
@@ -201,7 +205,7 @@ export default function ModeratorGroupsScreen() {
 
           <Text
             style={
-              styles.description
+              themeStyles.description
             }
           >
             View groups assigned
@@ -212,18 +216,18 @@ export default function ModeratorGroupsScreen() {
 
         <View
           style={
-            styles.summaryCard
+            themeStyles.summaryCard
           }
         >
           <View
             style={
-              styles.summaryIcon
+              themeStyles.summaryIcon
             }
           >
             <Ionicons
               name="shield-checkmark-outline"
               size={25}
-              color="#0E7C86"
+              color={themeTone("#0E7C86", "color")}
             />
           </View>
 
@@ -234,7 +238,7 @@ export default function ModeratorGroupsScreen() {
           >
             <Text
               style={
-                styles.summaryLabel
+                themeStyles.summaryLabel
               }
             >
               Assigned Groups
@@ -242,7 +246,7 @@ export default function ModeratorGroupsScreen() {
 
             <Text
               style={
-                styles.summaryValue
+                themeStyles.summaryValue
               }
             >
               {groups.length}
@@ -252,13 +256,13 @@ export default function ModeratorGroupsScreen() {
 
         <View
           style={
-            styles.searchBox
+            themeStyles.searchBox
           }
         >
           <Ionicons
             name="search-outline"
             size={20}
-            color="#8BA3AB"
+            color={themeTone("#8BA3AB", "color")}
           />
 
           <TextInput
@@ -267,9 +271,9 @@ export default function ModeratorGroupsScreen() {
               setSearch
             }
             placeholder="Search groups..."
-            placeholderTextColor="#8BA3AB"
+            placeholderTextColor={themeTone("#8BA3AB", "placeholderTextColor")}
             style={
-              styles.searchInput
+              themeStyles.searchInput
             }
           />
         </View>
@@ -277,12 +281,12 @@ export default function ModeratorGroupsScreen() {
         {error && (
           <View
             style={
-              styles.errorBox
+              themeStyles.errorBox
             }
           >
             <Text
               style={
-                styles.errorText
+                themeStyles.errorText
               }
             >
               {error}
@@ -293,17 +297,17 @@ export default function ModeratorGroupsScreen() {
         {loading ? (
           <View
             style={
-              styles.center
+              themeStyles.center
             }
           >
             <ActivityIndicator
               size="large"
-              color="#0E7C86"
+              color={themeTone("#0E7C86", "color")}
             />
 
             <Text
               style={
-                styles.loadingText
+                themeStyles.loadingText
               }
             >
               Loading groups...
@@ -313,18 +317,18 @@ export default function ModeratorGroupsScreen() {
           0 ? (
           <View
             style={
-              styles.emptyCard
+              themeStyles.emptyCard
             }
           >
             <Ionicons
               name="shield-outline"
               size={34}
-              color="#8BA3AB"
+              color={themeTone("#8BA3AB", "color")}
             />
 
             <Text
               style={
-                styles.emptyTitle
+                themeStyles.emptyTitle
               }
             >
               No groups assigned
@@ -332,7 +336,7 @@ export default function ModeratorGroupsScreen() {
 
             <Text
               style={
-                styles.emptyText
+                themeStyles.emptyText
               }
             >
               An Administrator
@@ -348,23 +352,23 @@ export default function ModeratorGroupsScreen() {
                   group.id
                 }
                 style={
-                  styles.groupCard
+                  themeStyles.groupCard
                 }
               >
                 <View
                   style={
-                    styles.cardTop
+                    themeStyles.cardTop
                   }
                 >
                   <View
                     style={
-                      styles.groupIcon
+                      themeStyles.groupIcon
                     }
                   >
                     <Ionicons
                       name="people"
                       size={23}
-                      color="#0E7C86"
+                      color={themeTone("#0E7C86", "color")}
                     />
                   </View>
 
@@ -376,7 +380,7 @@ export default function ModeratorGroupsScreen() {
                   >
                     <Text
                       style={
-                        styles.groupName
+                        themeStyles.groupName
                       }
                     >
                       {group.name}
@@ -384,7 +388,7 @@ export default function ModeratorGroupsScreen() {
 
                     <Text
                       style={
-                        styles.category
+                        themeStyles.category
                       }
                     >
                       {
@@ -397,7 +401,7 @@ export default function ModeratorGroupsScreen() {
                 <Text
                   numberOfLines={3}
                   style={
-                    styles.groupDescription
+                    themeStyles.groupDescription
                   }
                 >
                   {
@@ -418,18 +422,18 @@ export default function ModeratorGroupsScreen() {
                     })
                   }
                   style={
-                    styles.manageButton
+                    themeStyles.manageButton
                   }
                 >
                   <Ionicons
                     name="people-circle-outline"
                     size={20}
-                    color="#0E7C86"
+                    color={themeTone("#0E7C86", "color")}
                   />
 
                   <Text
                     style={
-                      styles.manageButtonText
+                      themeStyles.manageButtonText
                     }
                   >
                     Manage Members
@@ -438,7 +442,7 @@ export default function ModeratorGroupsScreen() {
                   <Ionicons
                     name="chevron-forward"
                     size={19}
-                    color="#168994"
+                    color={themeTone("#168994", "color")}
                   />
                 </Pressable>
 
@@ -455,19 +459,19 @@ export default function ModeratorGroupsScreen() {
                     })
                   }
                   style={[
-                    styles.manageButton,
+                    themeStyles.manageButton,
                     { marginTop: 10 },
                   ]}
                 >
                   <Ionicons
                     name="chatbubbles-outline"
                     size={20}
-                    color="#0E7C86"
+                    color={themeTone("#0E7C86", "color")}
                   />
 
                   <Text
                     style={
-                      styles.manageButtonText
+                      themeStyles.manageButtonText
                     }
                   >
                     View Posts
@@ -476,7 +480,7 @@ export default function ModeratorGroupsScreen() {
                   <Ionicons
                     name="chevron-forward"
                     size={19}
-                    color="#168994"
+                    color={themeTone("#168994", "color")}
                   />
                 </Pressable>
               </View>

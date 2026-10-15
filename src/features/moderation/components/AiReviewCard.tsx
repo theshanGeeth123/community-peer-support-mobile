@@ -1,3 +1,4 @@
+import { useThemeTone, useThemedStyles } from '@/theme/useAlyvenAppearance';
 import {
   ActivityIndicator,
   Pressable,
@@ -71,53 +72,56 @@ export default function AiReviewCard({
   error,
   onGenerate,
 }: AiReviewCardProps) {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   const vCfg = aiReview ? verdictConfig[aiReview.verdict] : null;
   const aCfg = aiReview ? actionConfig[aiReview.suggestedAction] : null;
 
   return (
-    <View style={styles.card}>
+    <View style={themeStyles.card}>
       {/* Header */}
-      <View style={styles.headerRow}>
-        <View style={styles.headerLeft}>
-          <View style={styles.aiIconWrap}>
-            <Ionicons name="sparkles" size={16} color="#0E7C86" />
+      <View style={themeStyles.headerRow}>
+        <View style={themeStyles.headerLeft}>
+          <View style={themeStyles.aiIconWrap}>
+            <Ionicons name="sparkles" size={16} color={themeTone("#0E7C86", "color")} />
           </View>
-          <Text style={styles.headerTitle}>AI Review</Text>
+          <Text style={themeStyles.headerTitle}>AI Review</Text>
         </View>
-        <Text style={styles.advisoryBadge}>Advisory only</Text>
+        <Text style={themeStyles.advisoryBadge}>Advisory only</Text>
       </View>
 
       {/* Not yet generated */}
       {!aiReview && !loading && !error && (
-        <View style={styles.promptBox}>
-          <Text style={styles.promptText}>
+        <View style={themeStyles.promptBox}>
+          <Text style={themeStyles.promptText}>
             Let AI scan this report and suggest a moderation action.
           </Text>
           <Pressable
             onPress={onGenerate}
-            style={({ pressed }) => [styles.generateBtn, pressed && styles.generateBtnPressed]}
+            style={({ pressed }) => [themeStyles.generateBtn, pressed && themeStyles.generateBtnPressed]}
           >
-            <Ionicons name="sparkles" size={14} color="#ffffff" />
-            <Text style={styles.generateBtnLabel}>Generate AI Review</Text>
+            <Ionicons name="sparkles" size={14} color={themeTone("#ffffff", "color")} />
+            <Text style={themeStyles.generateBtnLabel}>Generate AI Review</Text>
           </Pressable>
         </View>
       )}
 
       {/* Loading */}
       {loading && (
-        <View style={styles.loadingRow}>
-          <ActivityIndicator size="small" color="#0E7C86" />
-          <Text style={styles.loadingText}>Analysing report…</Text>
+        <View style={themeStyles.loadingRow}>
+          <ActivityIndicator size="small" color={themeTone("#0E7C86", "color")} />
+          <Text style={themeStyles.loadingText}>Analysing report…</Text>
         </View>
       )}
 
       {/* Error */}
       {error && !loading && (
-        <View style={styles.errorBox}>
-          <Ionicons name="alert-circle-outline" size={15} color="#dc2626" />
-          <Text style={styles.errorText} numberOfLines={3}>{error}</Text>
-          <Pressable onPress={onGenerate} style={styles.retryBtn}>
-            <Text style={styles.retryLabel}>Retry</Text>
+        <View style={themeStyles.errorBox}>
+          <Ionicons name="alert-circle-outline" size={15} color={themeTone("#dc2626", "color")} />
+          <Text style={themeStyles.errorText} numberOfLines={3}>{error}</Text>
+          <Pressable onPress={onGenerate} style={themeStyles.retryBtn}>
+            <Text style={themeStyles.retryLabel}>Retry</Text>
           </Pressable>
         </View>
       )}
@@ -126,40 +130,40 @@ export default function AiReviewCard({
       {aiReview && vCfg && aCfg && (
         <>
           {/* Verdict banner */}
-          <View style={[styles.verdictBanner, { backgroundColor: vCfg.bg, borderColor: vCfg.border }]}>
+          <View style={[themeStyles.verdictBanner, { backgroundColor: vCfg.bg, borderColor: vCfg.border }]}>
             <Ionicons name={vCfg.icon} size={18} color={vCfg.color} />
-            <Text style={[styles.verdictLabel, { color: vCfg.color }]}>{vCfg.label}</Text>
+            <Text style={[themeStyles.verdictLabel, { color: vCfg.color }]}>{vCfg.label}</Text>
           </View>
 
           {/* Summary */}
-          <View style={styles.summaryBox}>
-            <Text style={styles.summaryLabel}>Summary</Text>
-            <Text style={styles.summaryText}>{aiReview.summary}</Text>
+          <View style={themeStyles.summaryBox}>
+            <Text style={themeStyles.summaryLabel}>Summary</Text>
+            <Text style={themeStyles.summaryText}>{aiReview.summary}</Text>
           </View>
 
           {/* Concerned parts */}
           {aiReview.concernedParts ? (
-            <View style={styles.concernBox}>
-              <Text style={styles.concernLabel}>Concerning Content</Text>
-              <Text style={styles.concernText}>{aiReview.concernedParts}</Text>
+            <View style={themeStyles.concernBox}>
+              <Text style={themeStyles.concernLabel}>Concerning Content</Text>
+              <Text style={themeStyles.concernText}>{aiReview.concernedParts}</Text>
             </View>
           ) : null}
 
           {/* Suggested action */}
-          <View style={styles.suggestionRow}>
-            <Text style={styles.suggestionKey}>Suggested Action</Text>
-            <View style={[styles.suggestionBadge, { backgroundColor: aCfg.bg }]}>
-              <Text style={[styles.suggestionBadgeLabel, { color: aCfg.color }]}>{aCfg.label}</Text>
+          <View style={themeStyles.suggestionRow}>
+            <Text style={themeStyles.suggestionKey}>Suggested Action</Text>
+            <View style={[themeStyles.suggestionBadge, { backgroundColor: aCfg.bg }]}>
+              <Text style={[themeStyles.suggestionBadgeLabel, { color: aCfg.color }]}>{aCfg.label}</Text>
             </View>
           </View>
 
           {/* Regenerate */}
           <Pressable
             onPress={onGenerate}
-            style={({ pressed }) => [styles.regenBtn, pressed && styles.generateBtnPressed]}
+            style={({ pressed }) => [themeStyles.regenBtn, pressed && themeStyles.generateBtnPressed]}
           >
-            <Ionicons name="refresh-outline" size={13} color="#0E7C86" />
-            <Text style={styles.regenLabel}>Regenerate</Text>
+            <Ionicons name="refresh-outline" size={13} color={themeTone("#0E7C86", "color")} />
+            <Text style={themeStyles.regenLabel}>Regenerate</Text>
           </Pressable>
         </>
       )}

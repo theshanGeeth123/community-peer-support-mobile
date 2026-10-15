@@ -1,3 +1,4 @@
+import { useThemeTone, useThemedStyles } from '@/theme/useAlyvenAppearance';
 import type { PropsWithChildren } from "react";
 
 import {
@@ -27,6 +28,9 @@ export default function RoleAreaGuard({
   allowedRole,
   children,
 }: RoleAreaGuardProps) {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   const {
     user,
     isAuthenticated,
@@ -35,10 +39,10 @@ export default function RoleAreaGuard({
 
   if (isInitializing) {
     return (
-      <View style={styles.loadingContainer}>
+      <View style={themeStyles.loadingContainer}>
         <ActivityIndicator
           size="large"
-          color="#0E7C86"
+          color={themeTone("#0E7C86", "color")}
         />
       </View>
     );

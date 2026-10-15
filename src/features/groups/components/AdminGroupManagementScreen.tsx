@@ -1,3 +1,4 @@
+import { useThemeTone, useThemedStyles } from '@/theme/useAlyvenAppearance';
 import {
     useCallback,
     useEffect,
@@ -61,6 +62,9 @@ const EMPTY_PAGINATION: GroupPagination =
   };
 
 export default function AdminGroupManagementScreen() {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   const [
     groups,
     setGroups,
@@ -549,7 +553,7 @@ export default function AdminGroupManagementScreen() {
   return (
     <SafeAreaView
       style={
-        styles.safeArea
+        themeStyles.safeArea
       }
       edges={[
         "top",
@@ -562,7 +566,7 @@ export default function AdminGroupManagementScreen() {
           flex: 1,
         }}
         contentContainerStyle={
-          styles.content
+          themeStyles.content
         }
         showsVerticalScrollIndicator={
           false
@@ -580,12 +584,12 @@ export default function AdminGroupManagementScreen() {
       >
         <View
           style={
-            styles.headingArea
+            themeStyles.headingArea
           }
         >
           <Text
             style={
-              styles.heading
+              themeStyles.heading
             }
           >
             Group Management
@@ -593,7 +597,7 @@ export default function AdminGroupManagementScreen() {
 
           <Text
             style={
-              styles.headingDescription
+              themeStyles.headingDescription
             }
           >
             Create groups and
@@ -605,13 +609,13 @@ export default function AdminGroupManagementScreen() {
 
         <View
           style={
-            styles.summaryCard
+            themeStyles.summaryCard
           }
         >
           <View>
             <Text
               style={
-                styles.summaryLabel
+                themeStyles.summaryLabel
               }
             >
               Total Groups
@@ -619,7 +623,7 @@ export default function AdminGroupManagementScreen() {
 
             <Text
               style={
-                styles.summaryValue
+                themeStyles.summaryValue
               }
             >
               {
@@ -635,7 +639,7 @@ export default function AdminGroupManagementScreen() {
             style={({
               pressed,
             }) => [
-              styles.createButton,
+              themeStyles.createButton,
 
               pressed && {
                 opacity: 0.85,
@@ -645,12 +649,12 @@ export default function AdminGroupManagementScreen() {
             <Ionicons
               name="add"
               size={20}
-              color="#ffffff"
+              color={themeTone("#ffffff", "color")}
             />
 
             <Text
               style={
-                styles.createButtonText
+                themeStyles.createButtonText
               }
             >
               Create Group
@@ -660,13 +664,13 @@ export default function AdminGroupManagementScreen() {
 
         <View
           style={
-            styles.searchBox
+            themeStyles.searchBox
           }
         >
           <Ionicons
             name="search-outline"
             size={20}
-            color="#8BA3AB"
+            color={themeTone("#8BA3AB", "color")}
           />
 
           <TextInput
@@ -675,9 +679,9 @@ export default function AdminGroupManagementScreen() {
               setSearch
             }
             placeholder="Search groups..."
-            placeholderTextColor="#8BA3AB"
+            placeholderTextColor={themeTone("#8BA3AB", "placeholderTextColor")}
             style={
-              styles.searchInput
+              themeStyles.searchInput
             }
           />
 
@@ -692,7 +696,7 @@ export default function AdminGroupManagementScreen() {
               <Ionicons
                 name="close-circle"
                 size={20}
-                color="#8BA3AB"
+                color={themeTone("#8BA3AB", "color")}
               />
             </Pressable>
           )}
@@ -701,12 +705,12 @@ export default function AdminGroupManagementScreen() {
         {error && (
           <View
             style={
-              styles.errorBox
+              themeStyles.errorBox
             }
           >
             <Text
               style={
-                styles.errorText
+                themeStyles.errorText
               }
             >
               {error}
@@ -723,7 +727,7 @@ export default function AdminGroupManagementScreen() {
             >
               <Text
                 style={
-                  styles.tryAgain
+                  themeStyles.tryAgain
                 }
               >
                 Try Again
@@ -735,17 +739,17 @@ export default function AdminGroupManagementScreen() {
         {loading ? (
           <View
             style={
-              styles.loadingArea
+              themeStyles.loadingArea
             }
           >
             <ActivityIndicator
               size="large"
-              color="#0E7C86"
+              color={themeTone("#0E7C86", "color")}
             />
 
             <Text
               style={
-                styles.loadingText
+                themeStyles.loadingText
               }
             >
               Loading groups...
@@ -755,24 +759,24 @@ export default function AdminGroupManagementScreen() {
           0 ? (
           <View
             style={
-              styles.emptyArea
+              themeStyles.emptyArea
             }
           >
             <View
               style={
-                styles.emptyIcon
+                themeStyles.emptyIcon
               }
             >
               <Ionicons
                 name="people-outline"
                 size={29}
-                color="#0E7C86"
+                color={themeTone("#0E7C86", "color")}
               />
             </View>
 
             <Text
               style={
-                styles.emptyTitle
+                themeStyles.emptyTitle
               }
             >
               No groups found
@@ -780,7 +784,7 @@ export default function AdminGroupManagementScreen() {
 
             <Text
               style={
-                styles.emptyDescription
+                themeStyles.emptyDescription
               }
             >
               {debouncedSearch
@@ -791,7 +795,7 @@ export default function AdminGroupManagementScreen() {
         ) : (
           <View
             style={
-              styles.groupList
+              themeStyles.groupList
             }
           >
             {groups.map(
@@ -886,6 +890,9 @@ function GroupCard({
   group: SupportGroup;
   onManage: () => void;
 }) {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   const peerCount =
     group.peerSupporterCount ??
     group.peerSupporters.length;
@@ -897,34 +904,34 @@ function GroupCard({
   return (
     <View
       style={
-        styles.groupCard
+        themeStyles.groupCard
       }
     >
       <View
         style={
-          styles.cardTop
+          themeStyles.cardTop
         }
       >
         <View
           style={
-            styles.groupIcon
+            themeStyles.groupIcon
           }
         >
           <Ionicons
             name="people"
             size={23}
-            color="#0E7C86"
+            color={themeTone("#0E7C86", "color")}
           />
         </View>
 
         <View
           style={
-            styles.groupTitleArea
+            themeStyles.groupTitleArea
           }
         >
           <Text
             style={
-              styles.groupName
+              themeStyles.groupName
             }
           >
             {group.name}
@@ -932,7 +939,7 @@ function GroupCard({
 
           <Text
             style={
-              styles.category
+              themeStyles.category
             }
           >
             {group.category}
@@ -941,22 +948,22 @@ function GroupCard({
 
         <View
           style={[
-            styles.statusBadge,
+            themeStyles.statusBadge,
 
             group.status ===
             "ACTIVE"
-              ? styles.activeBadge
-              : styles.inactiveBadge,
+              ? themeStyles.activeBadge
+              : themeStyles.inactiveBadge,
           ]}
         >
           <Text
             style={[
-              styles.statusText,
+              themeStyles.statusText,
 
               group.status ===
               "ACTIVE"
-                ? styles.activeText
-                : styles.inactiveText,
+                ? themeStyles.activeText
+                : themeStyles.inactiveText,
             ]}
           >
             {group.status}
@@ -967,7 +974,7 @@ function GroupCard({
       <Text
         numberOfLines={3}
         style={
-          styles.description
+          themeStyles.description
         }
       >
         {group.description}
@@ -976,18 +983,18 @@ function GroupCard({
       {group.communityLocation && (
         <View
           style={
-            styles.locationRow
+            themeStyles.locationRow
           }
         >
           <Ionicons
             name="location-outline"
             size={16}
-            color="#64808C"
+            color={themeTone("#64808C", "color")}
           />
 
           <Text
             style={
-              styles.locationText
+              themeStyles.locationText
             }
           >
             {
@@ -999,23 +1006,23 @@ function GroupCard({
 
       <View
         style={
-          styles.staffSummary
+          themeStyles.staffSummary
         }
       >
         <View
           style={
-            styles.staffCount
+            themeStyles.staffCount
           }
         >
           <Ionicons
             name="heart-outline"
             size={17}
-            color="#168994"
+            color={themeTone("#168994", "color")}
           />
 
           <Text
             style={
-              styles.staffCountText
+              themeStyles.staffCountText
             }
           >
             {peerCount} Peer
@@ -1029,18 +1036,18 @@ function GroupCard({
 
         <View
           style={
-            styles.staffCount
+            themeStyles.staffCount
           }
         >
           <Ionicons
             name="shield-checkmark-outline"
             size={17}
-            color="#168994"
+            color={themeTone("#168994", "color")}
           />
 
           <Text
             style={
-              styles.staffCountText
+              themeStyles.staffCountText
             }
           >
             {moderatorCount}{" "}
@@ -1060,7 +1067,7 @@ function GroupCard({
         style={({
           pressed,
         }) => [
-          styles.manageButton,
+          themeStyles.manageButton,
 
           pressed && {
             opacity: 0.8,
@@ -1070,12 +1077,12 @@ function GroupCard({
         <Ionicons
           name="people-circle-outline"
           size={19}
-          color="#0E7C86"
+          color={themeTone("#0E7C86", "color")}
         />
 
         <Text
           style={
-            styles.manageButtonText
+            themeStyles.manageButtonText
           }
         >
           Manage Staff
@@ -1084,7 +1091,7 @@ function GroupCard({
         <Ionicons
           name="chevron-forward"
           size={18}
-          color="#168994"
+          color={themeTone("#168994", "color")}
         />
       </Pressable>
 
@@ -1102,7 +1109,7 @@ function GroupCard({
         style={({
           pressed,
         }) => [
-          styles.manageButton,
+          themeStyles.manageButton,
           { marginTop: 10 },
 
           pressed && {
@@ -1113,12 +1120,12 @@ function GroupCard({
         <Ionicons
           name="chatbubbles-outline"
           size={19}
-          color="#0E7C86"
+          color={themeTone("#0E7C86", "color")}
         />
 
         <Text
           style={
-            styles.manageButtonText
+            themeStyles.manageButtonText
           }
         >
           View Posts
@@ -1127,7 +1134,7 @@ function GroupCard({
         <Ionicons
           name="chevron-forward"
           size={18}
-          color="#168994"
+          color={themeTone("#168994", "color")}
         />
       </Pressable>
     </View>
@@ -1189,6 +1196,9 @@ function CreateGroupModal({
   onClose,
   onSubmit,
 }: CreateGroupModalProps) {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   return (
     <Modal
       visible={visible}
@@ -1211,7 +1221,7 @@ function CreateGroupModal({
       >
         <View
           style={
-            styles.modalOverlay
+            themeStyles.modalOverlay
           }
         >
           <Pressable
@@ -1225,12 +1235,12 @@ function CreateGroupModal({
 
           <View
             style={
-              styles.createModal
+              themeStyles.createModal
             }
           >
             <View
               style={
-                styles.modalHeader
+                themeStyles.modalHeader
               }
             >
               <View
@@ -1240,7 +1250,7 @@ function CreateGroupModal({
               >
                 <Text
                   style={
-                    styles.modalTitle
+                    themeStyles.modalTitle
                   }
                 >
                   Create Support
@@ -1249,7 +1259,7 @@ function CreateGroupModal({
 
                 <Text
                   style={
-                    styles.modalSubtitle
+                    themeStyles.modalSubtitle
                   }
                 >
                   Add the basic
@@ -1269,7 +1279,7 @@ function CreateGroupModal({
                 <Ionicons
                   name="close"
                   size={26}
-                  color="#4D6C78"
+                  color={themeTone("#4D6C78", "color")}
                 />
               </Pressable>
             </View>
@@ -1280,18 +1290,18 @@ function CreateGroupModal({
                 false
               }
               contentContainerStyle={
-                styles.formContent
+                themeStyles.formContent
               }
             >
               {error && (
                 <View
                   style={
-                    styles.errorBox
+                    themeStyles.errorBox
                   }
                 >
                   <Text
                     style={
-                      styles.errorText
+                      themeStyles.errorText
                     }
                   >
                     {error}
@@ -1312,9 +1322,9 @@ function CreateGroupModal({
                   !creating
                 }
                 placeholder="e.g. Student Stress Support"
-                placeholderTextColor="#8BA3AB"
+                placeholderTextColor={themeTone("#8BA3AB", "placeholderTextColor")}
                 style={
-                  styles.input
+                  themeStyles.input
                 }
               />
 
@@ -1333,9 +1343,9 @@ function CreateGroupModal({
                   !creating
                 }
                 placeholder="e.g. Student Well-being"
-                placeholderTextColor="#8BA3AB"
+                placeholderTextColor={themeTone("#8BA3AB", "placeholderTextColor")}
                 style={
-                  styles.input
+                  themeStyles.input
                 }
               />
 
@@ -1354,9 +1364,9 @@ function CreateGroupModal({
                   !creating
                 }
                 placeholder="e.g. Colombo"
-                placeholderTextColor="#8BA3AB"
+                placeholderTextColor={themeTone("#8BA3AB", "placeholderTextColor")}
                 style={
-                  styles.input
+                  themeStyles.input
                 }
               />
 
@@ -1375,12 +1385,12 @@ function CreateGroupModal({
                   !creating
                 }
                 placeholder="Describe the purpose of this group..."
-                placeholderTextColor="#8BA3AB"
+                placeholderTextColor={themeTone("#8BA3AB", "placeholderTextColor")}
                 multiline
                 textAlignVertical="top"
                 style={[
-                  styles.input,
-                  styles.largeInput,
+                  themeStyles.input,
+                  themeStyles.largeInput,
                 ]}
               />
 
@@ -1390,7 +1400,7 @@ function CreateGroupModal({
 
               <Text
                 style={
-                  styles.fieldHint
+                  themeStyles.fieldHint
                 }
               >
                 Enter one rule
@@ -1410,12 +1420,12 @@ function CreateGroupModal({
                 placeholder={
                   "Respect every member\nKeep discussions private\nAvoid abusive language"
                 }
-                placeholderTextColor="#8BA3AB"
+                placeholderTextColor={themeTone("#8BA3AB", "placeholderTextColor")}
                 multiline
                 textAlignVertical="top"
                 style={[
-                  styles.input,
-                  styles.rulesInput,
+                  themeStyles.input,
+                  themeStyles.rulesInput,
                 ]}
               />
 
@@ -1427,7 +1437,7 @@ function CreateGroupModal({
                   onSubmit
                 }
                 style={[
-                  styles.submitButton,
+                  themeStyles.submitButton,
 
                   creating && {
                     opacity: 0.6,
@@ -1436,19 +1446,19 @@ function CreateGroupModal({
               >
                 {creating ? (
                   <ActivityIndicator
-                    color="#ffffff"
+                    color={themeTone("#ffffff", "color")}
                   />
                 ) : (
                   <>
                     <Ionicons
                       name="add-circle-outline"
                       size={21}
-                      color="#ffffff"
+                      color={themeTone("#ffffff", "color")}
                     />
 
                     <Text
                       style={
-                        styles.submitButtonText
+                        themeStyles.submitButtonText
                       }
                     >
                       Create Group
@@ -1469,10 +1479,12 @@ function FieldLabel({
 }: {
   text: string;
 }) {
+  const themeStyles = useThemedStyles(styles);
+
   return (
     <Text
       style={
-        styles.fieldLabel
+        themeStyles.fieldLabel
       }
     >
       {text}

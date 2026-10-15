@@ -1,3 +1,4 @@
+import { useThemeTone, useThemedStyles } from '@/theme/useAlyvenAppearance';
 import { useCallback, useEffect, useState } from "react";
 
 import {
@@ -36,6 +37,9 @@ export default function GlobalPostCommentsModal({
 
   onClose: () => void;
 }) {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   const [comments, setComments] = useState<GlobalPostComment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -112,31 +116,31 @@ export default function GlobalPostCommentsModal({
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
-        <View style={styles.overlay}>
+        <View style={themeStyles.overlay}>
           <Pressable style={{ flex: 1 }} onPress={onClose} />
 
-          <View style={styles.container}>
-            <View style={styles.header}>
-              <Text style={styles.title}>Comments</Text>
+          <View style={themeStyles.container}>
+            <View style={themeStyles.header}>
+              <Text style={themeStyles.title}>Comments</Text>
 
               <Pressable hitSlop={10} onPress={onClose}>
-                <Ionicons name="close" size={24} color="#4D6C78" />
+                <Ionicons name="close" size={24} color={themeTone("#4D6C78", "color")} />
               </Pressable>
             </View>
 
             <ScrollView
-              style={styles.list}
-              contentContainerStyle={styles.listContent}
+              style={themeStyles.list}
+              contentContainerStyle={themeStyles.listContent}
               keyboardShouldPersistTaps="handled"
             >
               {loading ? (
                 <ActivityIndicator
                   size="large"
-                  color="#0E7C86"
+                  color={themeTone("#0E7C86", "color")}
                   style={{ marginTop: 20 }}
                 />
               ) : comments.length === 0 ? (
-                <Text style={styles.emptyText}>
+                <Text style={themeStyles.emptyText}>
                   No comments yet. Be the first to reply.
                 </Text>
               ) : (
@@ -145,9 +149,9 @@ export default function GlobalPostCommentsModal({
                     canModerate || comment.author.id === currentUserId;
 
                   return (
-                    <View key={comment.id} style={styles.commentRow}>
-                      <View style={styles.commentHeader}>
-                        <Text style={styles.commentAuthor}>
+                    <View key={comment.id} style={themeStyles.commentRow}>
+                      <View style={themeStyles.commentHeader}>
+                        <Text style={themeStyles.commentAuthor}>
                           {comment.author.fullName}
                         </Text>
 
@@ -161,13 +165,13 @@ export default function GlobalPostCommentsModal({
                             <Ionicons
                               name="trash-outline"
                               size={16}
-                              color="#8BA3AB"
+                              color={themeTone("#8BA3AB", "color")}
                             />
                           </Pressable>
                         )}
                       </View>
 
-                      <Text style={styles.commentContent}>
+                      <Text style={themeStyles.commentContent}>
                         {comment.content}
                       </Text>
                     </View>
@@ -175,17 +179,17 @@ export default function GlobalPostCommentsModal({
                 })
               )}
 
-              {error && <Text style={styles.errorText}>{error}</Text>}
+              {error && <Text style={themeStyles.errorText}>{error}</Text>}
             </ScrollView>
 
-            <View style={styles.inputRow}>
+            <View style={themeStyles.inputRow}>
               <TextInput
                 value={newComment}
                 onChangeText={setNewComment}
                 editable={!submitting}
                 placeholder="Write a comment..."
-                placeholderTextColor="#8BA3AB"
-                style={styles.input}
+                placeholderTextColor={themeTone("#8BA3AB", "placeholderTextColor")}
+                style={themeStyles.input}
                 multiline
               />
 
@@ -193,16 +197,16 @@ export default function GlobalPostCommentsModal({
                 disabled={submitting || newComment.trim().length === 0}
                 onPress={() => void handleAddComment()}
                 style={[
-                  styles.sendButton,
+                  themeStyles.sendButton,
                   (submitting || newComment.trim().length === 0) && {
                     opacity: 0.5,
                   },
                 ]}
               >
                 {submitting ? (
-                  <ActivityIndicator size="small" color="#ffffff" />
+                  <ActivityIndicator size="small" color={themeTone("#ffffff", "color")} />
                 ) : (
-                  <Ionicons name="send" size={16} color="#ffffff" />
+                  <Ionicons name="send" size={16} color={themeTone("#ffffff", "color")} />
                 )}
               </Pressable>
             </View>

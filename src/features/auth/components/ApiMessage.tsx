@@ -1,3 +1,4 @@
+import { useThemedClassName } from '@/theme/useAlyvenAppearance';
 import { Text, View } from "react-native";
 
 interface ApiMessageProps {
@@ -9,6 +10,8 @@ export default function ApiMessage({
   message,
   type = "error",
 }: ApiMessageProps) {
+  const themeClass = useThemedClassName();
+
   if (!message) {
     return null;
   }
@@ -17,18 +20,18 @@ export default function ApiMessage({
 
   return (
     <View
-      className={`mb-4 rounded-2xl border p-3 ${
+      className={themeClass(`mb-4 rounded-2xl border p-3 ${
         isError
           ? "border-red-200 bg-red-50"
           : "border-emerald-200 bg-emerald-50"
-      }`}
+      }`)}
     >
       <Text
-        className={`text-sm ${
+        className={themeClass(`text-sm ${
           isError
             ? "text-red-700"
             : "text-emerald-700"
-        }`}
+        }`)}
       >
         {message}
       </Text>

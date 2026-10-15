@@ -1,3 +1,4 @@
+import { useThemeTone, useThemedStyles } from '@/theme/useAlyvenAppearance';
 import { useState } from "react";
 
 import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
@@ -13,6 +14,9 @@ import { setMyLanguage, useMyLanguage } from "../myLanguage";
  * offer a "Translate" button into the chosen one.
  */
 export default function LanguageButton() {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   const myLanguage = useMyLanguage();
 
   const [pickerOpen, setPickerOpen] = useState(false);
@@ -24,11 +28,11 @@ export default function LanguageButton() {
         accessibilityRole="button"
         accessibilityLabel="Change my language"
         onPress={() => setPickerOpen(true)}
-        style={styles.button}
+        style={themeStyles.button}
       >
-        <Ionicons name="language" size={16} color="#0E7C86" />
+        <Ionicons name="language" size={16} color={themeTone("#0E7C86", "color")} />
 
-        <Text style={styles.buttonText}>{myLanguage}</Text>
+        <Text style={themeStyles.buttonText}>{myLanguage}</Text>
       </Pressable>
 
       <Modal
@@ -38,16 +42,16 @@ export default function LanguageButton() {
         onRequestClose={() => setPickerOpen(false)}
       >
         <Pressable
-          style={styles.overlay}
+          style={themeStyles.overlay}
           onPress={() => setPickerOpen(false)}
         >
           {/*
            * Inner Pressable stops taps inside the card closing it.
            */}
-          <Pressable style={styles.card} onPress={() => undefined}>
-            <Text style={styles.title}>My language</Text>
+          <Pressable style={themeStyles.card} onPress={() => undefined}>
+            <Text style={themeStyles.title}>My language</Text>
 
-            <Text style={styles.subtitle}>
+            <Text style={themeStyles.subtitle}>
               Posts written in another language will show a Translate
               button.
             </Text>
@@ -62,20 +66,20 @@ export default function LanguageButton() {
                     setMyLanguage(option.code);
                     setPickerOpen(false);
                   }}
-                  style={[styles.option, selected && styles.optionSelected]}
+                  style={[themeStyles.option, selected && themeStyles.optionSelected]}
                 >
-                  <View style={styles.optionText}>
+                  <View style={themeStyles.optionText}>
                     <Text
                       style={[
-                        styles.optionName,
-                        selected && styles.optionNameSelected,
+                        themeStyles.optionName,
+                        selected && themeStyles.optionNameSelected,
                       ]}
                     >
                       {option.nativeName}
                     </Text>
 
                     {option.nativeName !== option.englishName && (
-                      <Text style={styles.optionEnglishName}>
+                      <Text style={themeStyles.optionEnglishName}>
                         {option.englishName}
                       </Text>
                     )}
@@ -85,14 +89,14 @@ export default function LanguageButton() {
                     <Ionicons
                       name="checkmark-circle"
                       size={21}
-                      color="#0E7C86"
+                      color={themeTone("#0E7C86", "color")}
                     />
                   )}
                 </Pressable>
               );
             })}
 
-            <Text style={styles.footnote}>
+            <Text style={themeStyles.footnote}>
               Translations are made by AI and may not be perfect. You can
               always see the original.
             </Text>

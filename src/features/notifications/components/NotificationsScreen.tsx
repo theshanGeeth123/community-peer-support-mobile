@@ -1,3 +1,4 @@
+import { useThemeTone, useThemedStyles } from '@/theme/useAlyvenAppearance';
 import { useCallback, useState } from "react";
 
 import {
@@ -97,6 +98,9 @@ const TYPE_ICON: Record<
 };
 
 export default function NotificationsScreen() {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   const { user } = useAuth();
 
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
@@ -254,26 +258,26 @@ export default function NotificationsScreen() {
       <Pressable
         key={notification.id}
         onPress={() => handleOpenNotification(notification)}
-        style={[styles.item, !notification.isRead && styles.itemUnread]}
+        style={[themeStyles.item, !notification.isRead && themeStyles.itemUnread]}
       >
-        <View style={[styles.iconCircle, { backgroundColor: icon.background }]}>
+        <View style={[themeStyles.iconCircle, { backgroundColor: icon.background }]}>
           <Ionicons name={icon.name} size={17} color={icon.color} />
         </View>
 
-        <View style={styles.itemBody}>
+        <View style={themeStyles.itemBody}>
           <Text
-            style={[styles.itemTitle, !notification.isRead && styles.itemTitleUnread]}
+            style={[themeStyles.itemTitle, !notification.isRead && themeStyles.itemTitleUnread]}
           >
             {getNotificationText(notification)}
           </Text>
 
           {preview ? (
-            <Text numberOfLines={2} style={styles.itemPreview}>
+            <Text numberOfLines={2} style={themeStyles.itemPreview}>
               “{preview}”
             </Text>
           ) : null}
 
-          <Text style={styles.itemMeta}>
+          <Text style={themeStyles.itemMeta}>
             {[
               notification.group?.name,
               formatRelativeTime(notification.updatedAt),
@@ -283,31 +287,31 @@ export default function NotificationsScreen() {
           </Text>
         </View>
 
-        {!notification.isRead && <View style={styles.unreadDot} />}
+        {!notification.isRead && <View style={themeStyles.unreadDot} />}
       </Pressable>
     );
   };
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={["top", "left", "right"]}>
-      <View style={styles.header}>
-        <Pressable onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={22} color="#0E2A47" />
+    <SafeAreaView style={themeStyles.safeArea} edges={["top", "left", "right"]}>
+      <View style={themeStyles.header}>
+        <Pressable onPress={() => router.back()} style={themeStyles.backButton}>
+          <Ionicons name="arrow-back" size={22} color={themeTone("#0E2A47", "color")} />
         </Pressable>
 
-        <Text style={styles.headerTitle}>Notifications</Text>
+        <Text style={themeStyles.headerTitle}>Notifications</Text>
 
         {unreadCount > 0 ? (
           <Pressable
             disabled={markingAll}
             hitSlop={8}
             onPress={() => void handleMarkAllRead()}
-            style={styles.markAllButton}
+            style={themeStyles.markAllButton}
           >
             {markingAll ? (
-              <ActivityIndicator size="small" color="#0E7C86" />
+              <ActivityIndicator size="small" color={themeTone("#0E7C86", "color")} />
             ) : (
-              <Ionicons name="checkmark-done" size={22} color="#0E7C86" />
+              <Ionicons name="checkmark-done" size={22} color={themeTone("#0E7C86", "color")} />
             )}
           </Pressable>
         ) : (
@@ -316,35 +320,35 @@ export default function NotificationsScreen() {
       </View>
 
       <ScrollView
-        contentContainerStyle={styles.content}
+        contentContainerStyle={themeStyles.content}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }
       >
         {error && (
-          <View style={styles.errorBox}>
-            <Text style={styles.errorText}>{error}</Text>
+          <View style={themeStyles.errorBox}>
+            <Text style={themeStyles.errorText}>{error}</Text>
           </View>
         )}
 
         {loading ? (
-          <View style={styles.center}>
-            <ActivityIndicator size="large" color="#0E7C86" />
+          <View style={themeStyles.center}>
+            <ActivityIndicator size="large" color={themeTone("#0E7C86", "color")} />
           </View>
         ) : notifications.length === 0 && !error ? (
-          <View style={styles.emptyCard}>
-            <View style={styles.emptyIcon}>
+          <View style={themeStyles.emptyCard}>
+            <View style={themeStyles.emptyIcon}>
               <Ionicons
                 name="notifications-off-outline"
                 size={28}
-                color="#0E7C86"
+                color={themeTone("#0E7C86", "color")}
               />
             </View>
 
-            <Text style={styles.emptyTitle}>No notifications yet</Text>
+            <Text style={themeStyles.emptyTitle}>No notifications yet</Text>
 
-            <Text style={styles.emptyDescription}>
+            <Text style={themeStyles.emptyDescription}>
               When someone comments on or supports your posts, you will see
               it here.
             </Text>
@@ -352,23 +356,23 @@ export default function NotificationsScreen() {
         ) : (
           <>
             {unreadCount > 0 && (
-              <Text style={styles.unreadSummary}>
+              <Text style={themeStyles.unreadSummary}>
                 {unreadCount} unread · tap ✓✓ to mark all as read
               </Text>
             )}
 
-            <View style={styles.list}>{notifications.map(renderNotification)}</View>
+            <View style={themeStyles.list}>{notifications.map(renderNotification)}</View>
 
             {hasNextPage && (
               <Pressable
                 disabled={loadingMore}
                 onPress={() => void handleLoadMore()}
-                style={styles.loadMoreButton}
+                style={themeStyles.loadMoreButton}
               >
                 {loadingMore ? (
-                  <ActivityIndicator size="small" color="#0E7C86" />
+                  <ActivityIndicator size="small" color={themeTone("#0E7C86", "color")} />
                 ) : (
-                  <Text style={styles.loadMoreText}>Load more</Text>
+                  <Text style={themeStyles.loadMoreText}>Load more</Text>
                 )}
               </Pressable>
             )}

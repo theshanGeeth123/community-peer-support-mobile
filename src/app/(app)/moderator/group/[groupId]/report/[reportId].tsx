@@ -1,3 +1,4 @@
+import { useThemeTone, useThemedStyles } from '@/theme/useAlyvenAppearance';
 import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -69,6 +70,9 @@ function formatDate(iso: string) {
 }
 
 export default function ModeratorReportDetailScreen() {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   const params = useLocalSearchParams();
 
   const reportId = Array.isArray(params.reportId)
@@ -134,15 +138,15 @@ export default function ModeratorReportDetailScreen() {
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.container} edges={["top"]}>
-        <View style={styles.headerRow}>
-          <Pressable onPress={() => router.back()} style={styles.backBtn}>
-            <Ionicons name="arrow-back" size={22} color="#0E2A47" />
+      <SafeAreaView style={themeStyles.container} edges={["top"]}>
+        <View style={themeStyles.headerRow}>
+          <Pressable onPress={() => router.back()} style={themeStyles.backBtn}>
+            <Ionicons name="arrow-back" size={22} color={themeTone("#0E2A47", "color")} />
           </Pressable>
         </View>
-        <View style={styles.centered}>
-          <ActivityIndicator size="large" color="#0E7C86" />
-          <Text style={styles.loadingText}>Loading report...</Text>
+        <View style={themeStyles.centered}>
+          <ActivityIndicator size="large" color={themeTone("#0E7C86", "color")} />
+          <Text style={themeStyles.loadingText}>Loading report...</Text>
         </View>
       </SafeAreaView>
     );
@@ -150,20 +154,20 @@ export default function ModeratorReportDetailScreen() {
 
   if (error || !report) {
     return (
-      <SafeAreaView style={styles.container} edges={["top"]}>
-        <View style={styles.headerRow}>
-          <Pressable onPress={() => router.back()} style={styles.backBtn}>
-            <Ionicons name="arrow-back" size={22} color="#0E2A47" />
+      <SafeAreaView style={themeStyles.container} edges={["top"]}>
+        <View style={themeStyles.headerRow}>
+          <Pressable onPress={() => router.back()} style={themeStyles.backBtn}>
+            <Ionicons name="arrow-back" size={22} color={themeTone("#0E2A47", "color")} />
           </Pressable>
         </View>
-        <View style={styles.centered}>
-          <View style={styles.errorIconWrap}>
-            <Ionicons name="alert-circle-outline" size={36} color="#e11d48" />
+        <View style={themeStyles.centered}>
+          <View style={themeStyles.errorIconWrap}>
+            <Ionicons name="alert-circle-outline" size={36} color={themeTone("#e11d48", "color")} />
           </View>
-          <Text style={styles.errorTitle}>Failed to load report</Text>
-          <Text style={styles.errorSub}>{error ?? "Unknown error"}</Text>
-          <Pressable onPress={() => void refetch()} style={styles.retryBtn}>
-            <Text style={styles.retryLabel}>Retry</Text>
+          <Text style={themeStyles.errorTitle}>Failed to load report</Text>
+          <Text style={themeStyles.errorSub}>{error ?? "Unknown error"}</Text>
+          <Pressable onPress={() => void refetch()} style={themeStyles.retryBtn}>
+            <Text style={themeStyles.retryLabel}>Retry</Text>
           </Pressable>
         </View>
       </SafeAreaView>
@@ -178,89 +182,89 @@ export default function ModeratorReportDetailScreen() {
     "—";
 
   return (
-    <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
+    <SafeAreaView style={themeStyles.container} edges={["top", "left", "right"]}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
-        <View style={styles.headerRow}>
-          <Pressable onPress={() => router.back()} style={styles.backBtn} hitSlop={10}>
-            <Ionicons name="arrow-back" size={22} color="#0E2A47" />
+        <View style={themeStyles.headerRow}>
+          <Pressable onPress={() => router.back()} style={themeStyles.backBtn} hitSlop={10}>
+            <Ionicons name="arrow-back" size={22} color={themeTone("#0E2A47", "color")} />
           </Pressable>
-          <View style={styles.headerCenter}>
-            <Text style={styles.headerTitle}>Report Detail</Text>
+          <View style={themeStyles.headerCenter}>
+            <Text style={themeStyles.headerTitle}>Report Detail</Text>
           </View>
           <ReportStatusBadge status={report.status} />
         </View>
 
         <ScrollView
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.scrollContent}
+          contentContainerStyle={themeStyles.scrollContent}
           keyboardShouldPersistTaps="handled"
         >
           {/* Report Meta */}
-          <View style={styles.card}>
-            <Text style={styles.sectionLabel}>Reported Content</Text>
-            <View style={styles.infoRow}>
-              <Text style={styles.infoKey}>Type</Text>
-              <View style={[styles.targetPill, report.targetType === "POST" ? styles.targetPost : styles.targetComment]}>
+          <View style={themeStyles.card}>
+            <Text style={themeStyles.sectionLabel}>Reported Content</Text>
+            <View style={themeStyles.infoRow}>
+              <Text style={themeStyles.infoKey}>Type</Text>
+              <View style={[themeStyles.targetPill, report.targetType === "POST" ? themeStyles.targetPost : themeStyles.targetComment]}>
                 <Ionicons
                   name={report.targetType === "POST" ? "document-text-outline" : "chatbubble-outline"}
                   size={12}
                   color={report.targetType === "POST" ? "#0E7C86" : "#0E7C86"}
                 />
-                <Text style={[styles.targetLabel, report.targetType === "POST" ? styles.targetPostLabel : styles.targetCommentLabel]}>
+                <Text style={[themeStyles.targetLabel, report.targetType === "POST" ? themeStyles.targetPostLabel : themeStyles.targetCommentLabel]}>
                   {report.targetType}
                 </Text>
               </View>
             </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.infoKey}>Reason</Text>
+            <View style={themeStyles.infoRow}>
+              <Text style={themeStyles.infoKey}>Reason</Text>
               <ReasonBadge reason={report.reason} />
             </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.infoKey}>Group</Text>
-              <Text style={styles.infoVal} numberOfLines={1}>{displayGroupName}</Text>
+            <View style={themeStyles.infoRow}>
+              <Text style={themeStyles.infoKey}>Group</Text>
+              <Text style={themeStyles.infoVal} numberOfLines={1}>{displayGroupName}</Text>
             </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.infoKey}>Reported</Text>
-              <Text style={styles.infoVal}>{formatDate(report.createdAt)}</Text>
+            <View style={themeStyles.infoRow}>
+              <Text style={themeStyles.infoKey}>Reported</Text>
+              <Text style={themeStyles.infoVal}>{formatDate(report.createdAt)}</Text>
             </View>
             {report.additionalDetails ? (
-              <View style={styles.detailsBox}>
-                <Text style={styles.detailsLabel}>Reporter Note</Text>
-                <Text style={styles.detailsText}>{report.additionalDetails}</Text>
+              <View style={themeStyles.detailsBox}>
+                <Text style={themeStyles.detailsLabel}>Reporter Note</Text>
+                <Text style={themeStyles.detailsText}>{report.additionalDetails}</Text>
               </View>
             ) : null}
           </View>
 
           {/* Post Content */}
           {report.targetType === "POST" && (
-            <View style={styles.card}>
-              <Text style={styles.sectionLabel}>Post Content</Text>
+            <View style={themeStyles.card}>
+              <Text style={themeStyles.sectionLabel}>Post Content</Text>
               {postLoading ? (
-                <View style={styles.postLoadingRow}>
-                  <ActivityIndicator size="small" color="#8BA3AB" />
-                  <Text style={styles.postLoadingText}>Loading post...</Text>
+                <View style={themeStyles.postLoadingRow}>
+                  <ActivityIndicator size="small" color={themeTone("#8BA3AB", "color")} />
+                  <Text style={themeStyles.postLoadingText}>Loading post...</Text>
                 </View>
               ) : reportedPost ? (
                 <>
-                  <View style={styles.postAuthorRow}>
-                    <View style={styles.postAvatar}>
-                      <Text style={styles.postAvatarText}>
+                  <View style={themeStyles.postAuthorRow}>
+                    <View style={themeStyles.postAvatar}>
+                      <Text style={themeStyles.postAvatarText}>
                         {reportedPost.author.id === null ? "?" : reportedPost.author.fullName.charAt(0).toUpperCase()}
                       </Text>
                     </View>
                     <View>
-                      <Text style={styles.postAuthorName}>{reportedPost.author.fullName}</Text>
+                      <Text style={themeStyles.postAuthorName}>{reportedPost.author.fullName}</Text>
                       {reportedPost.isAnonymous && (
-                        <Text style={styles.anonBadge}>Anonymous post</Text>
+                        <Text style={themeStyles.anonBadge}>Anonymous post</Text>
                       )}
                     </View>
                   </View>
-                  <View style={styles.postContentBox}>
-                    <Text style={styles.postContentText}>{reportedPost.content}</Text>
+                  <View style={themeStyles.postContentBox}>
+                    <Text style={themeStyles.postContentText}>{reportedPost.content}</Text>
                   </View>
                 </>
               ) : (
-                <Text style={styles.postUnavailable}>
+                <Text style={themeStyles.postUnavailable}>
                   Post content could not be loaded. It may have been deleted.
                 </Text>
               )}
@@ -268,35 +272,35 @@ export default function ModeratorReportDetailScreen() {
           )}
 
           {/* Reporter */}
-          <View style={styles.card}>
-            <Text style={styles.sectionLabel}>Reporter</Text>
-            <View style={styles.personRow}>
-              <View style={styles.avatarCircle}>
-                <Text style={styles.avatarLetter}>{report.reporter.fullName.charAt(0).toUpperCase()}</Text>
+          <View style={themeStyles.card}>
+            <Text style={themeStyles.sectionLabel}>Reporter</Text>
+            <View style={themeStyles.personRow}>
+              <View style={themeStyles.avatarCircle}>
+                <Text style={themeStyles.avatarLetter}>{report.reporter.fullName.charAt(0).toUpperCase()}</Text>
               </View>
               <View>
-                <Text style={styles.personName}>{report.reporter.fullName}</Text>
-                <Text style={styles.personEmail}>{report.reporter.email}</Text>
+                <Text style={themeStyles.personName}>{report.reporter.fullName}</Text>
+                <Text style={themeStyles.personEmail}>{report.reporter.email}</Text>
               </View>
             </View>
           </View>
 
           {/* Already reviewed */}
           {!isPending && report.reviewedBy ? (
-            <View style={[styles.card, styles.reviewedCard]}>
-              <View style={styles.reviewedHeader}>
-                <Ionicons name="checkmark-circle" size={20} color="#10b981" />
-                <Text style={styles.reviewedTitle}>Already Reviewed</Text>
+            <View style={[themeStyles.card, themeStyles.reviewedCard]}>
+              <View style={themeStyles.reviewedHeader}>
+                <Ionicons name="checkmark-circle" size={20} color={themeTone("#10b981", "color")} />
+                <Text style={themeStyles.reviewedTitle}>Already Reviewed</Text>
               </View>
 
               {/* Who reviewed it */}
-              <View style={styles.personRow}>
-                <View style={[styles.avatarCircle, styles.avatarGreen]}>
-                  <Text style={[styles.avatarLetter, { color: "#065f46" }]}>{report.reviewedBy.fullName.charAt(0).toUpperCase()}</Text>
+              <View style={themeStyles.personRow}>
+                <View style={[themeStyles.avatarCircle, themeStyles.avatarGreen]}>
+                  <Text style={[themeStyles.avatarLetter, { color: themeTone("#065f46", "color") }]}>{report.reviewedBy.fullName.charAt(0).toUpperCase()}</Text>
                 </View>
                 <View>
-                  <Text style={styles.personName}>{report.reviewedBy.fullName}</Text>
-                  <Text style={styles.personEmail}>{report.reviewedAt ? formatDate(report.reviewedAt) : "—"}</Text>
+                  <Text style={themeStyles.personName}>{report.reviewedBy.fullName}</Text>
+                  <Text style={themeStyles.personEmail}>{report.reviewedAt ? formatDate(report.reviewedAt) : "—"}</Text>
                 </View>
               </View>
 
@@ -305,16 +309,16 @@ export default function ModeratorReportDetailScreen() {
                 const meta = ACTION_LABELS[moderationAction.action] ?? { label: moderationAction.action, color: "#64808C", bg: "#EDF5F4" };
                 return (
                   <>
-                    <View style={styles.actionDecisionRow}>
-                      <Text style={styles.infoKey}>Decision</Text>
-                      <View style={[styles.actionDecisionBadge, { backgroundColor: meta.bg }]}>
-                        <Text style={[styles.actionDecisionLabel, { color: meta.color }]}>{meta.label}</Text>
+                    <View style={themeStyles.actionDecisionRow}>
+                      <Text style={themeStyles.infoKey}>Decision</Text>
+                      <View style={[themeStyles.actionDecisionBadge, { backgroundColor: meta.bg }]}>
+                        <Text style={[themeStyles.actionDecisionLabel, { color: meta.color }]}>{meta.label}</Text>
                       </View>
                     </View>
 
-                    <View style={styles.reviewReasonBox}>
-                      <Text style={styles.reviewReasonTitle}>Moderator's Reason</Text>
-                      <Text style={styles.reviewReasonText}>{moderationAction.reason}</Text>
+                    <View style={themeStyles.reviewReasonBox}>
+                      <Text style={themeStyles.reviewReasonTitle}>Moderator's Reason</Text>
+                      <Text style={themeStyles.reviewReasonText}>{moderationAction.reason}</Text>
                     </View>
                   </>
                 );
@@ -334,38 +338,38 @@ export default function ModeratorReportDetailScreen() {
 
           {/* Review form */}
           {isPending ? (
-            <View style={styles.card}>
-              <Text style={styles.sectionLabel}>Take Action</Text>
+            <View style={themeStyles.card}>
+              <Text style={themeStyles.sectionLabel}>Take Action</Text>
               {ACTION_OPTIONS.map((opt) => {
                 const selected = selectedAction === opt.value;
                 return (
                   <Pressable
                     key={opt.value}
                     onPress={() => setSelectedAction(opt.value)}
-                    style={[styles.actionOption, selected && { borderColor: opt.selectedBorder, backgroundColor: opt.selectedBg }]}
+                    style={[themeStyles.actionOption, selected && { borderColor: opt.selectedBorder, backgroundColor: opt.selectedBg }]}
                   >
-                    <View style={[styles.actionIcon, { backgroundColor: opt.iconBg }]}>
+                    <View style={[themeStyles.actionIcon, { backgroundColor: opt.iconBg }]}>
                       <Ionicons name={opt.icon} size={22} color={opt.iconColor} />
                     </View>
-                    <View style={styles.actionTextWrap}>
-                      <Text style={[styles.actionLabel, selected && { color: opt.selectedBorder }]}>{opt.label}</Text>
-                      <Text style={styles.actionDesc}>{opt.description}</Text>
+                    <View style={themeStyles.actionTextWrap}>
+                      <Text style={[themeStyles.actionLabel, selected && { color: opt.selectedBorder }]}>{opt.label}</Text>
+                      <Text style={themeStyles.actionDesc}>{opt.description}</Text>
                     </View>
                     {selected
                       ? <Ionicons name="checkmark-circle" size={20} color={opt.selectedBorder} />
-                      : <View style={styles.radioOuter} />
+                      : <View style={themeStyles.radioOuter} />
                     }
                   </Pressable>
                 );
               })}
 
-              <Text style={[styles.infoKey, { marginTop: 20, marginBottom: 8 }]}>
-                Reason <Text style={{ color: "#e11d48" }}>*</Text>
+              <Text style={[themeStyles.infoKey, { marginTop: 20, marginBottom: 8 }]}>
+                Reason <Text style={{ color: themeTone("#e11d48", "color") }}>*</Text>
               </Text>
               <TextInput
-                style={styles.reasonInput}
+                style={themeStyles.reasonInput}
                 placeholder="Explain your decision (min. 10 characters)..."
-                placeholderTextColor="#8BA3AB"
+                placeholderTextColor={themeTone("#8BA3AB", "placeholderTextColor")}
                 multiline
                 numberOfLines={4}
                 value={reason}
@@ -375,28 +379,28 @@ export default function ModeratorReportDetailScreen() {
               />
               <Text
                 style={[
-                  styles.charCounter,
-                  reason.length > 450 && { color: "#e11d48" },
+                  themeStyles.charCounter,
+                  reason.length > 450 && { color: themeTone("#e11d48", "color") },
                 ]}
               >
                 {reason.length} / 500
               </Text>
 
               {reviewError ? (
-                <View style={styles.errorBox}>
-                  <Ionicons name="alert-circle-outline" size={16} color="#dc2626" />
-                  <Text style={styles.errorText}>{reviewError}</Text>
+                <View style={themeStyles.errorBox}>
+                  <Ionicons name="alert-circle-outline" size={16} color={themeTone("#dc2626", "color")} />
+                  <Text style={themeStyles.errorText}>{reviewError}</Text>
                 </View>
               ) : null}
 
               <Pressable
                 onPress={() => void handleSubmit()}
                 disabled={reviewing}
-                style={({ pressed }) => [styles.submitBtn, pressed && styles.submitPressed, reviewing && styles.submitDisabled]}
+                style={({ pressed }) => [themeStyles.submitBtn, pressed && themeStyles.submitPressed, reviewing && themeStyles.submitDisabled]}
               >
                 {reviewing
-                  ? <ActivityIndicator size="small" color="#fff" />
-                  : (<><Ionicons name="shield-checkmark" size={16} color="#fff" /><Text style={styles.submitLabel}>Submit Review</Text></>)
+                  ? <ActivityIndicator size="small" color={themeTone("#fff", "color")} />
+                  : (<><Ionicons name="shield-checkmark" size={16} color={themeTone("#fff", "color")} /><Text style={themeStyles.submitLabel}>Submit Review</Text></>)
                 }
               </Pressable>
             </View>

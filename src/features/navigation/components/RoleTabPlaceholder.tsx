@@ -1,3 +1,4 @@
+import { useThemeTone, useThemedClassName } from '@/theme/useAlyvenAppearance';
 import type {
     ComponentProps,
 } from "react";
@@ -30,12 +31,15 @@ export default function RoleTabPlaceholder({
   description,
   icon,
 }: RoleTabPlaceholderProps) {
+  const themeClass = useThemedClassName();
+  const themeTone = useThemeTone();
+
   return (
     <SafeAreaView
       style={{
         flex: 1,
         backgroundColor:
-          "#F5FAF9",
+          themeTone("#F5FAF9", "backgroundColor"),
       }}
       edges={[
         "top",
@@ -44,31 +48,31 @@ export default function RoleTabPlaceholder({
       ]}
     >
       <ScrollView
-        className="flex-1"
-        contentContainerClassName="px-5 pb-8 pt-5"
+        className={themeClass("flex-1")}
+        contentContainerClassName={themeClass("px-5 pb-8 pt-5")}
         showsVerticalScrollIndicator={
           false
         }
       >
-        <View className="rounded-3xl border border-slate-200 bg-white p-6">
-          <View className="h-14 w-14 items-center justify-center rounded-2xl bg-indigo-50">
+        <View className={themeClass("rounded-3xl border border-slate-200 bg-white p-6")}>
+          <View className={themeClass("h-14 w-14 items-center justify-center rounded-2xl bg-indigo-50")}>
             <Ionicons
               name={icon}
               size={28}
-              color="#0E7C86"
+              color={themeTone("#0E7C86", "color")}
             />
           </View>
 
-          <Text className="mt-5 text-3xl font-bold text-slate-900">
+          <Text className={themeClass("mt-5 text-3xl font-bold text-slate-900")}>
             {title}
           </Text>
 
-          <Text className="mt-3 text-base leading-6 text-slate-500">
+          <Text className={themeClass("mt-3 text-base leading-6 text-slate-500")}>
             {description}
           </Text>
 
-          <View className="mt-6 rounded-2xl bg-slate-50 p-4">
-            <Text className="text-sm font-semibold leading-5 text-slate-600">
+          <View className={themeClass("mt-6 rounded-2xl bg-slate-50 p-4")}>
+            <Text className={themeClass("text-sm font-semibold leading-5 text-slate-600")}>
               This page has its
               own route file.
               The assigned team

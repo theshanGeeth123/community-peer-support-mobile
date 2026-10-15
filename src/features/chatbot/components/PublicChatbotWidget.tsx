@@ -1,3 +1,4 @@
+import { useThemeTone, useThemedStyles } from '@/theme/useAlyvenAppearance';
 import {
     useMemo,
     useRef,
@@ -69,6 +70,9 @@ const createWelcomeMessage =
   };
 
 export default function PublicChatbotWidget() {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   const insets =
     useSafeAreaInsets();
 
@@ -304,7 +308,7 @@ export default function PublicChatbotWidget() {
         accessibilityRole="button"
         accessibilityLabel="Open Community Assistant"
         style={[
-          styles.floatingButton,
+          themeStyles.floatingButton,
 
           {
             bottom:
@@ -320,12 +324,12 @@ export default function PublicChatbotWidget() {
         <Ionicons
           name="chatbubble-ellipses"
           size={27}
-          color="#ffffff"
+          color={themeTone("#ffffff", "color")}
         />
 
         <View
           style={
-            styles.onlineIndicator
+            themeStyles.onlineIndicator
           }
         />
       </Pressable>
@@ -343,7 +347,7 @@ export default function PublicChatbotWidget() {
       >
         <KeyboardAvoidingView
           style={
-            styles.backdrop
+            themeStyles.backdrop
           }
           behavior={
             Platform.OS ===
@@ -366,7 +370,7 @@ export default function PublicChatbotWidget() {
 
           <View
             style={[
-              styles.chatPanel,
+              themeStyles.chatPanel,
 
               {
                 marginTop:
@@ -391,29 +395,29 @@ export default function PublicChatbotWidget() {
 
             <View
               style={
-                styles.header
+                themeStyles.header
               }
             >
               <View
                 style={
-                  styles.assistantIcon
+                  themeStyles.assistantIcon
                 }
               >
                 <Ionicons
                   name="sparkles"
                   size={21}
-                  color="#ffffff"
+                  color={themeTone("#ffffff", "color")}
                 />
               </View>
 
               <View
                 style={
-                  styles.headerTextContainer
+                  themeStyles.headerTextContainer
                 }
               >
                 <Text
                   style={
-                    styles.headerTitle
+                    themeStyles.headerTitle
                   }
                 >
                   Community
@@ -422,18 +426,18 @@ export default function PublicChatbotWidget() {
 
                 <View
                   style={
-                    styles.statusRow
+                    themeStyles.statusRow
                   }
                 >
                   <View
                     style={
-                      styles.statusDot
+                      themeStyles.statusDot
                     }
                   />
 
                   <Text
                     style={
-                      styles.statusText
+                      themeStyles.statusText
                     }
                   >
                     App guidance
@@ -454,7 +458,7 @@ export default function PublicChatbotWidget() {
                 accessibilityRole="button"
                 accessibilityLabel="Clear conversation"
                 style={
-                  styles.headerAction
+                  themeStyles.headerAction
                 }
               >
                 <Ionicons
@@ -477,13 +481,13 @@ export default function PublicChatbotWidget() {
                 accessibilityRole="button"
                 accessibilityLabel="Close Community Assistant"
                 style={
-                  styles.headerAction
+                  themeStyles.headerAction
                 }
               >
                 <Ionicons
                   name="close"
                   size={23}
-                  color="#4D6C78"
+                  color={themeTone("#4D6C78", "color")}
                 />
               </Pressable>
             </View>
@@ -492,18 +496,18 @@ export default function PublicChatbotWidget() {
 
             <View
               style={
-                styles.disclaimer
+                themeStyles.disclaimer
               }
             >
               <Ionicons
                 name="information-circle-outline"
                 size={17}
-                color="#0E7C86"
+                color={themeTone("#0E7C86", "color")}
               />
 
               <Text
                 style={
-                  styles.disclaimerText
+                  themeStyles.disclaimerText
                 }
               >
                 I provide app
@@ -531,10 +535,10 @@ export default function PublicChatbotWidget() {
                 />
               )}
               style={
-                styles.messageList
+                themeStyles.messageList
               }
               contentContainerStyle={
-                styles.messageListContent
+                themeStyles.messageListContent
               }
               keyboardShouldPersistTaps="handled"
               showsVerticalScrollIndicator={
@@ -547,17 +551,17 @@ export default function PublicChatbotWidget() {
                 isSending ? (
                   <View
                     style={
-                      styles.typingRow
+                      themeStyles.typingRow
                     }
                   >
                     <ActivityIndicator
                       size="small"
-                      color="#0E7C86"
+                      color={themeTone("#0E7C86", "color")}
                     />
 
                     <Text
                       style={
-                        styles.typingText
+                        themeStyles.typingText
                       }
                     >
                       Assistant is
@@ -573,18 +577,18 @@ export default function PublicChatbotWidget() {
             {errorMessage && (
               <View
                 style={
-                  styles.errorBox
+                  themeStyles.errorBox
                 }
               >
                 <Ionicons
                   name="alert-circle-outline"
                   size={18}
-                  color="#dc2626"
+                  color={themeTone("#dc2626", "color")}
                 />
 
                 <Text
                   style={
-                    styles.errorText
+                    themeStyles.errorText
                   }
                 >
                   {
@@ -598,12 +602,12 @@ export default function PublicChatbotWidget() {
 
             <View
               style={
-                styles.composer
+                themeStyles.composer
               }
             >
               <View
                 style={
-                  styles.inputContainer
+                  themeStyles.inputContainer
                 }
               >
                 <TextInput
@@ -621,7 +625,7 @@ export default function PublicChatbotWidget() {
                     }
                   }}
                   placeholder="Ask about the app..."
-                  placeholderTextColor="#8BA3AB"
+                  placeholderTextColor={themeTone("#8BA3AB", "placeholderTextColor")}
                   multiline
                   editable={
                     !isSending
@@ -630,7 +634,7 @@ export default function PublicChatbotWidget() {
                     MAX_MESSAGE_LENGTH
                   }
                   style={
-                    styles.input
+                    themeStyles.input
                   }
                   textAlignVertical="top"
                 />
@@ -639,7 +643,7 @@ export default function PublicChatbotWidget() {
                   850 && (
                   <Text
                     style={
-                      styles.characterCount
+                      themeStyles.characterCount
                     }
                   >
                     {
@@ -659,22 +663,22 @@ export default function PublicChatbotWidget() {
                 accessibilityRole="button"
                 accessibilityLabel="Send chatbot message"
                 style={[
-                  styles.sendButton,
+                  themeStyles.sendButton,
 
                   !canSend &&
-                    styles.sendButtonDisabled,
+                    themeStyles.sendButtonDisabled,
                 ]}
               >
                 {isSending ? (
                   <ActivityIndicator
                     size="small"
-                    color="#ffffff"
+                    color={themeTone("#ffffff", "color")}
                   />
                 ) : (
                   <Ionicons
                     name="send"
                     size={20}
-                    color="#ffffff"
+                    color={themeTone("#ffffff", "color")}
                   />
                 )}
               </Pressable>

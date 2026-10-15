@@ -1,3 +1,4 @@
+import { useThemedStyles } from '@/theme/useAlyvenAppearance';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { Brand } from '@/theme/brand';
 
@@ -8,20 +9,22 @@ type BrandMarkProps = {
 
 /** Shows the brand asset, without changing app navigation or authentication. */
 export default function BrandMark({ compact = false, light = false }: BrandMarkProps) {
+  const themeStyles = useThemedStyles(styles);
+
   return (
-    <View style={styles.row}>
+    <View style={themeStyles.row}>
       <Image
         source={require('../../../../assets/images/logo.png')}
         resizeMode="contain"
-        style={compact ? styles.smallIcon : styles.icon}
+        style={compact ? themeStyles.smallIcon : themeStyles.icon}
         accessibilityLabel="ALYVEN logo"
       />
-      <View style={styles.copy}>
-        <Text style={[styles.wordmark, compact && styles.smallWordmark, light && styles.light]}>
+      <View style={themeStyles.copy}>
+        <Text style={[themeStyles.wordmark, compact && themeStyles.smallWordmark, light && themeStyles.light]}>
           ALYVEN
         </Text>
         {!compact && (
-          <Text style={[styles.tagline, light && styles.taglineLight]}>A Place to Be Heard.</Text>
+          <Text style={[themeStyles.tagline, light && themeStyles.taglineLight]}>A Place to Be Heard.</Text>
         )}
       </View>
     </View>

@@ -1,3 +1,4 @@
+import { useThemeTone } from '@/theme/useAlyvenAppearance';
 import {
     Image,
     Text,
@@ -15,6 +16,8 @@ export default function UserAvatar({
   avatarUrl,
   size = 48,
 }: UserAvatarProps) {
+  const themeTone = useThemeTone();
+
   const getInitials = () => {
     const name =
       fullName?.trim() || "User";
@@ -49,7 +52,7 @@ export default function UserAvatar({
           height: size,
           borderRadius: size / 2,
           backgroundColor:
-            "#E0EDEB",
+            themeTone("#E0EDEB", "backgroundColor"),
         }}
         resizeMode="cover"
       />
@@ -66,14 +69,14 @@ export default function UserAvatar({
         justifyContent:
           "center",
         backgroundColor:
-          "#D8F3EA",
+          themeTone("#D8F3EA", "backgroundColor"),
       }}
     >
       <Text
         style={{
           fontSize: size * 0.34,
           fontWeight: "700",
-          color: "#09646E",
+          color: themeTone("#09646E", "color"),
         }}
       >
         {getInitials()}

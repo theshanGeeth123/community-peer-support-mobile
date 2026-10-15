@@ -1,3 +1,4 @@
+import { useThemeTone, useThemedStyles } from '@/theme/useAlyvenAppearance';
 import { useState } from 'react';
 import {
   Pressable,
@@ -17,16 +18,19 @@ interface AuthInputProps extends TextInputProps {
 }
 
 export default function AuthInput({ label, error, isPassword = false, ...props }: AuthInputProps) {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [focused, setFocused] = useState(false);
   return (
-    <View style={styles.wrapper}>
-      <Text style={styles.label}>{label}</Text>
-      <View style={[styles.field, focused && styles.focused, !!error && styles.errored]}>
+    <View style={themeStyles.wrapper}>
+      <Text style={themeStyles.label}>{label}</Text>
+      <View style={[themeStyles.field, focused && themeStyles.focused, !!error && themeStyles.errored]}>
         <TextInput
           {...props}
-          style={styles.input}
-          placeholderTextColor="#93A5AD"
+          style={themeStyles.input}
+          placeholderTextColor={themeTone("#93A5AD", "placeholderTextColor")}
           secureTextEntry={isPassword && !isPasswordVisible}
           onFocus={(event) => { setFocused(true); props.onFocus?.(event); }}
           onBlur={(event) => { setFocused(false); props.onBlur?.(event); }}
@@ -38,11 +42,11 @@ export default function AuthInput({ label, error, isPassword = false, ...props }
             onPress={() => setIsPasswordVisible(value => !value)}
             hitSlop={10}
           >
-            <Ionicons name={isPasswordVisible ? 'eye-off-outline' : 'eye-outline'} size={20} color={Brand.teal} />
+            <Ionicons name={isPasswordVisible ? 'eye-off-outline' : 'eye-outline'} size={20} color={themeTone(Brand.teal, "color")} />
           </Pressable>
         )}
       </View>
-      {!!error && <Text style={styles.error}>{error}</Text>}
+      {!!error && <Text style={themeStyles.error}>{error}</Text>}
     </View>
   );
 }

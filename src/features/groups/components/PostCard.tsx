@@ -1,3 +1,4 @@
+import { useThemeTone, useThemedStyles } from '@/theme/useAlyvenAppearance';
 import { useState } from "react";
 
 import {
@@ -206,6 +207,9 @@ export default function PostCard({
   onReport?: () => void;
   onMarkCrisisHandled?: () => void;
 }) {
+  const themeStyles = useThemedStyles(styles);
+  const themeTone = useThemeTone();
+
   const canDelete =
     canModerate ||
     (currentUserId &&
@@ -278,23 +282,23 @@ export default function PostCard({
   return (
     <View
       style={[
-        styles.card,
-        post.isPinned && styles.cardPinned,
-        hasOpenCrisisAlert && styles.cardCrisis,
-        highlighted && styles.cardHighlighted,
+        themeStyles.card,
+        post.isPinned && themeStyles.cardPinned,
+        hasOpenCrisisAlert && themeStyles.cardCrisis,
+        highlighted && themeStyles.cardHighlighted,
       ]}
     >
       {/* OPENED FROM A NOTIFICATION */}
 
       {fromNotification && (
-        <View style={styles.notificationBadge}>
+        <View style={themeStyles.notificationBadge}>
           <Ionicons
             name="notifications"
             size={12}
-            color="#0E7C86"
+            color={themeTone("#0E7C86", "color")}
           />
 
-          <Text style={styles.notificationBadgeText}>
+          <Text style={themeStyles.notificationBadgeText}>
             From your notification
           </Text>
         </View>
@@ -305,9 +309,9 @@ export default function PostCard({
       {crisisFlag?.isFlagged && (
         <View
           style={[
-            styles.crisisBanner,
+            themeStyles.crisisBanner,
             crisisFlag.isHandled &&
-              styles.crisisBannerHandled,
+              themeStyles.crisisBannerHandled,
           ]}
         >
           <Ionicons
@@ -324,12 +328,12 @@ export default function PostCard({
             }
           />
 
-          <View style={styles.crisisBannerText}>
+          <View style={themeStyles.crisisBannerText}>
             <Text
               style={[
-                styles.crisisTitle,
+                themeStyles.crisisTitle,
                 crisisFlag.isHandled &&
-                  styles.crisisTitleHandled,
+                  themeStyles.crisisTitleHandled,
               ]}
             >
               {crisisFlag.isHandled
@@ -341,7 +345,7 @@ export default function PostCard({
 
             {!crisisFlag.isHandled &&
               crisisFlag.matchedTerms.length > 0 && (
-                <Text style={styles.crisisTerms}>
+                <Text style={themeStyles.crisisTerms}>
                   Keywords: {crisisFlag.matchedTerms.join(", ")}
                 </Text>
               )}
@@ -349,7 +353,7 @@ export default function PostCard({
             {/* AI SAFETY CHECK */}
 
             {!crisisFlag.isHandled && aiReviewText && (
-              <Text style={styles.crisisTerms}>
+              <Text style={themeStyles.crisisTerms}>
                 {aiReviewText}
               </Text>
             )}
@@ -360,11 +364,11 @@ export default function PostCard({
               <Pressable
                 hitSlop={8}
                 onPress={onMarkCrisisHandled}
-                style={styles.crisisHandleButton}
+                style={themeStyles.crisisHandleButton}
               >
                 <Text
                   style={
-                    styles.crisisHandleButtonText
+                    themeStyles.crisisHandleButtonText
                   }
                 >
                   Mark handled
@@ -377,14 +381,14 @@ export default function PostCard({
       {/* PINNED BADGE */}
 
       {post.isPinned && (
-        <View style={styles.pinnedBadge}>
+        <View style={themeStyles.pinnedBadge}>
           <Ionicons
             name="pin"
             size={12}
-            color="#b45309"
+            color={themeTone("#b45309", "color")}
           />
 
-          <Text style={styles.pinnedBadgeText}>
+          <Text style={themeStyles.pinnedBadgeText}>
             Pinned post
           </Text>
         </View>
@@ -392,16 +396,16 @@ export default function PostCard({
 
       {/* HEADER */}
 
-      <View style={styles.header}>
-        <View style={styles.avatar}>
+      <View style={themeStyles.header}>
+        <View style={themeStyles.avatar}>
           {post.author.id === null ? (
             <Ionicons
               name="person"
               size={20}
-              color="#0E7C86"
+              color={themeTone("#0E7C86", "color")}
             />
           ) : (
-            <Text style={styles.avatarText}>
+            <Text style={themeStyles.avatarText}>
               {getInitials(
                 post.author.fullName
               )}
@@ -409,11 +413,11 @@ export default function PostCard({
           )}
         </View>
 
-        <View style={styles.headerText}>
-          <View style={styles.authorRow}>
+        <View style={themeStyles.headerText}>
+          <View style={themeStyles.authorRow}>
             <Text
               numberOfLines={1}
-              style={styles.authorName}
+              style={themeStyles.authorName}
             >
               {post.author.fullName}
             </Text>
@@ -423,7 +427,7 @@ export default function PostCard({
             />
           </View>
 
-          <Text style={styles.timestamp}>
+          <Text style={themeStyles.timestamp}>
             {post.groupName
               ? `${post.groupName} · ${formatRelativeTime(
                   post.createdAt
@@ -434,12 +438,12 @@ export default function PostCard({
           </Text>
         </View>
 
-        <View style={styles.headerActions}>
+        <View style={themeStyles.headerActions}>
           {canModerate && onTogglePin && (
             <Pressable
               hitSlop={10}
               onPress={onTogglePin}
-              style={styles.headerIconButton}
+              style={themeStyles.headerIconButton}
             >
               <Ionicons
                 name={
@@ -461,12 +465,12 @@ export default function PostCard({
             <Pressable
               hitSlop={10}
               onPress={onDelete}
-              style={styles.headerIconButton}
+              style={themeStyles.headerIconButton}
             >
               <Ionicons
                 name="trash-outline"
                 size={19}
-                color="#8BA3AB"
+                color={themeTone("#8BA3AB", "color")}
               />
             </Pressable>
           )}
@@ -478,12 +482,12 @@ export default function PostCard({
               <Pressable
                 hitSlop={12}
                 onPress={onReport}
-                style={styles.headerIconButton}
+                style={themeStyles.headerIconButton}
               >
                 <Ionicons
                   name="flag-outline"
                   size={19}
-                  color="#8BA3AB"
+                  color={themeTone("#8BA3AB", "color")}
                 />
               </Pressable>
             )}
@@ -493,34 +497,34 @@ export default function PostCard({
       {/* POST CONTENT */}
 
       {isContentHidden ? (
-        <View style={styles.warningCover}>
+        <View style={themeStyles.warningCover}>
           <Ionicons
             name="eye-off-outline"
             size={22}
-            color="#b45309"
+            color={themeTone("#b45309", "color")}
           />
 
-          <Text style={styles.warningCoverTitle}>
+          <Text style={themeStyles.warningCoverTitle}>
             Content warning
           </Text>
 
-          <Text style={styles.warningCoverLabels}>
+          <Text style={themeStyles.warningCoverLabels}>
             {formatContentWarnings(
               contentWarnings
             )}
           </Text>
 
-          <Text style={styles.warningCoverHint}>
+          <Text style={themeStyles.warningCoverHint}>
             This post may be difficult to read. Take care
             of yourself — you can skip it.
           </Text>
 
           <Pressable
             onPress={() => setRevealed(true)}
-            style={styles.warningCoverButton}
+            style={themeStyles.warningCoverButton}
           >
             <Text
-              style={styles.warningCoverButtonText}
+              style={themeStyles.warningCoverButtonText}
             >
               Show post
             </Text>
@@ -529,15 +533,15 @@ export default function PostCard({
       ) : (
         <>
           {hasContentWarnings && (
-            <View style={styles.warningTagRow}>
-              <View style={styles.warningTag}>
+            <View style={themeStyles.warningTagRow}>
+              <View style={themeStyles.warningTag}>
                 <Ionicons
                   name="warning-outline"
                   size={12}
-                  color="#b45309"
+                  color={themeTone("#b45309", "color")}
                 />
 
-                <Text style={styles.warningTagText}>
+                <Text style={themeStyles.warningTagText}>
                   {formatContentWarnings(
                     contentWarnings
                   )}
@@ -551,7 +555,7 @@ export default function PostCard({
                     setRevealed(false)
                   }
                 >
-                  <Text style={styles.warningHideText}>
+                  <Text style={themeStyles.warningHideText}>
                     Hide
                   </Text>
                 </Pressable>
@@ -561,7 +565,7 @@ export default function PostCard({
 
           <TranslatablePostText
             post={post}
-            style={styles.content}
+            style={themeStyles.content}
           />
 
           {post.imageUrl && (
@@ -571,11 +575,11 @@ export default function PostCard({
               }
               accessibilityRole="imagebutton"
               accessibilityLabel="Open photo"
-              style={styles.postImageWrapper}
+              style={themeStyles.postImageWrapper}
             >
               <Image
                 source={{ uri: post.imageUrl }}
-                style={styles.postImage}
+                style={themeStyles.postImage}
                 contentFit="cover"
                 transition={150}
               />
@@ -596,22 +600,22 @@ export default function PostCard({
           }
         >
           <Pressable
-            style={styles.viewerBackdrop}
+            style={themeStyles.viewerBackdrop}
             onPress={() =>
               setImageViewerOpen(false)
             }
           >
             <Image
               source={{ uri: post.imageUrl }}
-              style={styles.viewerImage}
+              style={themeStyles.viewerImage}
               contentFit="contain"
             />
 
-            <View style={styles.viewerClose}>
+            <View style={themeStyles.viewerClose}>
               <Ionicons
                 name="close"
                 size={22}
-                color="#ffffff"
+                color={themeTone("#ffffff", "color")}
               />
             </View>
           </Pressable>
@@ -620,12 +624,12 @@ export default function PostCard({
 
       {/* POST ACTIONS */}
 
-      <View style={styles.footer}>
+      <View style={themeStyles.footer}>
         {/* REACTION BUTTON + POPUP */}
 
-        <View style={styles.reactionContainer}>
+        <View style={themeStyles.reactionContainer}>
           {reactionPickerOpen && (
-            <View style={styles.reactionPicker}>
+            <View style={themeStyles.reactionPicker}>
               {POST_REACTIONS.map((reaction) => {
                 const isSelected =
                   currentReaction === reaction.type;
@@ -643,13 +647,13 @@ export default function PostCard({
                       reaction.label
                     }
                     style={[
-                      styles.reactionOption,
+                      themeStyles.reactionOption,
                       isSelected &&
-                        styles.reactionOptionSelected,
+                        themeStyles.reactionOptionSelected,
                     ]}
                   >
                     <Text
-                      style={styles.reactionEmoji}
+                      style={themeStyles.reactionEmoji}
                     >
                       {reaction.emoji}
                     </Text>
@@ -661,29 +665,29 @@ export default function PostCard({
 
           <Pressable
             style={[
-              styles.actionButton,
+              themeStyles.actionButton,
               currentReaction &&
-                styles.reactedActionButton,
+                themeStyles.reactedActionButton,
             ]}
             onPress={handleReactionPress}
           >
             {currentReactionEmoji ? (
-              <Text style={styles.selectedReactionEmoji}>
+              <Text style={themeStyles.selectedReactionEmoji}>
                 {currentReactionEmoji}
               </Text>
             ) : (
               <Ionicons
                 name="heart-outline"
                 size={19}
-                color="#64808C"
+                color={themeTone("#64808C", "color")}
               />
             )}
 
             <Text
               style={[
-                styles.actionText,
+                themeStyles.actionText,
                 currentReaction &&
-                  styles.reactedActionText,
+                  themeStyles.reactedActionText,
               ]}
             >
               {totalReactionCount}
@@ -691,7 +695,7 @@ export default function PostCard({
 
             {currentReaction && (
               <Text
-                style={styles.reactionLabel}
+                style={themeStyles.reactionLabel}
               >
                 {currentReactionLabel}
               </Text>
@@ -702,20 +706,20 @@ export default function PostCard({
         {/* COMMENTS */}
 
         <Pressable
-          style={styles.actionButton}
+          style={themeStyles.actionButton}
           onPress={onOpenComments}
         >
           <Ionicons
             name="chatbubble-outline"
             size={18}
-            color="#64808C"
+            color={themeTone("#64808C", "color")}
           />
 
-          <Text style={styles.actionText}>
+          <Text style={themeStyles.actionText}>
             {post.commentCount}
           </Text>
 
-          <Text style={styles.actionLabel}>
+          <Text style={themeStyles.actionLabel}>
             Comments
           </Text>
         </Pressable>
