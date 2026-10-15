@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { getApiErrorMessage } from "@/services/api/apiError";
 
@@ -10,6 +10,13 @@ export function useAiReview(reportId: string) {
   const [aiReview, setAiReview] = useState<AiReview | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Clear the previous result whenever the user navigates to a different report
+  useEffect(() => {
+    setAiReview(null);
+    setLoading(false);
+    setError(null);
+  }, [reportId]);
 
   const generate = useCallback(async () => {
     try {
