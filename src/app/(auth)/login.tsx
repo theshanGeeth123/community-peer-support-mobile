@@ -103,6 +103,7 @@ export default function LoginScreen() {
   ] = useState<
     string | null
   >(null);
+  const [showDemoAccounts, setShowDemoAccounts] = useState(false);
 
   const {
     control,
@@ -313,110 +314,69 @@ export default function LoginScreen() {
        * running the app in development mode.
        */}
       {__DEV__ && (
-        <View className={themeClass("mb-6 rounded-2xl border border-slate-200 bg-slate-50 p-4")}>
-          <View className={themeClass("mb-3 flex-row items-center")}>
-            <View className={themeClass("mr-2 h-8 w-8 items-center justify-center rounded-full bg-indigo-50")}>
-              <Ionicons
-                name="flash-outline"
-                size={17}
-                color={themeTone("#b45309", "color")}
-              />
+        <View className={themeClass("mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-3")}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Demo accounts for testing"
+            accessibilityState={{ expanded: showDemoAccounts }}
+            onPress={() => setShowDemoAccounts((current) => !current)}
+            className={themeClass("min-h-12 flex-row items-center rounded-xl px-2")}
+          >
+            <View className={themeClass("mr-3 h-10 w-10 items-center justify-center rounded-xl bg-indigo-50")}>
+              <Ionicons name="code-slash-outline" size={19} color={themeTone("#0E7C86", "color")} />
             </View>
-
             <View className={themeClass("flex-1")}>
-              <Text className={themeClass("font-bold text-slate-900")}>
-                Demo Login
-              </Text>
-
-              <Text className={themeClass("mt-0.5 text-xs text-slate-500")}>
+              <Text className={themeClass("font-bold text-slate-900")}>Testing access</Text>
+              <Text className={themeClass("mt-1 text-xs text-slate-500")}>
                 Development-only role shortcuts
               </Text>
             </View>
-          </View>
-
-          <View className={themeClass("gap-2")}>
-            {DEMO_ACCOUNTS.map(
-              (
-                account
-              ) => {
-                const isCurrentLoading =
-                  demoLoadingRole ===
-                  account.role;
-
-                const isDisabled =
-                  isSubmitting ||
-                  isDemoLoginLoading;
-
+            <Ionicons
+              name={showDemoAccounts ? "chevron-up-outline" : "chevron-down-outline"}
+              size={20}
+              color={themeTone("#64808C", "color")}
+            />
+          </Pressable>
+          {showDemoAccounts && (
+            <View className={themeClass("mt-3 gap-2 border-t border-slate-200 pt-3")}>
+              {DEMO_ACCOUNTS.map((account) => {
+                const isCurrentLoading = demoLoadingRole === account.role;
+                const isDisabled = isSubmitting || isDemoLoginLoading;
                 return (
                   <Pressable
-                    key={
-                      account.role
-                    }
-                    disabled={
-                      isDisabled
-                    }
-                    onPress={() =>
-                      handleDemoLogin(
-                        account.role,
-                        account.email
-                      )
-                    }
-                    className={themeClass(`min-h-12 flex-row items-center rounded-xl border px-4 ${
+                    key={account.role}
+                    disabled={isDisabled}
+                    accessibilityRole="button"
+                    accessibilityLabel={`Sign in as demo ${account.label}`}
+                    onPress={() => handleDemoLogin(account.role, account.email)}
+                    className={themeClass(`min-h-14 flex-row items-center rounded-xl border px-3 ${
                       isDisabled
                         ? "border-slate-200 bg-slate-100"
-                        : "border-amber-200 bg-white active:bg-indigo-50"
+                        : "border-slate-200 bg-white active:bg-indigo-50"
                     }`)}
                   >
-                    <View className={themeClass("mr-3 h-8 w-8 items-center justify-center rounded-lg bg-indigo-50")}>
+                    <View className={themeClass("mr-3 h-9 w-9 items-center justify-center rounded-xl bg-indigo-50")}>
                       {isCurrentLoading ? (
-                        <ActivityIndicator
-                          size="small"
-                          color={themeTone("#0E7C86", "color")}
-                        />
+                        <ActivityIndicator size="small" color={themeTone("#0E7C86", "color")} />
                       ) : (
-                        <Ionicons
-                          name={
-                            account.icon
-                          }
-                          size={
-                            18
-                          }
-                          color={themeTone("#0E7C86", "color")}
-                        />
+                        <Ionicons name={account.icon} size={19} color={themeTone("#0E7C86", "color")} />
                       )}
                     </View>
-
                     <View className={themeClass("flex-1")}>
-                      <Text className={themeClass("font-semibold text-slate-800")}>
-                        {
-                          account.label
-                        }
-                      </Text>
-
-                      <Text
-                        numberOfLines={
-                          1
-                        }
-                        className={themeClass("text-xs text-slate-500")}
-                      >
-                        {
-                          account.email
-                        }
+                      <Text className={themeClass("font-semibold text-slate-900")}>{account.label}</Text>
+                      <Text numberOfLines={1} className={themeClass("mt-0.5 text-xs text-slate-500")}>
+                        {account.email}
                       </Text>
                     </View>
-
-                    <Ionicons
-                      name="arrow-forward-outline"
-                      size={18}
-                      color={themeTone("#64808C", "color")}
-                    />
+                    <Ionicons name="arrow-forward-outline" size={19} color={themeTone("#0E7C86", "color")} />
                   </Pressable>
                 );
-              }
-            )}
-          </View>
+              })}
+            </View>
+          )}
         </View>
       )}
+
     </AuthScreen>
   );
 }
