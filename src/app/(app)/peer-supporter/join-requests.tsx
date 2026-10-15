@@ -420,7 +420,7 @@ export default function PeerSupporterJoinRequestsScreen() {
           style={styles.backBtn}
           hitSlop={10}
         >
-          <Ionicons name="arrow-back" size={22} color="#0f172a" />
+          <Ionicons name="arrow-back" size={22} color="#0E2A47" />
         </Pressable>
         <View style={{ flex: 1, alignItems: "center" }}>
           <Text style={styles.heading}>Join Requests</Text>
@@ -598,7 +598,7 @@ export default function PeerSupporterJoinRequestsScreen() {
           >
             <ActivityIndicator
               size="large"
-              color="#4f46e5"
+              color="#0E7C86"
             />
 
             <Text
@@ -712,7 +712,7 @@ function SummaryCard({
         <Ionicons
           name={icon}
           size={21}
-          color="#4f46e5"
+          color="#0E7C86"
         />
       </View>
 
@@ -865,7 +865,7 @@ function RequestCard({
         <Ionicons
           name="people-outline"
           size={15}
-          color="#4f46e5"
+          color="#0E7C86"
         />
 
         <Text
@@ -1004,7 +1004,7 @@ function EmptyState({
         <Ionicons
           name={icon}
           size={30}
-          color="#94a3b8"
+          color="#8BA3AB"
         />
       </View>
 
@@ -1157,7 +1157,7 @@ function ReviewModal({
                 <Ionicons
                   name="close"
                   size={26}
-                  color="#475569"
+                  color="#4D6C78"
                 />
               </Pressable>
             </View>
@@ -1229,7 +1229,7 @@ function ReviewModal({
                     ? "Optional message for the member..."
                     : "Optional reason for rejection..."
                 }
-                placeholderTextColor="#94a3b8"
+                placeholderTextColor="#8BA3AB"
                 style={
                   styles.noteInput
                 }
@@ -1405,7 +1405,7 @@ const styles =
       flex: 1,
 
       backgroundColor:
-        "#f8fafc",
+        "#F5FAF9",
     },
 
     header: {
@@ -1414,7 +1414,7 @@ const styles =
       paddingHorizontal: 16,
       paddingVertical: 14,
       borderBottomWidth: 1,
-      borderBottomColor: "#e2e8f0",
+      borderBottomColor: "#E0EDEB",
       backgroundColor: "#ffffff",
     },
 
@@ -1422,7 +1422,7 @@ const styles =
       width: 40,
       height: 40,
       borderRadius: 12,
-      backgroundColor: "#f1f5f9",
+      backgroundColor: "#EDF5F4",
       alignItems: "center",
       justifyContent: "center",
     },
@@ -1445,7 +1445,7 @@ const styles =
 
       fontWeight: "800",
 
-      color: "#0f172a",
+      color: "#0E2A47",
     },
 
     headingDescription: {
@@ -1455,7 +1455,7 @@ const styles =
 
       lineHeight: 21,
 
-      color: "#64748b",
+      color: "#64808C",
     },
 
     summaryRow: {
@@ -1475,7 +1475,7 @@ const styles =
       borderWidth: 1,
 
       borderColor:
-        "#e2e8f0",
+        "#E0EDEB",
 
       borderRadius: 18,
 
@@ -1497,7 +1497,7 @@ const styles =
       borderRadius: 12,
 
       backgroundColor:
-        "#eef2ff",
+        "#EAF8F5",
     },
 
     summaryValue: {
@@ -1507,7 +1507,7 @@ const styles =
 
       fontWeight: "800",
 
-      color: "#0f172a",
+      color: "#0E2A47",
     },
 
     summaryLabel: {
@@ -1515,7 +1515,7 @@ const styles =
 
       fontSize: 11,
 
-      color: "#64748b",
+      color: "#64808C",
     },
 
     filterSection: {
@@ -1529,7 +1529,7 @@ const styles =
 
       fontWeight: "700",
 
-      color: "#334155",
+      color: "#31515F",
     },
 
     filterChip: {
@@ -1544,7 +1544,7 @@ const styles =
       borderWidth: 1,
 
       borderColor:
-        "#e2e8f0",
+        "#E0EDEB",
 
       borderRadius: 999,
 
@@ -1554,10 +1554,10 @@ const styles =
 
     filterChipSelected: {
       borderColor:
-        "#c7d2fe",
+        "#B7E7DA",
 
       backgroundColor:
-        "#eef2ff",
+        "#EAF8F5",
     },
 
     filterChipText: {
@@ -1565,11 +1565,11 @@ const styles =
 
       fontWeight: "600",
 
-      color: "#64748b",
+      color: "#64808C",
     },
 
     filterChipTextSelected: {
-      color: "#4f46e5",
+      color: "#0E7C86",
     },
 
     errorBox: {
@@ -1602,7 +1602,7 @@ const styles =
 
       fontWeight: "700",
 
-      color: "#4f46e5",
+      color: "#0E7C86",
     },
 
     loadingArea: {
@@ -1615,7 +1615,7 @@ const styles =
     loadingText: {
       marginTop: 12,
 
-      color: "#64748b",
+      color: "#64808C",
     },
 
     emptyCard: {
@@ -1632,7 +1632,7 @@ const styles =
       borderWidth: 1,
 
       borderColor:
-        "#e2e8f0",
+        "#E0EDEB",
 
       borderRadius: 20,
 
@@ -1654,7 +1654,7 @@ const styles =
       borderRadius: 30,
 
       backgroundColor:
-        "#f1f5f9",
+        "#EDF5F4",
     },
 
     emptyTitle: {
@@ -1664,7 +1664,7 @@ const styles =
 
       fontWeight: "700",
 
-      color: "#475569",
+      color: "#4D6C78",
     },
 
     emptyDescription: {
@@ -1677,7 +1677,7 @@ const styles =
 
       lineHeight: 18,
 
-      color: "#94a3b8",
+      color: "#8BA3AB",
     },
 
     requestList: {
@@ -1692,7 +1692,7 @@ const styles =
       borderWidth: 1,
 
       borderColor:
-        "#e2e8f0",
+        "#E0EDEB",
 
       borderRadius: 20,
 
@@ -1722,7 +1722,7 @@ const styles =
       borderRadius: 23,
 
       backgroundColor:
-        "#eef2ff",
+        "#EAF8F5",
     },
 
     avatarText: {
@@ -1730,7 +1730,7 @@ const styles =
 
       fontWeight: "800",
 
-      color: "#4f46e5",
+      color: "#0E7C86",
     },
 
     userArea: {
@@ -1746,7 +1746,7 @@ const styles =
 
       fontWeight: "800",
 
-      color: "#0f172a",
+      color: "#0E2A47",
     },
 
     userEmail: {
@@ -1754,7 +1754,7 @@ const styles =
 
       fontSize: 11,
 
-      color: "#64748b",
+      color: "#64808C",
     },
 
     pendingBadge: {
@@ -1805,7 +1805,7 @@ const styles =
       borderRadius: 10,
 
       backgroundColor:
-        "#eef2ff",
+        "#EAF8F5",
     },
 
     groupTagText: {
@@ -1815,7 +1815,7 @@ const styles =
 
       fontWeight: "700",
 
-      color: "#4f46e5",
+      color: "#0E7C86",
     },
 
     reasonLabel: {
@@ -1825,7 +1825,7 @@ const styles =
 
       fontWeight: "700",
 
-      color: "#334155",
+      color: "#31515F",
     },
 
     reasonText: {
@@ -1835,7 +1835,7 @@ const styles =
 
       lineHeight: 21,
 
-      color: "#475569",
+      color: "#4D6C78",
     },
 
     requestDate: {
@@ -1843,7 +1843,7 @@ const styles =
 
       fontSize: 10,
 
-      color: "#94a3b8",
+      color: "#8BA3AB",
     },
 
     actions: {
@@ -1859,7 +1859,7 @@ const styles =
       borderTopWidth: 1,
 
       borderTopColor:
-        "#f1f5f9",
+        "#EDF5F4",
     },
 
     rejectButton: {
@@ -1912,7 +1912,7 @@ const styles =
       borderRadius: 13,
 
       backgroundColor:
-        "#4f46e5",
+        "#0E7C86",
     },
 
     approveButtonText: {
@@ -1963,7 +1963,7 @@ const styles =
       borderBottomWidth: 1,
 
       borderBottomColor:
-        "#f1f5f9",
+        "#EDF5F4",
     },
 
     modalTitle: {
@@ -1971,7 +1971,7 @@ const styles =
 
       fontWeight: "800",
 
-      color: "#0f172a",
+      color: "#0E2A47",
     },
 
     modalSubtitle: {
@@ -1979,7 +1979,7 @@ const styles =
 
       fontSize: 12,
 
-      color: "#64748b",
+      color: "#64808C",
     },
 
     modalContent: {
@@ -2027,7 +2027,7 @@ const styles =
 
       lineHeight: 18,
 
-      color: "#475569",
+      color: "#4D6C78",
     },
 
     noteLabel: {
@@ -2039,7 +2039,7 @@ const styles =
 
       fontWeight: "700",
 
-      color: "#334155",
+      color: "#31515F",
     },
 
     noteInput: {
@@ -2050,7 +2050,7 @@ const styles =
       borderWidth: 1,
 
       borderColor:
-        "#cbd5e1",
+        "#C4D8DA",
 
       borderRadius: 15,
 
@@ -2058,7 +2058,7 @@ const styles =
 
       lineHeight: 20,
 
-      color: "#0f172a",
+      color: "#0E2A47",
     },
 
     characterCount: {
@@ -2069,7 +2069,7 @@ const styles =
 
       fontSize: 11,
 
-      color: "#94a3b8",
+      color: "#8BA3AB",
     },
 
     reviewErrorBox: {
@@ -2111,7 +2111,7 @@ const styles =
 
     confirmApproveButton: {
       backgroundColor:
-        "#4f46e5",
+        "#0E7C86",
     },
 
     confirmRejectButton: {

@@ -80,7 +80,7 @@ export default function AiReviewCard({
       <View style={styles.headerRow}>
         <View style={styles.headerLeft}>
           <View style={styles.aiIconWrap}>
-            <Ionicons name="sparkles" size={16} color="#7c3aed" />
+            <Ionicons name="sparkles" size={16} color="#0E7C86" />
           </View>
           <Text style={styles.headerTitle}>AI Review</Text>
         </View>
@@ -106,7 +106,7 @@ export default function AiReviewCard({
       {/* Loading */}
       {loading && (
         <View style={styles.loadingRow}>
-          <ActivityIndicator size="small" color="#7c3aed" />
+          <ActivityIndicator size="small" color="#0E7C86" />
           <Text style={styles.loadingText}>Analysing report…</Text>
         </View>
       )}
@@ -158,7 +158,7 @@ export default function AiReviewCard({
             onPress={onGenerate}
             style={({ pressed }) => [styles.regenBtn, pressed && styles.generateBtnPressed]}
           >
-            <Ionicons name="refresh-outline" size={13} color="#7c3aed" />
+            <Ionicons name="refresh-outline" size={13} color="#0E7C86" />
             <Text style={styles.regenLabel}>Regenerate</Text>
           </Pressable>
         </>
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: "#e2e8f0",
+    borderColor: "#E0EDEB",
     padding: 16,
   },
   headerRow: {
@@ -192,21 +192,21 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 10,
-    backgroundColor: "#ede9fe",
+    backgroundColor: "#EAF8F5",
     alignItems: "center",
     justifyContent: "center",
   },
   headerTitle: {
     fontSize: 13,
     fontWeight: "700",
-    color: "#0f172a",
+    color: "#0E2A47",
     letterSpacing: 0.1,
   },
   advisoryBadge: {
     fontSize: 10,
     fontWeight: "600",
-    color: "#94a3b8",
-    backgroundColor: "#f1f5f9",
+    color: "#8BA3AB",
+    backgroundColor: "#EDF5F4",
     borderRadius: 99,
     paddingHorizontal: 8,
     paddingVertical: 3,
@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
   },
   promptText: {
     fontSize: 13,
-    color: "#64748b",
+    color: "#64808C",
     textAlign: "center",
     lineHeight: 18,
   },
@@ -231,7 +231,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-    backgroundColor: "#7c3aed",
+    backgroundColor: "#0E7C86",
     borderRadius: 12,
     paddingHorizontal: 18,
     paddingVertical: 10,
@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: 13,
-    color: "#94a3b8",
+    color: "#8BA3AB",
   },
   // Error
   errorBox: {
@@ -297,7 +297,7 @@ const styles = StyleSheet.create({
   },
   // Summary
   summaryBox: {
-    backgroundColor: "#f8fafc",
+    backgroundColor: "#F5FAF9",
     borderRadius: 12,
     padding: 12,
     marginBottom: 10,
@@ -305,14 +305,14 @@ const styles = StyleSheet.create({
   summaryLabel: {
     fontSize: 10,
     fontWeight: "700",
-    color: "#94a3b8",
+    color: "#8BA3AB",
     textTransform: "uppercase",
     letterSpacing: 0.6,
     marginBottom: 5,
   },
   summaryText: {
     fontSize: 13,
-    color: "#334155",
+    color: "#31515F",
     lineHeight: 19,
   },
   // Concerned parts
@@ -347,7 +347,7 @@ const styles = StyleSheet.create({
   suggestionKey: {
     fontSize: 12,
     fontWeight: "600",
-    color: "#64748b",
+    color: "#64808C",
   },
   suggestionBadge: {
     borderRadius: 99,
@@ -373,6 +373,6 @@ const styles = StyleSheet.create({
   regenLabel: {
     fontSize: 12,
     fontWeight: "600",
-    color: "#7c3aed",
+    color: "#0E7C86",
   },
 });

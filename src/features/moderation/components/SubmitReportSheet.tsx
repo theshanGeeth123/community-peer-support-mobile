@@ -164,7 +164,7 @@ export default function SubmitReportSheet({
               style={styles.closeBtn}
               hitSlop={12}
             >
-              <Ionicons name="close" size={20} color="#64748b" />
+              <Ionicons name="close" size={20} color="#64808C" />
             </Pressable>
           </View>
 
@@ -263,7 +263,7 @@ export default function SubmitReportSheet({
                       <TextInput
                         style={styles.textArea}
                         placeholder="Provide any extra context that will help our moderators..."
-                        placeholderTextColor="#94a3b8"
+                        placeholderTextColor="#8BA3AB"
                         multiline
                         numberOfLines={4}
                         maxLength={500}
@@ -333,7 +333,7 @@ export default function SubmitReportSheet({
 
 const styles = StyleSheet.create({
   backdrop: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     backgroundColor: "rgba(15,23,42,0.5)",
   },
   kvContainer: {
@@ -350,7 +350,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 4,
     borderRadius: 2,
-    backgroundColor: "#e2e8f0",
+    backgroundColor: "#E0EDEB",
     alignSelf: "center",
     marginTop: 12,
     marginBottom: 4,
@@ -362,23 +362,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#f1f5f9",
+    borderBottomColor: "#EDF5F4",
   },
   title: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#0f172a",
+    color: "#0E2A47",
   },
   subtitle: {
     fontSize: 13,
-    color: "#94a3b8",
+    color: "#8BA3AB",
     marginTop: 2,
   },
   closeBtn: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: "#f1f5f9",
+    backgroundColor: "#EDF5F4",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -390,12 +390,12 @@ const styles = StyleSheet.create({
   sectionLabel: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#334155",
+    color: "#31515F",
     marginBottom: 12,
   },
   optional: {
     fontWeight: "400",
-    color: "#94a3b8",
+    color: "#8BA3AB",
   },
   reasonGrid: {
     gap: 8,
@@ -403,13 +403,13 @@ const styles = StyleSheet.create({
   reasonChip: {
     borderRadius: 14,
     borderWidth: 1.5,
-    borderColor: "#e2e8f0",
-    backgroundColor: "#f8fafc",
+    borderColor: "#E0EDEB",
+    backgroundColor: "#F5FAF9",
     padding: 12,
   },
   reasonChipSelected: {
-    borderColor: "#4f46e5",
-    backgroundColor: "#eef2ff",
+    borderColor: "#0E7C86",
+    backgroundColor: "#EAF8F5",
   },
   reasonChipInner: {
     flexDirection: "row",
@@ -421,19 +421,19 @@ const styles = StyleSheet.create({
     height: 18,
     borderRadius: 9,
     borderWidth: 2,
-    borderColor: "#cbd5e1",
+    borderColor: "#C4D8DA",
     alignItems: "center",
     justifyContent: "center",
     flexShrink: 0,
   },
   radioOuterSelected: {
-    borderColor: "#4f46e5",
+    borderColor: "#0E7C86",
   },
   radioInner: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: "#4f46e5",
+    backgroundColor: "#0E7C86",
   },
   reasonTextWrap: {
     flex: 1,
@@ -441,14 +441,14 @@ const styles = StyleSheet.create({
   reasonLabel: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#334155",
+    color: "#31515F",
   },
   reasonLabelSelected: {
-    color: "#4338ca",
+    color: "#09646E",
   },
   reasonDesc: {
     fontSize: 12,
-    color: "#94a3b8",
+    color: "#8BA3AB",
     marginTop: 1,
   },
   fieldError: {
@@ -458,17 +458,17 @@ const styles = StyleSheet.create({
   },
   textArea: {
     borderWidth: 1.5,
-    borderColor: "#e2e8f0",
+    borderColor: "#E0EDEB",
     borderRadius: 14,
     padding: 12,
     fontSize: 14,
-    color: "#0f172a",
+    color: "#0E2A47",
     minHeight: 100,
-    backgroundColor: "#f8fafc",
+    backgroundColor: "#F5FAF9",
   },
   charCounter: {
     fontSize: 11,
-    color: "#94a3b8",
+    color: "#8BA3AB",
     textAlign: "right",
     marginTop: 5,
   },

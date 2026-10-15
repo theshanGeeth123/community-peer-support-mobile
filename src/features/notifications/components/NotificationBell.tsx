@@ -54,7 +54,7 @@ export default function NotificationBell() {
       <Ionicons
         name={unreadCount > 0 ? "notifications" : "notifications-outline"}
         size={23}
-        color="#334155"
+        color="#31515F"
       />
 
       {unreadCount > 0 && (
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
-    borderColor: "#e2e8f0",
+    borderColor: "#E0EDEB",
     borderRadius: 16,
     backgroundColor: "#ffffff",
   },
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 2,
-    borderColor: "#f8fafc",
+    borderColor: "#F5FAF9",
     borderRadius: 10,
     backgroundColor: "#e11d48",
   },

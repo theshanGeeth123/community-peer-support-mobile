@@ -88,10 +88,10 @@ const TYPE_ICON: Record<
   { name: keyof typeof Ionicons.glyphMap; color: string; background: string }
 > = {
   POST_LIKE: { name: "heart", color: "#e11d48", background: "#ffe4e6" },
-  POST_COMMENT: { name: "chatbubble", color: "#4f46e5", background: "#e0e7ff" },
+  POST_COMMENT: { name: "chatbubble", color: "#0E7C86", background: "#D8F3EA" },
   COMMENT_REPLY: {
     name: "arrow-undo",
-    color: "#0891b2",
+    color: "#0E7C86",
     background: "#cffafe",
   },
 };
@@ -292,7 +292,7 @@ export default function NotificationsScreen() {
     <SafeAreaView style={styles.safeArea} edges={["top", "left", "right"]}>
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={22} color="#0f172a" />
+          <Ionicons name="arrow-back" size={22} color="#0E2A47" />
         </Pressable>
 
         <Text style={styles.headerTitle}>Notifications</Text>
@@ -305,9 +305,9 @@ export default function NotificationsScreen() {
             style={styles.markAllButton}
           >
             {markingAll ? (
-              <ActivityIndicator size="small" color="#4f46e5" />
+              <ActivityIndicator size="small" color="#0E7C86" />
             ) : (
-              <Ionicons name="checkmark-done" size={22} color="#4f46e5" />
+              <Ionicons name="checkmark-done" size={22} color="#0E7C86" />
             )}
           </Pressable>
         ) : (
@@ -330,7 +330,7 @@ export default function NotificationsScreen() {
 
         {loading ? (
           <View style={styles.center}>
-            <ActivityIndicator size="large" color="#4f46e5" />
+            <ActivityIndicator size="large" color="#0E7C86" />
           </View>
         ) : notifications.length === 0 && !error ? (
           <View style={styles.emptyCard}>
@@ -338,7 +338,7 @@ export default function NotificationsScreen() {
               <Ionicons
                 name="notifications-off-outline"
                 size={28}
-                color="#4f46e5"
+                color="#0E7C86"
               />
             </View>
 
@@ -366,7 +366,7 @@ export default function NotificationsScreen() {
                 style={styles.loadMoreButton}
               >
                 {loadingMore ? (
-                  <ActivityIndicator size="small" color="#4f46e5" />
+                  <ActivityIndicator size="small" color="#0E7C86" />
                 ) : (
                   <Text style={styles.loadMoreText}>Load more</Text>
                 )}
@@ -382,7 +382,7 @@ export default function NotificationsScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#f8fafc",
+    backgroundColor: "#F5FAF9",
   },
 
   header: {
@@ -391,7 +391,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     borderBottomWidth: 1,
-    borderBottomColor: "#e2e8f0",
+    borderBottomColor: "#E0EDEB",
     backgroundColor: "#ffffff",
   },
 
@@ -401,7 +401,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 14,
-    backgroundColor: "#f1f5f9",
+    backgroundColor: "#EDF5F4",
   },
 
   headerTitle: {
@@ -410,7 +410,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 17,
     fontWeight: "800",
-    color: "#0f172a",
+    color: "#0E2A47",
   },
 
   markAllButton: {
@@ -419,7 +419,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 14,
-    backgroundColor: "#eef2ff",
+    backgroundColor: "#EAF8F5",
   },
 
   content: {
@@ -431,13 +431,13 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     fontSize: 12,
     fontWeight: "600",
-    color: "#64748b",
+    color: "#64808C",
   },
 
   list: {
     overflow: "hidden",
     borderWidth: 1,
-    borderColor: "#e2e8f0",
+    borderColor: "#E0EDEB",
     borderRadius: 20,
     backgroundColor: "#ffffff",
   },
@@ -447,7 +447,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-start",
     borderBottomWidth: 1,
-    borderBottomColor: "#f1f5f9",
+    borderBottomColor: "#EDF5F4",
   },
 
   itemUnread: {
@@ -470,25 +470,25 @@ const styles = StyleSheet.create({
   itemTitle: {
     fontSize: 14,
     lineHeight: 19,
-    color: "#334155",
+    color: "#31515F",
   },
 
   itemTitleUnread: {
     fontWeight: "800",
-    color: "#0f172a",
+    color: "#0E2A47",
   },
 
   itemPreview: {
     marginTop: 4,
     fontSize: 13,
     lineHeight: 18,
-    color: "#64748b",
+    color: "#64808C",
   },
 
   itemMeta: {
     marginTop: 5,
     fontSize: 11,
-    color: "#94a3b8",
+    color: "#8BA3AB",
   },
 
   unreadDot: {
@@ -497,7 +497,7 @@ const styles = StyleSheet.create({
     marginTop: 6,
     marginLeft: 8,
     borderRadius: 5,
-    backgroundColor: "#4f46e5",
+    backgroundColor: "#0E7C86",
   },
 
   loadMoreButton: {
@@ -506,13 +506,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 14,
-    backgroundColor: "#eef2ff",
+    backgroundColor: "#EAF8F5",
   },
 
   loadMoreText: {
     fontSize: 14,
     fontWeight: "700",
-    color: "#4f46e5",
+    color: "#0E7C86",
   },
 
   errorBox: {
@@ -539,7 +539,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 22,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#e2e8f0",
+    borderColor: "#E0EDEB",
     borderRadius: 20,
     backgroundColor: "#ffffff",
   },
@@ -550,14 +550,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 31,
-    backgroundColor: "#eef2ff",
+    backgroundColor: "#EAF8F5",
   },
 
   emptyTitle: {
     marginTop: 13,
     fontSize: 17,
     fontWeight: "700",
-    color: "#475569",
+    color: "#4D6C78",
   },
 
   emptyDescription: {
@@ -566,6 +566,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 12,
     lineHeight: 18,
-    color: "#94a3b8",
+    color: "#8BA3AB",
   },
 });

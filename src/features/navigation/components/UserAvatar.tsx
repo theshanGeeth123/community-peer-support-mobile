@@ -49,7 +49,7 @@ export default function UserAvatar({
           height: size,
           borderRadius: size / 2,
           backgroundColor:
-            "#e2e8f0",
+            "#E0EDEB",
         }}
         resizeMode="cover"
       />
@@ -66,14 +66,14 @@ export default function UserAvatar({
         justifyContent:
           "center",
         backgroundColor:
-          "#e0e7ff",
+          "#D8F3EA",
       }}
     >
       <Text
         style={{
           fontSize: size * 0.34,
           fontWeight: "700",
-          color: "#4338ca",
+          color: "#09646E",
         }}
       >
         {getInitials()}

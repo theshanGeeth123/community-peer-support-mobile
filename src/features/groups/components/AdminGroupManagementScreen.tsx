@@ -27,7 +27,6 @@ import {
 } from "@expo/vector-icons";
 
 import {
-    type Href,
     router,
 } from "expo-router";
 
@@ -667,7 +666,7 @@ export default function AdminGroupManagementScreen() {
           <Ionicons
             name="search-outline"
             size={20}
-            color="#94a3b8"
+            color="#8BA3AB"
           />
 
           <TextInput
@@ -676,7 +675,7 @@ export default function AdminGroupManagementScreen() {
               setSearch
             }
             placeholder="Search groups..."
-            placeholderTextColor="#94a3b8"
+            placeholderTextColor="#8BA3AB"
             style={
               styles.searchInput
             }
@@ -693,7 +692,7 @@ export default function AdminGroupManagementScreen() {
               <Ionicons
                 name="close-circle"
                 size={20}
-                color="#94a3b8"
+                color="#8BA3AB"
               />
             </Pressable>
           )}
@@ -741,7 +740,7 @@ export default function AdminGroupManagementScreen() {
           >
             <ActivityIndicator
               size="large"
-              color="#4f46e5"
+              color="#0E7C86"
             />
 
             <Text
@@ -767,7 +766,7 @@ export default function AdminGroupManagementScreen() {
               <Ionicons
                 name="people-outline"
                 size={29}
-                color="#4f46e5"
+                color="#0E7C86"
               />
             </View>
 
@@ -914,7 +913,7 @@ function GroupCard({
           <Ionicons
             name="people"
             size={23}
-            color="#4f46e5"
+            color="#0E7C86"
           />
         </View>
 
@@ -983,7 +982,7 @@ function GroupCard({
           <Ionicons
             name="location-outline"
             size={16}
-            color="#64748b"
+            color="#64808C"
           />
 
           <Text
@@ -1011,7 +1010,7 @@ function GroupCard({
           <Ionicons
             name="heart-outline"
             size={17}
-            color="#6366f1"
+            color="#168994"
           />
 
           <Text
@@ -1036,7 +1035,7 @@ function GroupCard({
           <Ionicons
             name="shield-checkmark-outline"
             size={17}
-            color="#6366f1"
+            color="#168994"
           />
 
           <Text
@@ -1071,7 +1070,7 @@ function GroupCard({
         <Ionicons
           name="people-circle-outline"
           size={19}
-          color="#4f46e5"
+          color="#0E7C86"
         />
 
         <Text
@@ -1085,7 +1084,7 @@ function GroupCard({
         <Ionicons
           name="chevron-forward"
           size={18}
-          color="#6366f1"
+          color="#168994"
         />
       </Pressable>
 
@@ -1093,7 +1092,7 @@ function GroupCard({
         onPress={() =>
           router.push({
             pathname:
-              "/(app)/admin/group/[groupId]/posts" as Href,
+              "/(app)/admin/group/[groupId]/posts",
 
             params: {
               groupId: group.id,
@@ -1114,7 +1113,7 @@ function GroupCard({
         <Ionicons
           name="chatbubbles-outline"
           size={19}
-          color="#4f46e5"
+          color="#0E7C86"
         />
 
         <Text
@@ -1128,7 +1127,7 @@ function GroupCard({
         <Ionicons
           name="chevron-forward"
           size={18}
-          color="#6366f1"
+          color="#168994"
         />
       </Pressable>
     </View>
@@ -1270,7 +1269,7 @@ function CreateGroupModal({
                 <Ionicons
                   name="close"
                   size={26}
-                  color="#475569"
+                  color="#4D6C78"
                 />
               </Pressable>
             </View>
@@ -1313,7 +1312,7 @@ function CreateGroupModal({
                   !creating
                 }
                 placeholder="e.g. Student Stress Support"
-                placeholderTextColor="#94a3b8"
+                placeholderTextColor="#8BA3AB"
                 style={
                   styles.input
                 }
@@ -1334,7 +1333,7 @@ function CreateGroupModal({
                   !creating
                 }
                 placeholder="e.g. Student Well-being"
-                placeholderTextColor="#94a3b8"
+                placeholderTextColor="#8BA3AB"
                 style={
                   styles.input
                 }
@@ -1355,7 +1354,7 @@ function CreateGroupModal({
                   !creating
                 }
                 placeholder="e.g. Colombo"
-                placeholderTextColor="#94a3b8"
+                placeholderTextColor="#8BA3AB"
                 style={
                   styles.input
                 }
@@ -1376,7 +1375,7 @@ function CreateGroupModal({
                   !creating
                 }
                 placeholder="Describe the purpose of this group..."
-                placeholderTextColor="#94a3b8"
+                placeholderTextColor="#8BA3AB"
                 multiline
                 textAlignVertical="top"
                 style={[
@@ -1411,7 +1410,7 @@ function CreateGroupModal({
                 placeholder={
                   "Respect every member\nKeep discussions private\nAvoid abusive language"
                 }
-                placeholderTextColor="#94a3b8"
+                placeholderTextColor="#8BA3AB"
                 multiline
                 textAlignVertical="top"
                 style={[
@@ -1487,7 +1486,7 @@ const styles =
       flex: 1,
 
       backgroundColor:
-        "#f8fafc",
+        "#F5FAF9",
     },
 
     content: {
@@ -1508,7 +1507,7 @@ const styles =
 
       fontWeight: "800",
 
-      color: "#0f172a",
+      color: "#0E2A47",
     },
 
     headingDescription: {
@@ -1518,7 +1517,7 @@ const styles =
 
       lineHeight: 20,
 
-      color: "#64748b",
+      color: "#64808C",
     },
 
     summaryCard: {
@@ -1539,7 +1538,7 @@ const styles =
       borderWidth: 1,
 
       borderColor:
-        "#e2e8f0",
+        "#E0EDEB",
 
       backgroundColor:
         "#ffffff",
@@ -1548,7 +1547,7 @@ const styles =
     summaryLabel: {
       fontSize: 13,
 
-      color: "#64748b",
+      color: "#64808C",
     },
 
     summaryValue: {
@@ -1558,7 +1557,7 @@ const styles =
 
       fontWeight: "800",
 
-      color: "#0f172a",
+      color: "#0E2A47",
     },
 
     createButton: {
@@ -1578,7 +1577,7 @@ const styles =
       borderRadius: 14,
 
       backgroundColor:
-        "#4f46e5",
+        "#0E7C86",
     },
 
     createButtonText: {
@@ -1607,7 +1606,7 @@ const styles =
       borderWidth: 1,
 
       borderColor:
-        "#e2e8f0",
+        "#E0EDEB",
 
       backgroundColor:
         "#ffffff",
@@ -1620,7 +1619,7 @@ const styles =
 
       fontSize: 15,
 
-      color: "#0f172a",
+      color: "#0E2A47",
     },
 
     errorBox: {
@@ -1650,7 +1649,7 @@ const styles =
 
       fontWeight: "700",
 
-      color: "#4f46e5",
+      color: "#0E7C86",
     },
 
     loadingArea: {
@@ -1663,7 +1662,7 @@ const styles =
     loadingText: {
       marginTop: 12,
 
-      color: "#64748b",
+      color: "#64808C",
     },
 
     emptyArea: {
@@ -1682,7 +1681,7 @@ const styles =
       borderWidth: 1,
 
       borderColor:
-        "#e2e8f0",
+        "#E0EDEB",
 
       backgroundColor:
         "#ffffff",
@@ -1702,7 +1701,7 @@ const styles =
       borderRadius: 29,
 
       backgroundColor:
-        "#eef2ff",
+        "#EAF8F5",
     },
 
     emptyTitle: {
@@ -1712,7 +1711,7 @@ const styles =
 
       fontWeight: "700",
 
-      color: "#0f172a",
+      color: "#0E2A47",
     },
 
     emptyDescription: {
@@ -1722,7 +1721,7 @@ const styles =
 
       lineHeight: 20,
 
-      color: "#64748b",
+      color: "#64808C",
     },
 
     groupList: {
@@ -1739,7 +1738,7 @@ const styles =
       borderWidth: 1,
 
       borderColor:
-        "#e2e8f0",
+        "#E0EDEB",
 
       backgroundColor:
         "#ffffff",
@@ -1766,7 +1765,7 @@ const styles =
       borderRadius: 14,
 
       backgroundColor:
-        "#eef2ff",
+        "#EAF8F5",
     },
 
     groupTitleArea: {
@@ -1780,7 +1779,7 @@ const styles =
 
       fontWeight: "800",
 
-      color: "#0f172a",
+      color: "#0E2A47",
     },
 
     category: {
@@ -1790,7 +1789,7 @@ const styles =
 
       fontWeight: "600",
 
-      color: "#6366f1",
+      color: "#168994",
     },
 
     statusBadge: {
@@ -1808,7 +1807,7 @@ const styles =
 
     inactiveBadge: {
       backgroundColor:
-        "#f1f5f9",
+        "#EDF5F4",
     },
 
     statusText: {
@@ -1822,7 +1821,7 @@ const styles =
     },
 
     inactiveText: {
-      color: "#64748b",
+      color: "#64808C",
     },
 
     description: {
@@ -1832,7 +1831,7 @@ const styles =
 
       lineHeight: 21,
 
-      color: "#475569",
+      color: "#4D6C78",
     },
 
     locationRow: {
@@ -1849,7 +1848,7 @@ const styles =
 
       fontSize: 13,
 
-      color: "#64748b",
+      color: "#64808C",
     },
 
     staffSummary: {
@@ -1862,7 +1861,7 @@ const styles =
       borderTopWidth: 1,
 
       borderTopColor:
-        "#f1f5f9",
+        "#EDF5F4",
     },
 
     staffCount: {
@@ -1879,7 +1878,7 @@ const styles =
 
       fontSize: 11,
 
-      color: "#64748b",
+      color: "#64808C",
     },
 
     manageButton: {
@@ -1900,10 +1899,10 @@ const styles =
       borderWidth: 1,
 
       borderColor:
-        "#c7d2fe",
+        "#B7E7DA",
 
       backgroundColor:
-        "#eef2ff",
+        "#EAF8F5",
     },
 
     manageButtonText: {
@@ -1913,7 +1912,7 @@ const styles =
 
       fontWeight: "700",
 
-      color: "#4f46e5",
+      color: "#0E7C86",
     },
 
     modalOverlay: {
@@ -1955,7 +1954,7 @@ const styles =
       borderBottomWidth: 1,
 
       borderBottomColor:
-        "#f1f5f9",
+        "#EDF5F4",
     },
 
     modalTitle: {
@@ -1963,7 +1962,7 @@ const styles =
 
       fontWeight: "800",
 
-      color: "#0f172a",
+      color: "#0E2A47",
     },
 
     modalSubtitle: {
@@ -1971,7 +1970,7 @@ const styles =
 
       fontSize: 13,
 
-      color: "#64748b",
+      color: "#64808C",
     },
 
     formContent: {
@@ -1989,7 +1988,7 @@ const styles =
 
       fontWeight: "700",
 
-      color: "#334155",
+      color: "#31515F",
     },
 
     fieldHint: {
@@ -1999,7 +1998,7 @@ const styles =
 
       fontSize: 12,
 
-      color: "#94a3b8",
+      color: "#8BA3AB",
     },
 
     input: {
@@ -2011,7 +2010,7 @@ const styles =
       borderWidth: 1,
 
       borderColor:
-        "#cbd5e1",
+        "#C4D8DA",
 
       borderRadius: 14,
 
@@ -2020,7 +2019,7 @@ const styles =
 
       fontSize: 15,
 
-      color: "#0f172a",
+      color: "#0E2A47",
     },
 
     largeInput: {
@@ -2051,7 +2050,7 @@ const styles =
       borderRadius: 16,
 
       backgroundColor:
-        "#4f46e5",
+        "#0E7C86",
     },
 
     submitButtonText: {

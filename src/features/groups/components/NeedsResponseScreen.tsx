@@ -393,7 +393,7 @@ export default function NeedsResponseScreen() {
           <Ionicons
             name="arrow-back"
             size={22}
-            color="#0f172a"
+            color="#0E2A47"
           />
         </Pressable>
 
@@ -430,7 +430,7 @@ export default function NeedsResponseScreen() {
           <View style={styles.center}>
             <ActivityIndicator
               size="large"
-              color="#4f46e5"
+              color="#0E7C86"
             />
 
             <Text style={styles.loadingText}>
@@ -528,7 +528,7 @@ export default function NeedsResponseScreen() {
                 <Ionicons
                   name="chatbubble-ellipses"
                   size={18}
-                  color="#4f46e5"
+                  color="#0E7C86"
                 />
 
                 <Text
@@ -582,7 +582,7 @@ export default function NeedsResponseScreen() {
                   {loadingMore ? (
                     <ActivityIndicator
                       size="small"
-                      color="#4f46e5"
+                      color="#0E7C86"
                     />
                   ) : (
                     <Text
@@ -625,7 +625,7 @@ export default function NeedsResponseScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#f8fafc",
+    backgroundColor: "#F5FAF9",
   },
 
   header: {
@@ -634,7 +634,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     borderBottomWidth: 1,
-    borderBottomColor: "#e2e8f0",
+    borderBottomColor: "#E0EDEB",
     backgroundColor: "#ffffff",
   },
 
@@ -644,7 +644,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 14,
-    backgroundColor: "#f1f5f9",
+    backgroundColor: "#EDF5F4",
   },
 
   headerTitle: {
@@ -653,7 +653,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 17,
     fontWeight: "800",
-    color: "#0f172a",
+    color: "#0E2A47",
   },
 
   content: {
@@ -674,7 +674,7 @@ const styles = StyleSheet.create({
     marginLeft: 7,
     fontSize: 16,
     fontWeight: "800",
-    color: "#0f172a",
+    color: "#0E2A47",
   },
 
   crisisTitle: {
@@ -688,7 +688,7 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     alignItems: "center",
     borderRadius: 999,
-    backgroundColor: "#4f46e5",
+    backgroundColor: "#0E7C86",
   },
 
   crisisBadge: {
@@ -705,13 +705,13 @@ const styles = StyleSheet.create({
     marginTop: 5,
     fontSize: 12,
     lineHeight: 17,
-    color: "#64748b",
+    color: "#64808C",
   },
 
   sectionEmpty: {
     marginTop: 14,
     fontSize: 13,
-    color: "#94a3b8",
+    color: "#8BA3AB",
   },
 
   loadMoreButton: {
@@ -720,13 +720,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 14,
-    backgroundColor: "#eef2ff",
+    backgroundColor: "#EAF8F5",
   },
 
   loadMoreText: {
     fontSize: 14,
     fontWeight: "700",
-    color: "#4f46e5",
+    color: "#0E7C86",
   },
 
   errorBox: {
@@ -749,7 +749,7 @@ const styles = StyleSheet.create({
 
   loadingText: {
     marginTop: 12,
-    color: "#64748b",
+    color: "#64808C",
   },
 
   emptyCard: {
@@ -758,7 +758,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 22,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#e2e8f0",
+    borderColor: "#E0EDEB",
     borderRadius: 20,
     backgroundColor: "#ffffff",
   },
@@ -776,7 +776,7 @@ const styles = StyleSheet.create({
     marginTop: 13,
     fontSize: 17,
     fontWeight: "700",
-    color: "#475569",
+    color: "#4D6C78",
   },
 
   emptyDescription: {
@@ -785,6 +785,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 12,
     lineHeight: 18,
-    color: "#94a3b8",
+    color: "#8BA3AB",
   },
 });

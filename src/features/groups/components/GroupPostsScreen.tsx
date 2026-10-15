@@ -956,7 +956,7 @@ export default function GroupPostsScreen() {
           <Ionicons
             name="arrow-back"
             size={22}
-            color="#0f172a"
+            color="#0E2A47"
           />
         </Pressable>
 
@@ -990,7 +990,7 @@ export default function GroupPostsScreen() {
           <Ionicons
             name="search"
             size={17}
-            color="#94a3b8"
+            color="#8BA3AB"
           />
 
           <TextInput
@@ -999,7 +999,7 @@ export default function GroupPostsScreen() {
               setSearchText
             }
             placeholder="Search posts in this group"
-            placeholderTextColor="#94a3b8"
+            placeholderTextColor="#8BA3AB"
             autoCapitalize="none"
             autoCorrect={false}
             returnKeyType="search"
@@ -1020,7 +1020,7 @@ export default function GroupPostsScreen() {
               <Ionicons
                 name="close-circle"
                 size={18}
-                color="#94a3b8"
+                color="#8BA3AB"
               />
             </Pressable>
           )}
@@ -1069,7 +1069,7 @@ export default function GroupPostsScreen() {
                       color={
                         active
                           ? "#ffffff"
-                          : "#64748b"
+                          : "#64808C"
                       }
                     />
 
@@ -1093,7 +1093,7 @@ export default function GroupPostsScreen() {
           {refetching && (
             <ActivityIndicator
               size="small"
-              color="#4f46e5"
+              color="#0E7C86"
               style={
                 styles.sortSpinner
               }
@@ -1159,7 +1159,7 @@ export default function GroupPostsScreen() {
           >
             <ActivityIndicator
               size="large"
-              color="#4f46e5"
+              color="#0E7C86"
             />
 
             <Text
@@ -1186,7 +1186,7 @@ export default function GroupPostsScreen() {
               <Ionicons
                 name="search-outline"
                 size={27}
-                color="#4f46e5"
+                color="#0E7C86"
               />
             </View>
 
@@ -1278,7 +1278,7 @@ export default function GroupPostsScreen() {
               <Ionicons
                 name="chatbubbles-outline"
                 size={29}
-                color="#4f46e5"
+                color="#0E7C86"
               />
             </View>
 
@@ -1395,7 +1395,7 @@ export default function GroupPostsScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#f8fafc",
+    backgroundColor: "#F5FAF9",
   },
 
   header: {
@@ -1404,7 +1404,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     borderBottomWidth: 1,
-    borderBottomColor: "#e2e8f0",
+    borderBottomColor: "#E0EDEB",
     backgroundColor: "#ffffff",
   },
 
@@ -1414,7 +1414,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 14,
-    backgroundColor: "#f1f5f9",
+    backgroundColor: "#EDF5F4",
   },
 
   headerTitle: {
@@ -1423,7 +1423,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 17,
     fontWeight: "800",
-    color: "#0f172a",
+    color: "#0E2A47",
   },
 
   content: {
@@ -1438,7 +1438,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#e2e8f0",
+    borderColor: "#E0EDEB",
     borderRadius: 16,
     backgroundColor: "#ffffff",
   },
@@ -1447,7 +1447,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginHorizontal: 9,
     fontSize: 14,
-    color: "#0f172a",
+    color: "#0E2A47",
   },
 
   sortRow: {
@@ -1467,20 +1467,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 5,
     borderWidth: 1,
-    borderColor: "#e2e8f0",
+    borderColor: "#E0EDEB",
     borderRadius: 999,
     backgroundColor: "#ffffff",
   },
 
   sortChipActive: {
-    borderColor: "#4f46e5",
-    backgroundColor: "#4f46e5",
+    borderColor: "#0E7C86",
+    backgroundColor: "#0E7C86",
   },
 
   sortChipText: {
     fontSize: 12,
     fontWeight: "700",
-    color: "#64748b",
+    color: "#64808C",
   },
 
   sortChipTextActive: {
@@ -1495,7 +1495,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     fontSize: 12,
     fontWeight: "600",
-    color: "#64748b",
+    color: "#64808C",
   },
 
   clearSearchButton: {
@@ -1503,13 +1503,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 9,
     borderRadius: 999,
-    backgroundColor: "#eef2ff",
+    backgroundColor: "#EAF8F5",
   },
 
   clearSearchButtonText: {
     fontSize: 13,
     fontWeight: "700",
-    color: "#4f46e5",
+    color: "#0E7C86",
   },
 
   errorBox: {
@@ -1532,7 +1532,7 @@ const styles = StyleSheet.create({
 
   loadingText: {
     marginTop: 12,
-    color: "#64748b",
+    color: "#64808C",
   },
 
   emptyCard: {
@@ -1541,7 +1541,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 22,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#e2e8f0",
+    borderColor: "#E0EDEB",
     borderRadius: 20,
     backgroundColor: "#ffffff",
   },
@@ -1552,14 +1552,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 31,
-    backgroundColor: "#eef2ff",
+    backgroundColor: "#EAF8F5",
   },
 
   emptyTitle: {
     marginTop: 13,
     fontSize: 17,
     fontWeight: "700",
-    color: "#475569",
+    color: "#4D6C78",
   },
 
   emptyDescription: {
@@ -1568,6 +1568,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 12,
     lineHeight: 18,
-    color: "#94a3b8",
+    color: "#8BA3AB",
   },
 });

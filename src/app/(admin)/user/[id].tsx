@@ -452,12 +452,12 @@ export default function AdminUserDetailsScreen() {
           justifyContent:
             "center",
           backgroundColor:
-            "#f8fafc",
+            "#F5FAF9",
         }}
       >
         <ActivityIndicator
           size="large"
-          color="#4f46e5"
+          color="#0E7C86"
         />
 
         <Text className="mt-4 text-slate-500">
@@ -471,7 +471,7 @@ export default function AdminUserDetailsScreen() {
     <SafeAreaView
       style={{
         flex: 1,
-        backgroundColor: "#f8fafc",
+        backgroundColor: "#F5FAF9",
       }}
       edges={[
         "top",
@@ -502,7 +502,7 @@ export default function AdminUserDetailsScreen() {
             <Ionicons
               name="arrow-back"
               size={22}
-              color="#0f172a"
+              color="#0E2A47"
             />
           </Pressable>
 
@@ -530,7 +530,7 @@ export default function AdminUserDetailsScreen() {
             <Ionicons
               name="person-outline"
               size={36}
-              color="#94a3b8"
+              color="#8BA3AB"
             />
 
             <Text className="mt-4 font-bold text-slate-900">
@@ -689,7 +689,7 @@ export default function AdminUserDetailsScreen() {
                   <Ionicons
                     name="shield-outline"
                     size={21}
-                    color="#4f46e5"
+                    color="#0E7C86"
                   />
                 </View>
 
@@ -765,7 +765,7 @@ export default function AdminUserDetailsScreen() {
                             <Ionicons
                               name="checkmark-circle"
                               size={22}
-                              color="#4f46e5"
+                              color="#0E7C86"
                             />
                           )}
                         </View>

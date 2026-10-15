@@ -16,7 +16,7 @@ export default function GroupsScreen() {
     <SafeAreaView
       style={{
         flex: 1,
-        backgroundColor: "#f8fafc",
+        backgroundColor: "#F5FAF9",
       }}
       edges={[
         "top",
@@ -45,7 +45,7 @@ export default function GroupsScreen() {
             <Ionicons
               name="chatbubbles-outline"
               size={38}
-              color="#4f46e5"
+              color="#0E7C86"
             />
           </View>
 
@@ -76,7 +76,7 @@ export default function GroupsScreen() {
               <Ionicons
                 name="school-outline"
                 size={22}
-                color="#7c3aed"
+                color="#0E7C86"
               />
             </View>
 
@@ -115,7 +115,7 @@ export default function GroupsScreen() {
             <Ionicons
               name="information-circle-outline"
               size={23}
-              color="#4f46e5"
+              color="#0E7C86"
             />
 
             <View className="ml-3 flex-1">

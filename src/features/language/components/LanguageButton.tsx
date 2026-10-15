@@ -26,7 +26,7 @@ export default function LanguageButton() {
         onPress={() => setPickerOpen(true)}
         style={styles.button}
       >
-        <Ionicons name="language" size={16} color="#4f46e5" />
+        <Ionicons name="language" size={16} color="#0E7C86" />
 
         <Text style={styles.buttonText}>{myLanguage}</Text>
       </Pressable>
@@ -85,7 +85,7 @@ export default function LanguageButton() {
                     <Ionicons
                       name="checkmark-circle"
                       size={21}
-                      color="#4f46e5"
+                      color="#0E7C86"
                     />
                   )}
                 </Pressable>
@@ -113,13 +113,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: 3,
     borderRadius: 14,
-    backgroundColor: "#eef2ff",
+    backgroundColor: "#EAF8F5",
   },
 
   buttonText: {
     fontSize: 11,
     fontWeight: "800",
-    color: "#4f46e5",
+    color: "#0E7C86",
   },
 
   overlay: {
@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: "800",
-    color: "#0f172a",
+    color: "#0E2A47",
   },
 
   subtitle: {
@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
     marginBottom: 14,
     fontSize: 13,
     lineHeight: 19,
-    color: "#64748b",
+    color: "#64808C",
   },
 
   option: {
@@ -159,14 +159,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#e2e8f0",
+    borderColor: "#E0EDEB",
     borderRadius: 16,
-    backgroundColor: "#f8fafc",
+    backgroundColor: "#F5FAF9",
   },
 
   optionSelected: {
-    borderColor: "#4f46e5",
-    backgroundColor: "#eef2ff",
+    borderColor: "#0E7C86",
+    backgroundColor: "#EAF8F5",
   },
 
   optionText: {
@@ -176,23 +176,23 @@ const styles = StyleSheet.create({
   optionName: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#0f172a",
+    color: "#0E2A47",
   },
 
   optionNameSelected: {
-    color: "#4338ca",
+    color: "#09646E",
   },
 
   optionEnglishName: {
     marginTop: 2,
     fontSize: 12,
-    color: "#94a3b8",
+    color: "#8BA3AB",
   },
 
   footnote: {
     marginTop: 6,
     fontSize: 11,
     lineHeight: 16,
-    color: "#94a3b8",
+    color: "#8BA3AB",
   },
 });

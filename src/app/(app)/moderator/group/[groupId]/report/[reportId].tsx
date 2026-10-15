@@ -137,11 +137,11 @@ export default function ModeratorReportDetailScreen() {
       <SafeAreaView style={styles.container} edges={["top"]}>
         <View style={styles.headerRow}>
           <Pressable onPress={() => router.back()} style={styles.backBtn}>
-            <Ionicons name="arrow-back" size={22} color="#0f172a" />
+            <Ionicons name="arrow-back" size={22} color="#0E2A47" />
           </Pressable>
         </View>
         <View style={styles.centered}>
-          <ActivityIndicator size="large" color="#4f46e5" />
+          <ActivityIndicator size="large" color="#0E7C86" />
           <Text style={styles.loadingText}>Loading report...</Text>
         </View>
       </SafeAreaView>
@@ -153,7 +153,7 @@ export default function ModeratorReportDetailScreen() {
       <SafeAreaView style={styles.container} edges={["top"]}>
         <View style={styles.headerRow}>
           <Pressable onPress={() => router.back()} style={styles.backBtn}>
-            <Ionicons name="arrow-back" size={22} color="#0f172a" />
+            <Ionicons name="arrow-back" size={22} color="#0E2A47" />
           </Pressable>
         </View>
         <View style={styles.centered}>
@@ -182,7 +182,7 @@ export default function ModeratorReportDetailScreen() {
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
         <View style={styles.headerRow}>
           <Pressable onPress={() => router.back()} style={styles.backBtn} hitSlop={10}>
-            <Ionicons name="arrow-back" size={22} color="#0f172a" />
+            <Ionicons name="arrow-back" size={22} color="#0E2A47" />
           </Pressable>
           <View style={styles.headerCenter}>
             <Text style={styles.headerTitle}>Report Detail</Text>
@@ -204,7 +204,7 @@ export default function ModeratorReportDetailScreen() {
                 <Ionicons
                   name={report.targetType === "POST" ? "document-text-outline" : "chatbubble-outline"}
                   size={12}
-                  color={report.targetType === "POST" ? "#4f46e5" : "#0891b2"}
+                  color={report.targetType === "POST" ? "#0E7C86" : "#0E7C86"}
                 />
                 <Text style={[styles.targetLabel, report.targetType === "POST" ? styles.targetPostLabel : styles.targetCommentLabel]}>
                   {report.targetType}
@@ -237,7 +237,7 @@ export default function ModeratorReportDetailScreen() {
               <Text style={styles.sectionLabel}>Post Content</Text>
               {postLoading ? (
                 <View style={styles.postLoadingRow}>
-                  <ActivityIndicator size="small" color="#94a3b8" />
+                  <ActivityIndicator size="small" color="#8BA3AB" />
                   <Text style={styles.postLoadingText}>Loading post...</Text>
                 </View>
               ) : reportedPost ? (
@@ -302,7 +302,7 @@ export default function ModeratorReportDetailScreen() {
 
               {/* Action taken */}
               {moderationAction ? (() => {
-                const meta = ACTION_LABELS[moderationAction.action] ?? { label: moderationAction.action, color: "#64748b", bg: "#f1f5f9" };
+                const meta = ACTION_LABELS[moderationAction.action] ?? { label: moderationAction.action, color: "#64808C", bg: "#EDF5F4" };
                 return (
                   <>
                     <View style={styles.actionDecisionRow}>
@@ -365,7 +365,7 @@ export default function ModeratorReportDetailScreen() {
               <TextInput
                 style={styles.reasonInput}
                 placeholder="Explain your decision (min. 10 characters)..."
-                placeholderTextColor="#94a3b8"
+                placeholderTextColor="#8BA3AB"
                 multiline
                 numberOfLines={4}
                 value={reason}
@@ -408,65 +408,65 @@ export default function ModeratorReportDetailScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#f8fafc" },
-  headerRow: { flexDirection: "row", alignItems: "center", paddingHorizontal: 16, paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: "#e2e8f0", backgroundColor: "#ffffff" },
-  backBtn: { width: 40, height: 40, borderRadius: 12, backgroundColor: "#f1f5f9", alignItems: "center", justifyContent: "center" },
+  container: { flex: 1, backgroundColor: "#F5FAF9" },
+  headerRow: { flexDirection: "row", alignItems: "center", paddingHorizontal: 16, paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: "#E0EDEB", backgroundColor: "#ffffff" },
+  backBtn: { width: 40, height: 40, borderRadius: 12, backgroundColor: "#EDF5F4", alignItems: "center", justifyContent: "center" },
   headerCenter: { flex: 1, alignItems: "center" },
-  headerTitle: { fontSize: 17, fontWeight: "700", color: "#0f172a" },
+  headerTitle: { fontSize: 17, fontWeight: "700", color: "#0E2A47" },
   scrollContent: { padding: 16, gap: 12, paddingBottom: 40 },
-  card: { backgroundColor: "#ffffff", borderRadius: 20, borderWidth: 1, borderColor: "#e2e8f0", padding: 16 },
+  card: { backgroundColor: "#ffffff", borderRadius: 20, borderWidth: 1, borderColor: "#E0EDEB", padding: 16 },
   reviewedCard: { borderColor: "#a7f3d0", backgroundColor: "#f0fdf4" },
   reviewedHeader: { flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 14 },
   reviewedTitle: { fontSize: 15, fontWeight: "700", color: "#065f46" },
-  sectionLabel: { fontSize: 11, fontWeight: "700", color: "#94a3b8", textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 14 },
+  sectionLabel: { fontSize: 11, fontWeight: "700", color: "#8BA3AB", textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 14 },
   infoRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 12 },
-  infoKey: { fontSize: 13, fontWeight: "600", color: "#64748b" },
-  infoVal: { fontSize: 13, color: "#334155", fontWeight: "500", flexShrink: 1, textAlign: "right", marginLeft: 8 },
+  infoKey: { fontSize: 13, fontWeight: "600", color: "#64808C" },
+  infoVal: { fontSize: 13, color: "#31515F", fontWeight: "500", flexShrink: 1, textAlign: "right", marginLeft: 8 },
   targetPill: { flexDirection: "row", alignItems: "center", gap: 4, borderRadius: 99, paddingHorizontal: 10, paddingVertical: 4 },
-  targetPost: { backgroundColor: "#ede9fe" },
+  targetPost: { backgroundColor: "#EAF8F5" },
   targetComment: { backgroundColor: "#cffafe" },
   targetLabel: { fontSize: 12, fontWeight: "700", letterSpacing: 0.3 },
-  targetPostLabel: { color: "#4f46e5" },
-  targetCommentLabel: { color: "#0891b2" },
-  detailsBox: { backgroundColor: "#f8fafc", borderRadius: 12, padding: 12, marginTop: 4 },
-  detailsLabel: { fontSize: 11, fontWeight: "600", color: "#94a3b8", textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 6 },
-  detailsText: { fontSize: 14, color: "#334155", lineHeight: 20 },
+  targetPostLabel: { color: "#0E7C86" },
+  targetCommentLabel: { color: "#0E7C86" },
+  detailsBox: { backgroundColor: "#F5FAF9", borderRadius: 12, padding: 12, marginTop: 4 },
+  detailsLabel: { fontSize: 11, fontWeight: "600", color: "#8BA3AB", textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 6 },
+  detailsText: { fontSize: 14, color: "#31515F", lineHeight: 20 },
   postLoadingRow: { flexDirection: "row", alignItems: "center", gap: 8, paddingVertical: 8 },
-  postLoadingText: { fontSize: 13, color: "#94a3b8" },
+  postLoadingText: { fontSize: 13, color: "#8BA3AB" },
   postAuthorRow: { flexDirection: "row", alignItems: "center", gap: 10, marginBottom: 12 },
-  postAvatar: { width: 36, height: 36, borderRadius: 18, backgroundColor: "#ede9fe", alignItems: "center", justifyContent: "center" },
-  postAvatarText: { fontSize: 14, fontWeight: "700", color: "#4f46e5" },
-  postAuthorName: { fontSize: 13, fontWeight: "700", color: "#0f172a" },
-  anonBadge: { fontSize: 11, color: "#94a3b8", marginTop: 1 },
-  postContentBox: { backgroundColor: "#f8fafc", borderRadius: 12, padding: 12, borderWidth: 1, borderColor: "#e2e8f0" },
-  postContentText: { fontSize: 14, color: "#334155", lineHeight: 22 },
-  postUnavailable: { fontSize: 13, color: "#94a3b8", fontStyle: "italic" },
+  postAvatar: { width: 36, height: 36, borderRadius: 18, backgroundColor: "#EAF8F5", alignItems: "center", justifyContent: "center" },
+  postAvatarText: { fontSize: 14, fontWeight: "700", color: "#0E7C86" },
+  postAuthorName: { fontSize: 13, fontWeight: "700", color: "#0E2A47" },
+  anonBadge: { fontSize: 11, color: "#8BA3AB", marginTop: 1 },
+  postContentBox: { backgroundColor: "#F5FAF9", borderRadius: 12, padding: 12, borderWidth: 1, borderColor: "#E0EDEB" },
+  postContentText: { fontSize: 14, color: "#31515F", lineHeight: 22 },
+  postUnavailable: { fontSize: 13, color: "#8BA3AB", fontStyle: "italic" },
   personRow: { flexDirection: "row", alignItems: "center", gap: 12 },
-  avatarCircle: { width: 44, height: 44, borderRadius: 22, backgroundColor: "#ede9fe", alignItems: "center", justifyContent: "center", flexShrink: 0 },
+  avatarCircle: { width: 44, height: 44, borderRadius: 22, backgroundColor: "#EAF8F5", alignItems: "center", justifyContent: "center", flexShrink: 0 },
   avatarGreen: { backgroundColor: "#d1fae5" },
-  avatarLetter: { fontSize: 18, fontWeight: "700", color: "#4f46e5" },
-  personName: { fontSize: 14, fontWeight: "700", color: "#0f172a" },
-  personEmail: { fontSize: 12, color: "#94a3b8", marginTop: 2 },
-  actionOption: { flexDirection: "row", alignItems: "center", gap: 12, borderRadius: 14, borderWidth: 1.5, borderColor: "#e2e8f0", padding: 14, marginBottom: 10, backgroundColor: "#f8fafc" },
+  avatarLetter: { fontSize: 18, fontWeight: "700", color: "#0E7C86" },
+  personName: { fontSize: 14, fontWeight: "700", color: "#0E2A47" },
+  personEmail: { fontSize: 12, color: "#8BA3AB", marginTop: 2 },
+  actionOption: { flexDirection: "row", alignItems: "center", gap: 12, borderRadius: 14, borderWidth: 1.5, borderColor: "#E0EDEB", padding: 14, marginBottom: 10, backgroundColor: "#F5FAF9" },
   actionIcon: { width: 44, height: 44, borderRadius: 12, alignItems: "center", justifyContent: "center", flexShrink: 0 },
   actionTextWrap: { flex: 1 },
-  actionLabel: { fontSize: 14, fontWeight: "700", color: "#0f172a", marginBottom: 2 },
-  actionDesc: { fontSize: 12, color: "#64748b", lineHeight: 16 },
-  radioOuter: { width: 20, height: 20, borderRadius: 10, borderWidth: 2, borderColor: "#cbd5e1", flexShrink: 0 },
-  reasonInput: { borderWidth: 1.5, borderColor: "#e2e8f0", borderRadius: 14, padding: 12, fontSize: 14, color: "#0f172a", minHeight: 100, backgroundColor: "#f8fafc" },
+  actionLabel: { fontSize: 14, fontWeight: "700", color: "#0E2A47", marginBottom: 2 },
+  actionDesc: { fontSize: 12, color: "#64808C", lineHeight: 16 },
+  radioOuter: { width: 20, height: 20, borderRadius: 10, borderWidth: 2, borderColor: "#C4D8DA", flexShrink: 0 },
+  reasonInput: { borderWidth: 1.5, borderColor: "#E0EDEB", borderRadius: 14, padding: 12, fontSize: 14, color: "#0E2A47", minHeight: 100, backgroundColor: "#F5FAF9" },
   errorBox: { flexDirection: "row", alignItems: "center", gap: 8, backgroundColor: "#fef2f2", borderRadius: 12, padding: 12, marginTop: 12 },
   errorText: { fontSize: 13, color: "#dc2626", flex: 1 },
-  submitBtn: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, backgroundColor: "#4f46e5", borderRadius: 16, paddingVertical: 15, marginTop: 20 },
+  submitBtn: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, backgroundColor: "#0E7C86", borderRadius: 16, paddingVertical: 15, marginTop: 20 },
   submitPressed: { opacity: 0.85 },
   submitDisabled: { opacity: 0.6 },
   submitLabel: { fontSize: 15, fontWeight: "700", color: "#ffffff" },
-  charCounter: { fontSize: 11, color: "#94a3b8", textAlign: "right", marginTop: 5 },
+  charCounter: { fontSize: 11, color: "#8BA3AB", textAlign: "right", marginTop: 5 },
   centered: { flex: 1, alignItems: "center", justifyContent: "center", padding: 24 },
-  loadingText: { marginTop: 12, fontSize: 14, color: "#94a3b8" },
+  loadingText: { marginTop: 12, fontSize: 14, color: "#8BA3AB" },
   errorIconWrap: { width: 72, height: 72, borderRadius: 36, backgroundColor: "#fff1f2", alignItems: "center", justifyContent: "center", marginBottom: 16 },
-  errorTitle: { fontSize: 17, fontWeight: "700", color: "#0f172a", marginBottom: 6 },
-  errorSub: { fontSize: 14, color: "#64748b", textAlign: "center", marginBottom: 20 },
-  retryBtn: { paddingHorizontal: 24, paddingVertical: 12, borderRadius: 12, backgroundColor: "#4f46e5" },
+  errorTitle: { fontSize: 17, fontWeight: "700", color: "#0E2A47", marginBottom: 6 },
+  errorSub: { fontSize: 14, color: "#64808C", textAlign: "center", marginBottom: 20 },
+  retryBtn: { paddingHorizontal: 24, paddingVertical: 12, borderRadius: 12, backgroundColor: "#0E7C86" },
   retryLabel: { fontSize: 14, fontWeight: "700", color: "#ffffff" },
   // Decision badge row inside Already Reviewed card
   actionDecisionRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: 14 },

@@ -45,7 +45,7 @@ export default function ModeratorHistoryScreen() {
       {/* Header */}
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} style={styles.backBtn} hitSlop={10}>
-          <Ionicons name="arrow-back" size={22} color="#0f172a" />
+          <Ionicons name="arrow-back" size={22} color="#0E2A47" />
         </Pressable>
         <View style={styles.headerCenter}>
           <Text style={styles.headerTitle}>Moderation History</Text>
@@ -68,7 +68,7 @@ export default function ModeratorHistoryScreen() {
 
       {loading ? (
         <View style={styles.centered}>
-          <ActivityIndicator size="large" color="#7c3aed" />
+          <ActivityIndicator size="large" color="#0E7C86" />
           <Text style={styles.loadingText}>Loading history...</Text>
         </View>
       ) : error ? (
@@ -98,7 +98,7 @@ export default function ModeratorHistoryScreen() {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={() => void refresh()}
-              tintColor="#7c3aed"
+              tintColor="#0E7C86"
             />
           }
           onEndReached={() => void loadMore()}
@@ -106,7 +106,7 @@ export default function ModeratorHistoryScreen() {
           ListEmptyComponent={
             <View style={styles.emptyBox}>
               <View style={styles.emptyIcon}>
-                <Ionicons name="time-outline" size={36} color="#94a3b8" />
+                <Ionicons name="time-outline" size={36} color="#8BA3AB" />
               </View>
               <Text style={styles.emptyTitle}>No history yet</Text>
               <Text style={styles.emptySub}>
@@ -117,7 +117,7 @@ export default function ModeratorHistoryScreen() {
           ListFooterComponent={
             loadingMore ? (
               <View style={styles.loadingMore}>
-                <ActivityIndicator size="small" color="#7c3aed" />
+                <ActivityIndicator size="small" color="#0E7C86" />
               </View>
             ) : null
           }
@@ -128,27 +128,27 @@ export default function ModeratorHistoryScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#f8fafc" },
+  container: { flex: 1, backgroundColor: "#F5FAF9" },
   header: {
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: "#e2e8f0",
+    borderBottomColor: "#E0EDEB",
     backgroundColor: "#ffffff",
   },
   backBtn: {
     width: 40,
     height: 40,
     borderRadius: 12,
-    backgroundColor: "#f1f5f9",
+    backgroundColor: "#EDF5F4",
     alignItems: "center",
     justifyContent: "center",
   },
   headerCenter: { flex: 1, alignItems: "center" },
-  headerTitle: { fontSize: 17, fontWeight: "700", color: "#0f172a" },
-  headerSub: { fontSize: 12, color: "#94a3b8", marginTop: 1 },
+  headerTitle: { fontSize: 17, fontWeight: "700", color: "#0E2A47" },
+  headerSub: { fontSize: 12, color: "#8BA3AB", marginTop: 1 },
   infoBanner: {
     flexDirection: "row",
     alignItems: "center",
@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
   },
   listContent: { padding: 16, paddingBottom: 32 },
   centered: { flex: 1, alignItems: "center", justifyContent: "center", padding: 24 },
-  loadingText: { marginTop: 12, fontSize: 14, color: "#94a3b8" },
+  loadingText: { marginTop: 12, fontSize: 14, color: "#8BA3AB" },
   errorIconWrap: {
     width: 72,
     height: 72,
@@ -176,24 +176,24 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginBottom: 16,
   },
-  errorTitle: { fontSize: 17, fontWeight: "700", color: "#0f172a", marginBottom: 6 },
-  errorSub: { fontSize: 14, color: "#64748b", textAlign: "center", marginBottom: 20 },
-  retryBtn: { paddingHorizontal: 24, paddingVertical: 12, borderRadius: 12, backgroundColor: "#7c3aed" },
+  errorTitle: { fontSize: 17, fontWeight: "700", color: "#0E2A47", marginBottom: 6 },
+  errorSub: { fontSize: 14, color: "#64808C", textAlign: "center", marginBottom: 20 },
+  retryBtn: { paddingHorizontal: 24, paddingVertical: 12, borderRadius: 12, backgroundColor: "#0E7C86" },
   retryLabel: { fontSize: 14, fontWeight: "700", color: "#ffffff" },
   emptyBox: { alignItems: "center", paddingTop: 60 },
   emptyIcon: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: "#f1f5f9",
+    backgroundColor: "#EDF5F4",
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 16,
   },
-  emptyTitle: { fontSize: 18, fontWeight: "700", color: "#334155", marginBottom: 6 },
+  emptyTitle: { fontSize: 18, fontWeight: "700", color: "#31515F", marginBottom: 6 },
   emptySub: {
     fontSize: 14,
-    color: "#94a3b8",
+    color: "#8BA3AB",
     textAlign: "center",
     lineHeight: 20,
     maxWidth: 260,

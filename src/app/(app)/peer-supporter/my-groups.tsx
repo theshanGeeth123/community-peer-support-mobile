@@ -26,7 +26,6 @@ import {
 import {
   router,
   useFocusEffect,
-  type Href,
 } from "expo-router";
 
 import {
@@ -182,7 +181,7 @@ export default function PeerSupporterMyGroupsScreen() {
     ) => {
       router.push({
         pathname:
-          "/(app)/peer-supporter/join-requests" as Href,
+          "/(app)/peer-supporter/join-requests",
 
         params: {
           groupId,
@@ -196,7 +195,7 @@ export default function PeerSupporterMyGroupsScreen() {
     ) => {
       router.push({
         pathname:
-          "/(app)/peer-supporter/group/[groupId]/posts" as Href,
+          "/(app)/peer-supporter/group/[groupId]/posts",
 
         params: {
           groupId,
@@ -274,7 +273,7 @@ export default function PeerSupporterMyGroupsScreen() {
             <Ionicons
               name="heart-outline"
               size={25}
-              color="#4f46e5"
+              color="#0E7C86"
             />
           </View>
 
@@ -309,7 +308,7 @@ export default function PeerSupporterMyGroupsScreen() {
           <Ionicons
             name="search-outline"
             size={20}
-            color="#94a3b8"
+            color="#8BA3AB"
           />
 
           <TextInput
@@ -318,7 +317,7 @@ export default function PeerSupporterMyGroupsScreen() {
               setSearch
             }
             placeholder="Search assigned groups..."
-            placeholderTextColor="#94a3b8"
+            placeholderTextColor="#8BA3AB"
             style={
               styles.searchInput
             }
@@ -335,7 +334,7 @@ export default function PeerSupporterMyGroupsScreen() {
               <Ionicons
                 name="close-circle"
                 size={20}
-                color="#94a3b8"
+                color="#8BA3AB"
               />
             </Pressable>
           )}
@@ -391,7 +390,7 @@ export default function PeerSupporterMyGroupsScreen() {
           >
             <ActivityIndicator
               size="large"
-              color="#4f46e5"
+              color="#0E7C86"
             />
 
             <Text
@@ -418,7 +417,7 @@ export default function PeerSupporterMyGroupsScreen() {
               <Ionicons
                 name="people-outline"
                 size={30}
-                color="#94a3b8"
+                color="#8BA3AB"
               />
             </View>
 
@@ -514,7 +513,7 @@ function GroupCard({
           <Ionicons
             name="people"
             size={23}
-            color="#4f46e5"
+            color="#0E7C86"
           />
         </View>
 
@@ -573,7 +572,7 @@ function GroupCard({
           <Ionicons
             name="location-outline"
             size={16}
-            color="#64748b"
+            color="#64808C"
           />
 
           <Text
@@ -601,7 +600,7 @@ function GroupCard({
           <Ionicons
             name="heart-outline"
             size={17}
-            color="#6366f1"
+            color="#168994"
           />
 
           <Text
@@ -626,7 +625,7 @@ function GroupCard({
           <Ionicons
             name="shield-checkmark-outline"
             size={17}
-            color="#6366f1"
+            color="#168994"
           />
 
           <Text
@@ -666,7 +665,7 @@ function GroupCard({
           <Ionicons
             name="person-add-outline"
             size={18}
-            color="#4f46e5"
+            color="#0E7C86"
           />
         </View>
 
@@ -696,7 +695,7 @@ function GroupCard({
         <Ionicons
           name="chevron-forward"
           size={19}
-          color="#6366f1"
+          color="#168994"
         />
       </Pressable>
 
@@ -723,7 +722,7 @@ function GroupCard({
           <Ionicons
             name="chatbubbles-outline"
             size={18}
-            color="#4f46e5"
+            color="#0E7C86"
           />
         </View>
 
@@ -752,7 +751,7 @@ function GroupCard({
         <Ionicons
           name="chevron-forward"
           size={19}
-          color="#6366f1"
+          color="#168994"
         />
       </Pressable>
     </View>
@@ -765,7 +764,7 @@ const styles =
       flex: 1,
 
       backgroundColor:
-        "#f8fafc",
+        "#F5FAF9",
     },
 
     content: {
@@ -789,7 +788,7 @@ const styles =
         "800",
 
       color:
-        "#0f172a",
+        "#0E2A47",
     },
 
     headingDescription: {
@@ -800,7 +799,7 @@ const styles =
       lineHeight: 21,
 
       color:
-        "#64748b",
+        "#64808C",
     },
 
     summaryCard: {
@@ -817,7 +816,7 @@ const styles =
       borderWidth: 1,
 
       borderColor:
-        "#e2e8f0",
+        "#E0EDEB",
 
       borderRadius: 20,
 
@@ -839,7 +838,7 @@ const styles =
       borderRadius: 17,
 
       backgroundColor:
-        "#eef2ff",
+        "#EAF8F5",
     },
 
     summaryContent: {
@@ -852,7 +851,7 @@ const styles =
       fontSize: 13,
 
       color:
-        "#64748b",
+        "#64808C",
     },
 
     summaryValue: {
@@ -864,7 +863,7 @@ const styles =
         "800",
 
       color:
-        "#0f172a",
+        "#0E2A47",
     },
 
     searchBox: {
@@ -884,7 +883,7 @@ const styles =
       borderWidth: 1,
 
       borderColor:
-        "#e2e8f0",
+        "#E0EDEB",
 
       borderRadius: 16,
 
@@ -900,7 +899,7 @@ const styles =
       fontSize: 15,
 
       color:
-        "#0f172a",
+        "#0E2A47",
     },
 
     errorBox: {
@@ -947,7 +946,7 @@ const styles =
         "700",
 
       color:
-        "#4f46e5",
+        "#0E7C86",
     },
 
     loadingArea: {
@@ -962,7 +961,7 @@ const styles =
       marginTop: 12,
 
       color:
-        "#64748b",
+        "#64808C",
     },
 
     emptyCard: {
@@ -980,7 +979,7 @@ const styles =
       borderWidth: 1,
 
       borderColor:
-        "#e2e8f0",
+        "#E0EDEB",
 
       borderRadius: 20,
 
@@ -1002,7 +1001,7 @@ const styles =
       borderRadius: 31,
 
       backgroundColor:
-        "#f1f5f9",
+        "#EDF5F4",
     },
 
     emptyTitle: {
@@ -1014,7 +1013,7 @@ const styles =
         "700",
 
       color:
-        "#475569",
+        "#4D6C78",
     },
 
     emptyDescription: {
@@ -1030,7 +1029,7 @@ const styles =
       lineHeight: 18,
 
       color:
-        "#94a3b8",
+        "#8BA3AB",
     },
 
     groupList: {
@@ -1045,7 +1044,7 @@ const styles =
       borderWidth: 1,
 
       borderColor:
-        "#e2e8f0",
+        "#E0EDEB",
 
       borderRadius: 20,
 
@@ -1075,7 +1074,7 @@ const styles =
       borderRadius: 15,
 
       backgroundColor:
-        "#eef2ff",
+        "#EAF8F5",
     },
 
     groupTitleArea: {
@@ -1093,7 +1092,7 @@ const styles =
         "800",
 
       color:
-        "#0f172a",
+        "#0E2A47",
     },
 
     category: {
@@ -1105,7 +1104,7 @@ const styles =
         "600",
 
       color:
-        "#6366f1",
+        "#168994",
     },
 
     activeBadge: {
@@ -1138,7 +1137,7 @@ const styles =
       lineHeight: 21,
 
       color:
-        "#475569",
+        "#4D6C78",
     },
 
     locationRow: {
@@ -1157,7 +1156,7 @@ const styles =
       fontSize: 12,
 
       color:
-        "#64748b",
+        "#64808C",
     },
 
     staffSection: {
@@ -1171,7 +1170,7 @@ const styles =
       borderTopWidth: 1,
 
       borderTopColor:
-        "#f1f5f9",
+        "#EDF5F4",
     },
 
     staffItem: {
@@ -1190,7 +1189,7 @@ const styles =
       fontSize: 11,
 
       color:
-        "#64748b",
+        "#64808C",
     },
 
     requestsButton: {
@@ -1210,12 +1209,12 @@ const styles =
       borderWidth: 1,
 
       borderColor:
-        "#c7d2fe",
+        "#B7E7DA",
 
       borderRadius: 14,
 
       backgroundColor:
-        "#eef2ff",
+        "#EAF8F5",
     },
 
     requestsButtonIcon: {
@@ -1248,7 +1247,7 @@ const styles =
         "800",
 
       color:
-        "#4f46e5",
+        "#0E7C86",
     },
 
     requestsButtonDescription: {
@@ -1257,6 +1256,6 @@ const styles =
       fontSize: 10,
 
       color:
-        "#64748b",
+        "#64808C",
     },
   });

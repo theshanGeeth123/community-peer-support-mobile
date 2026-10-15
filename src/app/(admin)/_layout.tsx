@@ -29,7 +29,7 @@ export default function AdminLayout() {
       <View style={styles.loadingContainer}>
         <ActivityIndicator
           size="large"
-          color="#4f46e5"
+          color="#0E7C86"
         />
       </View>
     );
@@ -61,7 +61,7 @@ export default function AdminLayout() {
         animation: "slide_from_right",
 
         contentStyle: {
-          backgroundColor: "#f8fafc",
+          backgroundColor: "#F5FAF9",
         },
       }}
     />
@@ -73,6 +73,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#f8fafc",
+    backgroundColor: "#F5FAF9",
   },
 });

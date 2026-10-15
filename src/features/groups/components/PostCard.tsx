@@ -291,7 +291,7 @@ export default function PostCard({
           <Ionicons
             name="notifications"
             size={12}
-            color="#4f46e5"
+            color="#0E7C86"
           />
 
           <Text style={styles.notificationBadgeText}>
@@ -398,7 +398,7 @@ export default function PostCard({
             <Ionicons
               name="person"
               size={20}
-              color="#4f46e5"
+              color="#0E7C86"
             />
           ) : (
             <Text style={styles.avatarText}>
@@ -451,7 +451,7 @@ export default function PostCard({
                 color={
                   post.isPinned
                     ? "#b45309"
-                    : "#94a3b8"
+                    : "#8BA3AB"
                 }
               />
             </Pressable>
@@ -466,7 +466,7 @@ export default function PostCard({
               <Ionicons
                 name="trash-outline"
                 size={19}
-                color="#94a3b8"
+                color="#8BA3AB"
               />
             </Pressable>
           )}
@@ -483,7 +483,7 @@ export default function PostCard({
                 <Ionicons
                   name="flag-outline"
                   size={19}
-                  color="#94a3b8"
+                  color="#8BA3AB"
                 />
               </Pressable>
             )}
@@ -675,7 +675,7 @@ export default function PostCard({
               <Ionicons
                 name="heart-outline"
                 size={19}
-                color="#64748b"
+                color="#64808C"
               />
             )}
 
@@ -708,7 +708,7 @@ export default function PostCard({
           <Ionicons
             name="chatbubble-outline"
             size={18}
-            color="#64748b"
+            color="#64808C"
           />
 
           <Text style={styles.actionText}>
@@ -729,7 +729,7 @@ const styles = StyleSheet.create({
     marginTop: 14,
     padding: 16,
     borderWidth: 1,
-    borderColor: "#e2e8f0",
+    borderColor: "#E0EDEB",
     borderRadius: 20,
     backgroundColor: "#ffffff",
   },
@@ -745,8 +745,8 @@ const styles = StyleSheet.create({
 
   cardHighlighted: {
     borderWidth: 2,
-    borderColor: "#6366f1",
-    backgroundColor: "#eef2ff",
+    borderColor: "#168994",
+    backgroundColor: "#EAF8F5",
   },
 
   notificationBadge: {
@@ -757,14 +757,14 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     alignItems: "center",
     borderRadius: 999,
-    backgroundColor: "#e0e7ff",
+    backgroundColor: "#D8F3EA",
   },
 
   notificationBadgeText: {
     marginLeft: 5,
     fontSize: 11,
     fontWeight: "800",
-    color: "#4f46e5",
+    color: "#0E7C86",
   },
 
   crisisBanner: {
@@ -844,13 +844,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 21,
-    backgroundColor: "#eef2ff",
+    backgroundColor: "#EAF8F5",
   },
 
   avatarText: {
     fontSize: 13,
     fontWeight: "800",
-    color: "#4f46e5",
+    color: "#0E7C86",
   },
 
   headerText: {
@@ -867,13 +867,13 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     fontSize: 14,
     fontWeight: "800",
-    color: "#0f172a",
+    color: "#0E2A47",
   },
 
   timestamp: {
     marginTop: 3,
     fontSize: 11,
-    color: "#94a3b8",
+    color: "#8BA3AB",
   },
 
   headerActions: {
@@ -889,14 +889,14 @@ const styles = StyleSheet.create({
     marginTop: 14,
     fontSize: 14,
     lineHeight: 21,
-    color: "#334155",
+    color: "#31515F",
   },
 
   postImageWrapper: {
     marginTop: 12,
     overflow: "hidden",
     borderRadius: 16,
-    backgroundColor: "#f1f5f9",
+    backgroundColor: "#EDF5F4",
   },
 
   postImage: {
@@ -1005,7 +1005,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     fontSize: 12,
     fontWeight: "700",
-    color: "#94a3b8",
+    color: "#8BA3AB",
   },
 
   footer: {
@@ -1014,7 +1014,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     borderTopWidth: 1,
-    borderTopColor: "#f1f5f9",
+    borderTopColor: "#EDF5F4",
   },
 
   /*
@@ -1035,7 +1035,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#e2e8f0",
+    borderColor: "#E0EDEB",
     borderRadius: 18,
     backgroundColor: "#ffffff",
     shadowColor: "#000000",
@@ -1057,7 +1057,7 @@ const styles = StyleSheet.create({
   },
 
   reactionOptionSelected: {
-    backgroundColor: "#f1f5f9",
+    backgroundColor: "#EDF5F4",
   },
 
   reactionEmoji: {
@@ -1069,17 +1069,17 @@ const styles = StyleSheet.create({
   },
 
   reactedActionButton: {
-    backgroundColor: "#f8fafc",
+    backgroundColor: "#F5FAF9",
   },
 
   reactedActionText: {
-    color: "#4f46e5",
+    color: "#0E7C86",
   },
 
   reactionLabel: {
     marginLeft: 4,
     fontSize: 12,
-    color: "#64748b",
+    color: "#64808C",
   },
 
   actionButton: {
@@ -1095,12 +1095,12 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     fontSize: 13,
     fontWeight: "700",
-    color: "#64748b",
+    color: "#64808C",
   },
 
   actionLabel: {
     marginLeft: 5,
     fontSize: 12,
-    color: "#94a3b8",
+    color: "#8BA3AB",
   },
 });

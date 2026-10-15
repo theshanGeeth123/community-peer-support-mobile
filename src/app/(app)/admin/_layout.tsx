@@ -23,10 +23,10 @@ export default function AdminTabsLayout() {
           headerShown: false,
 
           tabBarActiveTintColor:
-            "#4f46e5",
+            "#0E7C86",
 
           tabBarInactiveTintColor:
-            "#94a3b8",
+            "#8BA3AB",
 
           tabBarHideOnKeyboard:
             true,
@@ -37,23 +37,18 @@ export default function AdminTabsLayout() {
           },
 
           tabBarStyle: {
-            height:
-              Platform.OS === "ios"
-                ? 88
-                : 72,
-
-            paddingTop: 6,
-
-            paddingBottom:
-              Platform.OS === "ios"
-                ? 24
-                : 8,
-
-            backgroundColor:
-              "#ffffff",
-
-            borderTopColor:
-              "#e2e8f0",
+            backgroundColor: '#FFFFFF',
+            borderTopWidth: 0,
+            borderTopLeftRadius: 24,
+            borderTopRightRadius: 24,
+            height: Platform.OS === 'ios' ? 90 : 76,
+            paddingTop: 11,
+            paddingBottom: Platform.OS === 'ios' ? 26 : 9,
+            shadowColor: '#0E2A47',
+            shadowOffset: { width: 0, height: -5 },
+            shadowOpacity: 0.07,
+            shadowRadius: 14,
+            elevation: 12,
           },
         }}
       >

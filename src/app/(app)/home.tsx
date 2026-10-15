@@ -29,7 +29,7 @@ export default function HomeScreen() {
     <SafeAreaView
       style={{
         flex: 1,
-        backgroundColor: "#f8fafc",
+        backgroundColor: "#F5FAF9",
       }}
       edges={[
         "top",
@@ -107,7 +107,7 @@ export default function HomeScreen() {
               <Ionicons
                 name="person-outline"
                 size={20}
-                color="#4f46e5"
+                color="#0E7C86"
               />
             </View>
 
@@ -155,7 +155,7 @@ export default function HomeScreen() {
             <Ionicons
               name="people-outline"
               size={24}
-              color="#4f46e5"
+              color="#0E7C86"
             />
           </View>
 
@@ -173,7 +173,7 @@ export default function HomeScreen() {
           <Ionicons
             name="chevron-forward"
             size={20}
-            color="#94a3b8"
+            color="#8BA3AB"
           />
         </Pressable>
 
@@ -189,7 +189,7 @@ export default function HomeScreen() {
             <Ionicons
               name="chatbubbles-outline"
               size={24}
-              color="#7c3aed"
+              color="#0E7C86"
             />
           </View>
 
@@ -207,7 +207,7 @@ export default function HomeScreen() {
           <Ionicons
             name="chevron-forward"
             size={20}
-            color="#94a3b8"
+            color="#8BA3AB"
           />
         </Pressable>
 
@@ -241,7 +241,7 @@ export default function HomeScreen() {
           <Ionicons
             name="chevron-forward"
             size={20}
-            color="#94a3b8"
+            color="#8BA3AB"
           />
         </Pressable>
 
@@ -282,7 +282,7 @@ export default function HomeScreen() {
                 <Ionicons
                   name="chevron-forward"
                   size={20}
-                  color="#cbd5e1"
+                  color="#C4D8DA"
                 />
               </View>
             </Pressable>

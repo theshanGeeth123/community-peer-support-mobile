@@ -35,7 +35,7 @@ export default function RoleTabPlaceholder({
       style={{
         flex: 1,
         backgroundColor:
-          "#f8fafc",
+          "#F5FAF9",
       }}
       edges={[
         "top",
@@ -55,7 +55,7 @@ export default function RoleTabPlaceholder({
             <Ionicons
               name={icon}
               size={28}
-              color="#4f46e5"
+              color="#0E7C86"
             />
           </View>
 

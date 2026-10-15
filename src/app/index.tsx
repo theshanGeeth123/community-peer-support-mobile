@@ -28,7 +28,7 @@ export default function IndexScreen() {
       <View style={styles.container}>
         <ActivityIndicator
           size="large"
-          color="#4f46e5"
+          color="#0E7C86"
         />
       </View>
     );
@@ -65,6 +65,6 @@ const styles =
         "center",
 
       backgroundColor:
-        "#f8fafc",
+        "#F5FAF9",
     },
   });

@@ -1,62 +1,72 @@
-import type { PropsWithChildren } from "react";
-
+import type { PropsWithChildren } from 'react';
 import {
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    Text,
-    View,
-} from "react-native";
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import BrandMark from '@/features/branding/components/BrandMark';
+import { Brand } from '@/theme/brand';
 
 interface AuthScreenProps extends PropsWithChildren {
   title: string;
   subtitle: string;
 }
 
-export default function AuthScreen({
-  title,
-  subtitle,
-  children,
-}: AuthScreenProps) {
+export default function AuthScreen({ title, subtitle, children }: AuthScreenProps) {
   return (
-    <KeyboardAvoidingView
-      className="flex-1 bg-slate-50"
-      behavior={
-        Platform.OS === "ios" ? "padding" : undefined
-      }
-    >
-      <ScrollView
-        className="flex-1"
-        contentContainerClassName="flex-grow px-6 py-10"
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
+    <SafeAreaView edges={['top', 'left', 'right']} style={styles.safe}>
+      <KeyboardAvoidingView
+        style={styles.flex}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-        <View className="flex-1 justify-center">
-          <View className="mb-8">
-            <View className="mb-5 h-14 w-14 items-center justify-center rounded-2xl bg-indigo-600">
-              <Text className="text-2xl font-bold text-white">
-                C
-              </Text>
+        <ScrollView
+          contentContainerStyle={styles.content}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <View pointerEvents="none" style={styles.topShape} />
+          <View style={styles.brandRow}>
+            <BrandMark />
+            <View style={styles.safetyBadge}>
+              <Text style={styles.safetyText}>SAFE SPACES</Text>
             </View>
-
-            <Text className="text-3xl font-bold tracking-tight text-slate-900">
-              {title}
-            </Text>
-
-            <Text className="mt-2 text-base leading-6 text-slate-500">
-              {subtitle}
-            </Text>
           </View>
-
-          <View className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-            {children}
+          <View style={styles.hero}>
+            <Text style={styles.eyebrow}>CONNECT  ·  SHARE  ·  BELONG</Text>
+            <Text style={styles.title}>{title}</Text>
+            <Text style={styles.subtitle}>{subtitle}</Text>
           </View>
-
-          <Text className="mt-8 text-center text-xs leading-5 text-slate-400">
-            Community Peer Support Network
-          </Text>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+          <View style={styles.formCard}>{children}</View>
+          <View style={styles.footer}>
+            <View style={styles.footerRule} />
+            <Text style={styles.footerText}>Real people. Safer spaces. Brighter tomorrows.</Text>
+            <Text style={styles.footerBrand}>ALYVEN  ·  A PLACE TO BE HEARD</Text>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  flex: { flex: 1 },
+  safe: { flex: 1, backgroundColor: Brand.background },
+  content: { flexGrow: 1, paddingHorizontal: 22, paddingTop: 24, paddingBottom: 36 },
+  topShape: { position: 'absolute', right: -140, top: -210, width: 360, height: 360, borderRadius: 180, backgroundColor: Brand.mint, opacity: 0.7 },
+  brandRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  safetyBadge: { backgroundColor: Brand.white, borderColor: Brand.border, borderWidth: 1, borderRadius: 20, paddingHorizontal: 10, paddingVertical: 8 },
+  safetyText: { color: Brand.teal, fontWeight: '800', fontSize: 9, letterSpacing: 0.7 },
+  hero: { marginTop: 35, marginBottom: 24 },
+  eyebrow: { color: Brand.teal, fontWeight: '800', fontSize: 10, letterSpacing: 1.6 },
+  title: { color: Brand.navy, fontSize: 35, fontWeight: '900', letterSpacing: -1.1, marginTop: 11 },
+  subtitle: { color: Brand.secondaryText, fontSize: 14, lineHeight: 21, maxWidth: 340, marginTop: 9 },
+  formCard: { backgroundColor: Brand.white, borderColor: Brand.border, borderWidth: 1, borderRadius: 27, padding: 22, shadowColor: Brand.navy, shadowOpacity: 0.045, shadowRadius: 20, shadowOffset: { width: 0, height: 8 }, elevation: 2 },
+  footer: { alignItems: 'center', marginTop: 30 },
+  footerRule: { backgroundColor: Brand.aqua, width: 38, height: 3, borderRadius: 2, marginBottom: 15 },
+  footerText: { color: Brand.secondaryText, fontSize: 11.5, textAlign: 'center' },
+  footerBrand: { color: Brand.teal, letterSpacing: 1.2, fontSize: 9, fontWeight: '800', marginTop: 9 },
+});

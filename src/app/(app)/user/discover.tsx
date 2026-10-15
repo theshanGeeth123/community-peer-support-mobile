@@ -1,3 +1,4 @@
+import SectionBanner from "@/features/branding/components/SectionBanner";
 import { useCallback, useMemo, useState } from "react";
 
 import {
@@ -15,7 +16,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Ionicons } from "@expo/vector-icons";
 
-import { router, useFocusEffect, type Href } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 
 import { groupApi } from "@/features/groups/api/group.api";
 import { groupMembershipApi } from "@/features/groups/api/groupMembership.api";
@@ -124,7 +125,7 @@ export default function DiscoverGroupsScreen() {
 
   const openGroup = (groupId: string) => {
     router.push({
-      pathname: "/(app)/user/group/[groupId]" as Href,
+      pathname: "/(app)/user/group/[groupId]",
       params: { groupId },
     });
   };
@@ -133,7 +134,7 @@ export default function DiscoverGroupsScreen() {
     <SafeAreaView style={styles.safeArea} edges={["top", "left", "right"]}>
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={22} color="#0f172a" />
+          <Ionicons name="arrow-back" size={22} color="#0E2A47" />
         </Pressable>
 
         <Text style={styles.headerTitle}>Discover Groups</Text>
@@ -148,20 +149,26 @@ export default function DiscoverGroupsScreen() {
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }
       >
+        <SectionBanner
+          eyebrow="FIND YOUR PEOPLE"
+          title="A community for every journey."
+          description="Explore supportive groups and discover where you feel a sense of belonging."
+          icon="compass-outline"
+        />
         <View style={styles.searchBox}>
-          <Ionicons name="search-outline" size={20} color="#94a3b8" />
+          <Ionicons name="search-outline" size={20} color="#8BA3AB" />
 
           <TextInput
             value={search}
             onChangeText={setSearch}
             placeholder="Search groups to join..."
-            placeholderTextColor="#94a3b8"
+            placeholderTextColor="#8BA3AB"
             style={styles.searchInput}
           />
 
           {search.length > 0 && (
             <Pressable hitSlop={10} onPress={() => setSearch("")}>
-              <Ionicons name="close-circle" size={20} color="#94a3b8" />
+              <Ionicons name="close-circle" size={20} color="#8BA3AB" />
             </Pressable>
           )}
         </View>
@@ -178,13 +185,13 @@ export default function DiscoverGroupsScreen() {
 
         {loading ? (
           <View style={styles.loadingArea}>
-            <ActivityIndicator size="large" color="#4f46e5" />
+            <ActivityIndicator size="large" color="#0E7C86" />
 
             <Text style={styles.loadingText}>Loading groups...</Text>
           </View>
         ) : discoverableGroups.length === 0 ? (
           <View style={styles.emptyCard}>
-            <Ionicons name="compass-outline" size={30} color="#94a3b8" />
+            <Ionicons name="compass-outline" size={30} color="#8BA3AB" />
 
             <Text style={styles.emptyTitle}>
               {search ? "No groups found" : "You're in every group already"}
@@ -208,7 +215,7 @@ export default function DiscoverGroupsScreen() {
             >
               <View style={styles.cardTop}>
                 <View style={styles.groupIcon}>
-                  <Ionicons name="people" size={23} color="#4f46e5" />
+                  <Ionicons name="people" size={23} color="#0E7C86" />
                 </View>
 
                 <View style={styles.groupTitleArea}>
@@ -217,7 +224,7 @@ export default function DiscoverGroupsScreen() {
                   <Text style={styles.category}>{group.category}</Text>
                 </View>
 
-                <Ionicons name="chevron-forward" size={20} color="#94a3b8" />
+                <Ionicons name="chevron-forward" size={20} color="#8BA3AB" />
               </View>
 
               <Text numberOfLines={2} style={styles.groupDescription}>
@@ -234,7 +241,7 @@ export default function DiscoverGroupsScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#f8fafc",
+    backgroundColor: "#F5FAF9",
   },
 
   header: {
@@ -243,7 +250,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     borderBottomWidth: 1,
-    borderBottomColor: "#e2e8f0",
+    borderBottomColor: "#E0EDEB",
     backgroundColor: "#ffffff",
   },
 
@@ -253,7 +260,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 14,
-    backgroundColor: "#f1f5f9",
+    backgroundColor: "#EDF5F4",
   },
 
   headerTitle: {
@@ -261,7 +268,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 17,
     fontWeight: "800",
-    color: "#0f172a",
+    color: "#0E2A47",
   },
 
   content: {
@@ -276,7 +283,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: "#e2e8f0",
+    borderColor: "#E0EDEB",
     backgroundColor: "#ffffff",
   },
 
@@ -284,7 +291,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 9,
     fontSize: 15,
-    color: "#0f172a",
+    color: "#0E2A47",
   },
 
   errorBox: {
@@ -304,7 +311,7 @@ const styles = StyleSheet.create({
   retryText: {
     marginTop: 8,
     fontWeight: "700",
-    color: "#4f46e5",
+    color: "#0E7C86",
   },
 
   loadingArea: {
@@ -314,7 +321,7 @@ const styles = StyleSheet.create({
 
   loadingText: {
     marginTop: 12,
-    color: "#64748b",
+    color: "#64808C",
   },
 
   emptyCard: {
@@ -324,7 +331,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: "#e2e8f0",
+    borderColor: "#E0EDEB",
     backgroundColor: "#ffffff",
   },
 
@@ -332,7 +339,7 @@ const styles = StyleSheet.create({
     marginTop: 13,
     fontSize: 16,
     fontWeight: "700",
-    color: "#475569",
+    color: "#4D6C78",
   },
 
   emptyDescription: {
@@ -340,7 +347,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 12,
     lineHeight: 18,
-    color: "#94a3b8",
+    color: "#8BA3AB",
   },
 
   groupCard: {
@@ -348,7 +355,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: "#e2e8f0",
+    borderColor: "#E0EDEB",
     backgroundColor: "#ffffff",
   },
 
@@ -363,7 +370,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 14,
-    backgroundColor: "#eef2ff",
+    backgroundColor: "#EAF8F5",
   },
 
   groupTitleArea: {
@@ -375,20 +382,20 @@ const styles = StyleSheet.create({
   groupName: {
     fontSize: 16,
     fontWeight: "800",
-    color: "#0f172a",
+    color: "#0E2A47",
   },
 
   category: {
     marginTop: 3,
     fontSize: 12,
     fontWeight: "600",
-    color: "#6366f1",
+    color: "#168994",
   },
 
   groupDescription: {
     marginTop: 12,
     fontSize: 13,
     lineHeight: 19,
-    color: "#475569",
+    color: "#4D6C78",
   },
 });

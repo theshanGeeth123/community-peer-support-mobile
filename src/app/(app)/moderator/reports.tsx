@@ -70,7 +70,7 @@ export default function ModeratorReportsScreen() {
           <Ionicons
             name="arrow-back"
             size={22}
-            color="#0f172a"
+            color="#0E2A47"
           />
         </Pressable>
 
@@ -117,7 +117,7 @@ export default function ModeratorReportsScreen() {
         <View style={styles.centered}>
           <ActivityIndicator
             size="large"
-            color="#4f46e5"
+            color="#0E7C86"
           />
           <Text style={styles.loadingText}>
             Loading reports…
@@ -159,7 +159,7 @@ export default function ModeratorReportsScreen() {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={() => void refresh()}
-              tintColor="#4f46e5"
+              tintColor="#0E7C86"
             />
           }
           onEndReached={() => void loadMore()}
@@ -170,7 +170,7 @@ export default function ModeratorReportsScreen() {
                 <Ionicons
                   name="flag-outline"
                   size={36}
-                  color="#94a3b8"
+                  color="#8BA3AB"
                 />
               </View>
               <Text style={styles.emptyTitle}>
@@ -188,7 +188,7 @@ export default function ModeratorReportsScreen() {
               <View style={styles.loadingMore}>
                 <ActivityIndicator
                   size="small"
-                  color="#4f46e5"
+                  color="#0E7C86"
                 />
               </View>
             ) : null
@@ -202,7 +202,7 @@ export default function ModeratorReportsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f8fafc",
+    backgroundColor: "#F5FAF9",
   },
   header: {
     flexDirection: "row",
@@ -210,14 +210,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: "#e2e8f0",
+    borderBottomColor: "#E0EDEB",
     backgroundColor: "#ffffff",
   },
   backBtn: {
     width: 40,
     height: 40,
     borderRadius: 12,
-    backgroundColor: "#f1f5f9",
+    backgroundColor: "#EDF5F4",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -228,11 +228,11 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 17,
     fontWeight: "700",
-    color: "#0f172a",
+    color: "#0E2A47",
   },
   headerSub: {
     fontSize: 12,
-    color: "#94a3b8",
+    color: "#8BA3AB",
     marginTop: 1,
   },
   filterRow: {
@@ -242,27 +242,27 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     backgroundColor: "#ffffff",
     borderBottomWidth: 1,
-    borderBottomColor: "#e2e8f0",
+    borderBottomColor: "#E0EDEB",
   },
   filterChip: {
     paddingHorizontal: 16,
     paddingVertical: 7,
     borderRadius: 99,
     borderWidth: 1.5,
-    borderColor: "#e2e8f0",
-    backgroundColor: "#f8fafc",
+    borderColor: "#E0EDEB",
+    backgroundColor: "#F5FAF9",
   },
   filterChipActive: {
-    borderColor: "#4f46e5",
-    backgroundColor: "#eef2ff",
+    borderColor: "#0E7C86",
+    backgroundColor: "#EAF8F5",
   },
   filterLabel: {
     fontSize: 13,
     fontWeight: "600",
-    color: "#64748b",
+    color: "#64808C",
   },
   filterLabelActive: {
-    color: "#4338ca",
+    color: "#09646E",
   },
   listContent: {
     padding: 16,
@@ -277,7 +277,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: 12,
     fontSize: 14,
-    color: "#94a3b8",
+    color: "#8BA3AB",
   },
   errorIcon: {
     width: 72,
@@ -291,12 +291,12 @@ const styles = StyleSheet.create({
   errorTitle: {
     fontSize: 17,
     fontWeight: "700",
-    color: "#0f172a",
+    color: "#0E2A47",
     marginBottom: 6,
   },
   errorSub: {
     fontSize: 14,
-    color: "#64748b",
+    color: "#64808C",
     textAlign: "center",
     marginBottom: 20,
   },
@@ -304,7 +304,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 12,
-    backgroundColor: "#4f46e5",
+    backgroundColor: "#0E7C86",
   },
   retryLabel: {
     fontSize: 14,
@@ -319,7 +319,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: "#f1f5f9",
+    backgroundColor: "#EDF5F4",
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 16,
@@ -327,12 +327,12 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#334155",
+    color: "#31515F",
     marginBottom: 6,
   },
   emptySub: {
     fontSize: 14,
-    color: "#94a3b8",
+    color: "#8BA3AB",
     textAlign: "center",
     lineHeight: 20,
   },

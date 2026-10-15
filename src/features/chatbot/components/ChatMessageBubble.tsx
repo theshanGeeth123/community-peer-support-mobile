@@ -57,7 +57,7 @@ export default function ChatMessageBubble({
             color={
               isSafety
                 ? "#b45309"
-                : "#4f46e5"
+                : "#0E7C86"
             }
           />
 
@@ -71,7 +71,7 @@ export default function ChatMessageBubble({
 
               color: isSafety
                 ? "#b45309"
-                : "#64748b",
+                : "#64808C",
             }}
           >
             {isSafety
@@ -98,10 +98,10 @@ export default function ChatMessageBubble({
           paddingVertical: 11,
 
           backgroundColor: isUser
-            ? "#4f46e5"
+            ? "#0E7C86"
             : isSafety
               ? "#fff7ed"
-              : "#f1f5f9",
+              : "#EDF5F4",
 
           borderWidth:
             isSafety ? 1 : 0,

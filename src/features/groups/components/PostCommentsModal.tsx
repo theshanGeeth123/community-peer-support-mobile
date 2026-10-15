@@ -1217,7 +1217,7 @@ export default function PostCommentsModal({
                       styles.editInput
                     }
                     placeholder="Edit your comment..."
-                    placeholderTextColor="#94a3b8"
+                    placeholderTextColor="#8BA3AB"
                   />
 
                   <View
@@ -1398,7 +1398,7 @@ export default function PostCommentsModal({
                       <Ionicons
                         name="return-down-forward-outline"
                         size={16}
-                        color="#64748b"
+                        color="#64808C"
                       />
 
                       <Text
@@ -1433,8 +1433,8 @@ export default function PostCommentsModal({
                         size={15}
                         color={
                           isPinned
-                            ? "#4f46e5"
-                            : "#64748b"
+                            ? "#0E7C86"
+                            : "#64808C"
                         }
                       />
 
@@ -1466,7 +1466,7 @@ export default function PostCommentsModal({
                       <Ionicons
                         name="create-outline"
                         size={16}
-                        color="#64748b"
+                        color="#64808C"
                       />
 
                       <Text
@@ -1598,7 +1598,7 @@ export default function PostCommentsModal({
                 <Ionicons
                   name="close"
                   size={22}
-                  color="#334155"
+                  color="#31515F"
                 />
               </Pressable>
             </View>
@@ -1608,14 +1608,14 @@ export default function PostCommentsModal({
                 <Ionicons
                   name="search-outline"
                   size={18}
-                  color="#94a3b8"
+                  color="#8BA3AB"
                 />
 
                 <TextInput
                   value={commentSearch}
                   onChangeText={setCommentSearch}
                   placeholder="Search comments..."
-                  placeholderTextColor="#94a3b8"
+                  placeholderTextColor="#8BA3AB"
                   style={styles.searchInput}
                   returnKeyType="search"
                   autoCorrect={false}
@@ -1629,7 +1629,7 @@ export default function PostCommentsModal({
                     <Ionicons
                       name="close-circle"
                       size={18}
-                      color="#94a3b8"
+                      color="#8BA3AB"
                     />
                   </Pressable>
                 )}
@@ -1647,7 +1647,7 @@ export default function PostCommentsModal({
                   <Ionicons
                     name="swap-vertical-outline"
                     size={17}
-                    color="#4f46e5"
+                    color="#0E7C86"
                   />
 
                   <Text style={styles.sortButtonText}>
@@ -1665,7 +1665,7 @@ export default function PostCommentsModal({
                         : "chevron-down"
                     }
                     size={15}
-                    color="#64748b"
+                    color="#64808C"
                   />
                 </Pressable>
 
@@ -1716,7 +1716,7 @@ export default function PostCommentsModal({
                           <Ionicons
                             name="checkmark"
                             size={16}
-                            color="#4f46e5"
+                            color="#0E7C86"
                           />
                         )}
                       </Pressable>
@@ -1744,7 +1744,7 @@ export default function PostCommentsModal({
                 >
                   <ActivityIndicator
                     size="large"
-                    color="#4f46e5"
+                    color="#0E7C86"
                   />
 
                   <Text
@@ -1774,7 +1774,7 @@ export default function PostCommentsModal({
                           : "chatbubble-ellipses-outline"
                       }
                       size={32}
-                      color="#6366f1"
+                      color="#168994"
                     />
                   </View>
 
@@ -1844,7 +1844,7 @@ export default function PostCommentsModal({
                   <Ionicons
                     name="return-down-forward-outline"
                     size={17}
-                    color="#4f46e5"
+                    color="#0E7C86"
                   />
 
                   <Text
@@ -1877,7 +1877,7 @@ export default function PostCommentsModal({
                   <Ionicons
                     name="close-circle"
                     size={20}
-                    color="#94a3b8"
+                    color="#8BA3AB"
                   />
                 </Pressable>
               </View>
@@ -1899,7 +1899,7 @@ export default function PostCommentsModal({
                     <Ionicons
                       name="close"
                       size={18}
-                      color="#64748b"
+                      color="#64808C"
                     />
                   </Pressable>
                 </View>
@@ -1908,7 +1908,7 @@ export default function PostCommentsModal({
                   <View style={styles.aiLoadingRow}>
                     <ActivityIndicator
                       size="small"
-                      color="#4f46e5"
+                      color="#0E7C86"
                     />
                     <Text style={styles.aiLoadingText}>
                       Generating suggestions...
@@ -1943,7 +1943,7 @@ export default function PostCommentsModal({
                     <Ionicons
                       name="refresh-outline"
                       size={16}
-                      color="#4f46e5"
+                      color="#0E7C86"
                     />
                     <Text style={styles.aiRegenerateText}>
                       Regenerate
@@ -1972,7 +1972,7 @@ export default function PostCommentsModal({
                 <Ionicons
                   name="sparkles-outline"
                   size={16}
-                  color="#4f46e5"
+                  color="#0E7C86"
                 />
                 <Text style={styles.aiSuggestText}>
                   AI Suggest
@@ -1993,7 +1993,7 @@ export default function PostCommentsModal({
                 <Ionicons
                   name="person"
                   size={18}
-                  color="#4f46e5"
+                  color="#0E7C86"
                 />
               </View>
 
@@ -2008,7 +2008,7 @@ export default function PostCommentsModal({
                     ? "Write a reply..."
                     : "Write a comment..."
                 }
-                placeholderTextColor="#94a3b8"
+                placeholderTextColor="#8BA3AB"
                 style={styles.input}
                 multiline
                 maxLength={1000}
@@ -2028,7 +2028,7 @@ export default function PostCommentsModal({
                 <Ionicons
                   name="image-outline"
                   size={21}
-                  color="#4f46e5"
+                  color="#0E7C86"
                 />
               </Pressable>
 
@@ -2120,13 +2120,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 21,
     fontWeight: "800",
-    color: "#0f172a",
+    color: "#0E2A47",
   },
 
   commentCount: {
     marginTop: 2,
     fontSize: 12,
-    color: "#94a3b8",
+    color: "#8BA3AB",
     fontWeight: "500",
   },
 
@@ -2149,16 +2149,16 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#e2e8f0",
+    borderColor: "#E0EDEB",
     borderRadius: 12,
-    backgroundColor: "#f8fafc",
+    backgroundColor: "#F5FAF9",
   },
 
   searchInput: {
     flex: 1,
     marginLeft: 7,
     paddingVertical: 8,
-    color: "#0f172a",
+    color: "#0E2A47",
     fontSize: 13,
   },
 
@@ -2174,7 +2174,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#e2e8f0",
+    borderColor: "#E0EDEB",
     borderRadius: 12,
     backgroundColor: "#ffffff",
   },
@@ -2183,7 +2183,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
     fontSize: 12,
     fontWeight: "700",
-    color: "#334155",
+    color: "#31515F",
   },
 
   sortOptions: {
@@ -2193,10 +2193,10 @@ const styles = StyleSheet.create({
     width: 145,
     paddingVertical: 5,
     borderWidth: 1,
-    borderColor: "#e2e8f0",
+    borderColor: "#E0EDEB",
     borderRadius: 12,
     backgroundColor: "#ffffff",
-    shadowColor: "#0f172a",
+    shadowColor: "#0E2A47",
     shadowOffset: {
       width: 0,
       height: 4,
@@ -2216,17 +2216,17 @@ const styles = StyleSheet.create({
   },
 
   sortOptionSelected: {
-    backgroundColor: "#eef2ff",
+    backgroundColor: "#EAF8F5",
   },
 
   sortOptionText: {
     fontSize: 12,
     fontWeight: "600",
-    color: "#475569",
+    color: "#4D6C78",
   },
 
   sortOptionSelectedText: {
-    color: "#4f46e5",
+    color: "#0E7C86",
     fontWeight: "700",
   },
 
@@ -2236,7 +2236,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 19,
-    backgroundColor: "#f8fafc",
+    backgroundColor: "#F5FAF9",
   },
 
   list: {
@@ -2258,7 +2258,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: 10,
     fontSize: 13,
-    color: "#94a3b8",
+    color: "#8BA3AB",
   },
 
   emptyContainer: {
@@ -2273,14 +2273,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 34,
-    backgroundColor: "#eef2ff",
+    backgroundColor: "#EAF8F5",
   },
 
   emptyTitle: {
     marginTop: 15,
     fontSize: 17,
     fontWeight: "800",
-    color: "#0f172a",
+    color: "#0E2A47",
   },
 
   emptyText: {
@@ -2288,7 +2288,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 13,
     lineHeight: 20,
-    color: "#94a3b8",
+    color: "#8BA3AB",
   },
 
   commentBlock: {
@@ -2310,13 +2310,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 19,
-    backgroundColor: "#eef2ff",
+    backgroundColor: "#EAF8F5",
   },
 
   avatarText: {
     fontSize: 12,
     fontWeight: "800",
-    color: "#4f46e5",
+    color: "#0E7C86",
   },
 
   commentMain: {
@@ -2328,7 +2328,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 13,
     paddingVertical: 10,
     borderRadius: 17,
-    backgroundColor: "#f8fafc",
+    backgroundColor: "#F5FAF9",
   },
 
   commentTopRow: {
@@ -2341,20 +2341,20 @@ const styles = StyleSheet.create({
   authorName: {
     fontSize: 13,
     fontWeight: "800",
-    color: "#0f172a",
+    color: "#0E2A47",
   },
 
   timeText: {
     marginLeft: 8,
     fontSize: 10,
-    color: "#94a3b8",
+    color: "#8BA3AB",
   },
 
   commentContent: {
     marginTop: 5,
     fontSize: 14,
     lineHeight: 20,
-    color: "#334155",
+    color: "#31515F",
   },
 
   savedMediaContainer: {
@@ -2370,7 +2370,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     overflow: "hidden",
     borderRadius: 12,
-    backgroundColor: "#e2e8f0",
+    backgroundColor: "#E0EDEB",
   },
 
   savedMediaImage: {
@@ -2382,7 +2382,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#334155",
+    backgroundColor: "#31515F",
   },
 
   savedVideoLabel: {
@@ -2401,10 +2401,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#e2e8f0",
+    borderColor: "#E0EDEB",
     borderRadius: 999,
     backgroundColor: "#ffffff",
-    shadowColor: "#0f172a",
+    shadowColor: "#0E2A47",
     shadowOffset: {
       width: 0,
       height: 3,
@@ -2424,7 +2424,7 @@ const styles = StyleSheet.create({
   },
 
   reactionOptionSelected: {
-    backgroundColor: "#eef2ff",
+    backgroundColor: "#EAF8F5",
   },
 
   reactionEmoji: {
@@ -2450,18 +2450,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     paddingVertical: 2,
     borderRadius: 999,
-    backgroundColor: "#f8fafc",
+    backgroundColor: "#F5FAF9",
   },
 
   pinnedAction: {
     paddingHorizontal: 5,
     paddingVertical: 2,
     borderRadius: 999,
-    backgroundColor: "#eef2ff",
+    backgroundColor: "#EAF8F5",
   },
 
   pinnedActionText: {
-    color: "#4f46e5",
+    color: "#0E7C86",
   },
 
   selectedReactionEmoji: {
@@ -2474,11 +2474,11 @@ const styles = StyleSheet.create({
     marginLeft: 4,
     fontSize: 11,
     fontWeight: "700",
-    color: "#64748b",
+    color: "#64808C",
   },
 
   reactionCountText: {
-    color: "#4f46e5",
+    color: "#0E7C86",
   },
 
   deleteText: {
@@ -2493,7 +2493,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     paddingLeft: 12,
     borderLeftWidth: 2,
-    borderLeftColor: "#e2e8f0",
+    borderLeftColor: "#E0EDEB",
   },
 
   editContainer: {
@@ -2505,10 +2505,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 8,
     borderWidth: 1,
-    borderColor: "#c7d2fe",
+    borderColor: "#B7E7DA",
     borderRadius: 12,
     backgroundColor: "#ffffff",
-    color: "#0f172a",
+    color: "#0E2A47",
     fontSize: 13,
   },
 
@@ -2528,7 +2528,7 @@ const styles = StyleSheet.create({
   cancelText: {
     fontSize: 12,
     fontWeight: "700",
-    color: "#64748b",
+    color: "#64808C",
   },
 
   saveButton: {
@@ -2538,7 +2538,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 10,
-    backgroundColor: "#4f46e5",
+    backgroundColor: "#0E7C86",
   },
 
   saveText: {
@@ -2588,12 +2588,12 @@ const styles = StyleSheet.create({
   replyingText: {
     marginLeft: 7,
     fontSize: 12,
-    color: "#64748b",
+    color: "#64808C",
   },
 
   replyingName: {
     fontWeight: "800",
-    color: "#4f46e5",
+    color: "#0E7C86",
   },
 
   mediaPreviewContainer: {
@@ -2621,7 +2621,7 @@ const styles = StyleSheet.create({
     width: 72,
     height: 72,
     borderRadius: 12,
-    backgroundColor: "#f1f5f9",
+    backgroundColor: "#EDF5F4",
   },
 
   videoPreview: {
@@ -2630,7 +2630,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 12,
-    backgroundColor: "#334155",
+    backgroundColor: "#31515F",
   },
 
   videoLabel: {
@@ -2659,7 +2659,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
     fontSize: 10,
     fontWeight: "600",
-    color: "#64748b",
+    color: "#64808C",
   },
 
   inputContainer: {
@@ -2689,7 +2689,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 11,
     paddingVertical: 7,
     borderRadius: 14,
-    backgroundColor: "#eef2ff",
+    backgroundColor: "#EAF8F5",
   },
 
   disabledAiSuggestButton: {
@@ -2698,7 +2698,7 @@ const styles = StyleSheet.create({
 
   aiSuggestText: {
     marginLeft: 5,
-    color: "#4338ca",
+    color: "#09646E",
     fontSize: 12,
     fontWeight: "700",
   },
@@ -2708,9 +2708,9 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     padding: 10,
     borderWidth: 1,
-    borderColor: "#c7d2fe",
+    borderColor: "#B7E7DA",
     borderRadius: 14,
-    backgroundColor: "#eef2ff",
+    backgroundColor: "#EAF8F5",
   },
 
   aiSuggestionsHeader: {
@@ -2721,7 +2721,7 @@ const styles = StyleSheet.create({
   },
 
   aiSuggestionsTitle: {
-    color: "#3730a3",
+    color: "#0E2A47",
     fontSize: 12,
     fontWeight: "700",
   },
@@ -2734,7 +2734,7 @@ const styles = StyleSheet.create({
 
   aiLoadingText: {
     marginLeft: 8,
-    color: "#475569",
+    color: "#4D6C78",
     fontSize: 12,
   },
 
@@ -2746,14 +2746,14 @@ const styles = StyleSheet.create({
   },
 
   aiSuggestionText: {
-    color: "#334155",
+    color: "#31515F",
     fontSize: 13,
     lineHeight: 19,
   },
 
   aiSelectText: {
     marginTop: 6,
-    color: "#4f46e5",
+    color: "#0E7C86",
     fontSize: 11,
     fontWeight: "700",
   },
@@ -2767,7 +2767,7 @@ const styles = StyleSheet.create({
 
   aiRegenerateText: {
     marginLeft: 4,
-    color: "#4f46e5",
+    color: "#0E7C86",
     fontSize: 12,
     fontWeight: "700",
   },
@@ -2780,7 +2780,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 17,
-    backgroundColor: "#eef2ff",
+    backgroundColor: "#EAF8F5",
   },
 
   input: {
@@ -2790,10 +2790,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 10,
     borderWidth: 1,
-    borderColor: "#e2e8f0",
+    borderColor: "#E0EDEB",
     borderRadius: 21,
-    backgroundColor: "#f8fafc",
-    color: "#0f172a",
+    backgroundColor: "#F5FAF9",
+    color: "#0E2A47",
     fontSize: 13,
   },
 
@@ -2805,7 +2805,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 20,
-    backgroundColor: "#eef2ff",
+    backgroundColor: "#EAF8F5",
   },
 
   disabledMediaButton: {
@@ -2820,7 +2820,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 21,
-    backgroundColor: "#4f46e5",
+    backgroundColor: "#0E7C86",
   },
 
   disabledSendButton: {

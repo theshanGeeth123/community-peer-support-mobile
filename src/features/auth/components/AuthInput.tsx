@@ -1,12 +1,14 @@
-import { useState } from "react";
-
+import { useState } from 'react';
 import {
-    Pressable,
-    Text,
-    TextInput,
-    View,
-    type TextInputProps,
-} from "react-native";
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  type TextInputProps,
+} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { Brand } from '@/theme/brand';
 
 interface AuthInputProps extends TextInputProps {
   label: string;
@@ -14,56 +16,43 @@ interface AuthInputProps extends TextInputProps {
   isPassword?: boolean;
 }
 
-export default function AuthInput({
-  label,
-  error,
-  isPassword = false,
-  ...props
-}: AuthInputProps) {
-  const [isPasswordVisible, setIsPasswordVisible] =
-    useState(false);
-
+export default function AuthInput({ label, error, isPassword = false, ...props }: AuthInputProps) {
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [focused, setFocused] = useState(false);
   return (
-    <View className="mb-4">
-      <Text className="mb-2 text-sm font-semibold text-slate-700">
-        {label}
-      </Text>
-
-      <View
-        className={`flex-row items-center rounded-2xl border bg-slate-50 px-4 ${
-          error
-            ? "border-red-400"
-            : "border-slate-200"
-        }`}
-      >
+    <View style={styles.wrapper}>
+      <Text style={styles.label}>{label}</Text>
+      <View style={[styles.field, focused && styles.focused, !!error && styles.errored]}>
         <TextInput
           {...props}
-          className="min-h-14 flex-1 text-base text-slate-900"
-          placeholderTextColor="#94a3b8"
-          secureTextEntry={
-            isPassword && !isPasswordVisible
-          }
+          style={styles.input}
+          placeholderTextColor="#93A5AD"
+          secureTextEntry={isPassword && !isPasswordVisible}
+          onFocus={(event) => { setFocused(true); props.onFocus?.(event); }}
+          onBlur={(event) => { setFocused(false); props.onBlur?.(event); }}
         />
-
         {isPassword && (
           <Pressable
-            onPress={() =>
-              setIsPasswordVisible((current) => !current)
-            }
+            accessibilityRole="button"
+            accessibilityLabel={isPasswordVisible ? 'Hide password' : 'Show password'}
+            onPress={() => setIsPasswordVisible(value => !value)}
             hitSlop={10}
           >
-            <Text className="font-semibold text-indigo-600">
-              {isPasswordVisible ? "Hide" : "Show"}
-            </Text>
+            <Ionicons name={isPasswordVisible ? 'eye-off-outline' : 'eye-outline'} size={20} color={Brand.teal} />
           </Pressable>
         )}
       </View>
-
-      {error && (
-        <Text className="mt-1.5 text-sm text-red-500">
-          {error}
-        </Text>
-      )}
+      {!!error && <Text style={styles.error}>{error}</Text>}
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  wrapper: { marginBottom: 17 },
+  label: { fontSize: 12.5, fontWeight: '800', color: Brand.navy, marginBottom: 8 },
+  field: { borderWidth: 1.2, borderColor: Brand.border, backgroundColor: Brand.background, borderRadius: 15, paddingHorizontal: 15, flexDirection: 'row', alignItems: 'center' },
+  focused: { borderColor: Brand.teal, backgroundColor: Brand.white },
+  errored: { borderColor: Brand.danger },
+  input: { flex: 1, minHeight: 53, color: Brand.navy, fontSize: 14.5, paddingVertical: 10 },
+  error: { color: Brand.danger, fontSize: 12, marginTop: 6 },
+});

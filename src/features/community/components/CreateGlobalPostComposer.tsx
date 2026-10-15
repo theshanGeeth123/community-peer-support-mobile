@@ -89,7 +89,7 @@ export default function CreateGlobalPostComposer({
             textAlignVertical="top"
             maxLength={MAX_CONTENT_LENGTH}
             placeholder="Share an update with the community..."
-            placeholderTextColor="#94a3b8"
+            placeholderTextColor="#8BA3AB"
             style={styles.input}
           />
         ) : (
@@ -111,7 +111,7 @@ export default function CreateGlobalPostComposer({
               <Ionicons
                 name={isPinned ? "checkbox" : "square-outline"}
                 size={19}
-                color="#4f46e5"
+                color="#0E7C86"
               />
 
               <Text style={styles.pinLabel}>Pin as announcement</Text>
@@ -158,11 +158,11 @@ const styles = StyleSheet.create({
   card: {
     padding: 16,
     borderWidth: 1,
-    borderColor: "#e2e8f0",
+    borderColor: "#E0EDEB",
     borderRadius: 20,
     backgroundColor: "#ffffff",
 
-    shadowColor: "#0f172a",
+    shadowColor: "#0E2A47",
     shadowOpacity: 0.04,
     shadowRadius: 10,
     shadowOffset: { width: 0, height: 4 },
@@ -180,12 +180,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 21,
-    backgroundColor: "#eef2ff",
+    backgroundColor: "#EAF8F5",
   },
 
   avatarText: {
     fontWeight: "800",
-    color: "#4f46e5",
+    color: "#0E7C86",
   },
 
   trigger: {
@@ -195,12 +195,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: 16,
     borderRadius: 21,
-    backgroundColor: "#f8fafc",
+    backgroundColor: "#F5FAF9",
   },
 
   triggerText: {
     fontSize: 14,
-    color: "#94a3b8",
+    color: "#8BA3AB",
   },
 
   input: {
@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
     minHeight: 64,
     fontSize: 15,
     lineHeight: 21,
-    color: "#0f172a",
+    color: "#0E2A47",
   },
 
   footer: {
@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     borderTopWidth: 1,
-    borderTopColor: "#f1f5f9",
+    borderTopColor: "#EDF5F4",
   },
 
   pinToggle: {
@@ -231,7 +231,7 @@ const styles = StyleSheet.create({
     marginLeft: 7,
     fontSize: 13,
     fontWeight: "600",
-    color: "#334155",
+    color: "#31515F",
   },
 
   footerButtons: {
@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
   cancelButtonText: {
     fontSize: 13,
     fontWeight: "600",
-    color: "#94a3b8",
+    color: "#8BA3AB",
   },
 
   submitButton: {
@@ -258,7 +258,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 19,
-    backgroundColor: "#4f46e5",
+    backgroundColor: "#0E7C86",
   },
 
   submitButtonText: {

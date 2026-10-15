@@ -99,7 +99,7 @@ export default function ModerationActionCard({
         <Ionicons
           name="shield-checkmark-outline"
           size={12}
-          color="#94a3b8"
+          color="#8BA3AB"
         />
         <Text style={styles.footerText}>
           {action.moderator.fullName}
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: "#e2e8f0",
+    borderColor: "#E0EDEB",
     padding: 16,
     marginBottom: 12,
   },
@@ -142,16 +142,16 @@ const styles = StyleSheet.create({
   },
   meta: {
     fontSize: 12,
-    color: "#94a3b8",
+    color: "#8BA3AB",
   },
   date: {
     fontSize: 11,
-    color: "#94a3b8",
+    color: "#8BA3AB",
     flexShrink: 0,
     marginTop: 2,
   },
   reasonWrap: {
-    backgroundColor: "#f8fafc",
+    backgroundColor: "#F5FAF9",
     borderRadius: 12,
     padding: 12,
     marginBottom: 12,
@@ -159,14 +159,14 @@ const styles = StyleSheet.create({
   reasonLabel: {
     fontSize: 11,
     fontWeight: "600",
-    color: "#94a3b8",
+    color: "#8BA3AB",
     textTransform: "uppercase",
     letterSpacing: 0.5,
     marginBottom: 4,
   },
   reasonText: {
     fontSize: 13,
-    color: "#334155",
+    color: "#31515F",
     lineHeight: 18,
   },
   footer: {
@@ -176,6 +176,6 @@ const styles = StyleSheet.create({
   },
   footerText: {
     fontSize: 12,
-    color: "#94a3b8",
+    color: "#8BA3AB",
   },
 });

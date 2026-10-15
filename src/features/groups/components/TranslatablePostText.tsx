@@ -121,7 +121,7 @@ export default function TranslatablePostText({
         <View style={styles.row}>
           {isShowingTranslation ? (
             <>
-              <Ionicons name="sparkles" size={12} color="#94a3b8" />
+              <Ionicons name="sparkles" size={12} color="#8BA3AB" />
 
               <Text style={styles.translatedLabel}>
                 {text.translatedByAi}
@@ -138,7 +138,7 @@ export default function TranslatablePostText({
             </>
           ) : loading ? (
             <>
-              <ActivityIndicator size="small" color="#4f46e5" />
+              <ActivityIndicator size="small" color="#0E7C86" />
 
               <Text style={styles.translatedLabel}>{text.translating}</Text>
             </>
@@ -149,7 +149,7 @@ export default function TranslatablePostText({
               onPress={() => void handleTranslate()}
               style={styles.translateButton}
             >
-              <Ionicons name="language" size={14} color="#4f46e5" />
+              <Ionicons name="language" size={14} color="#0E7C86" />
 
               <Text style={styles.link}>
                 {translationForMyLanguage !== null
@@ -186,17 +186,17 @@ const styles = StyleSheet.create({
   link: {
     fontSize: 12,
     fontWeight: "700",
-    color: "#4f46e5",
+    color: "#0E7C86",
   },
 
   translatedLabel: {
     fontSize: 12,
-    color: "#94a3b8",
+    color: "#8BA3AB",
   },
 
   separator: {
     fontSize: 12,
-    color: "#cbd5e1",
+    color: "#C4D8DA",
   },
 
   error: {

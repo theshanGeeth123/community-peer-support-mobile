@@ -32,8 +32,8 @@ const config: Record<
   },
   OTHER: {
     label: "Other",
-    bg: "#f1f5f9",
-    text: "#475569",
+    bg: "#EDF5F4",
+    text: "#4D6C78",
   },
 };
 

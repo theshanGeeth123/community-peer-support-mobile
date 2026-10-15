@@ -16,7 +16,7 @@ export default function CommunityScreen() {
     <SafeAreaView
       style={{
         flex: 1,
-        backgroundColor: "#f8fafc",
+        backgroundColor: "#F5FAF9",
       }}
       edges={[
         "top",
@@ -72,7 +72,7 @@ export default function CommunityScreen() {
             <Ionicons
               name="compass-outline"
               size={24}
-              color="#4f46e5"
+              color="#0E7C86"
             />
           </View>
 
@@ -90,7 +90,7 @@ export default function CommunityScreen() {
           <Ionicons
             name="chevron-forward"
             size={20}
-            color="#94a3b8"
+            color="#8BA3AB"
           />
         </Pressable>
 
@@ -117,7 +117,7 @@ export default function CommunityScreen() {
           <Ionicons
             name="chevron-forward"
             size={20}
-            color="#94a3b8"
+            color="#8BA3AB"
           />
         </Pressable>
 
@@ -144,7 +144,7 @@ export default function CommunityScreen() {
           <Ionicons
             name="chevron-forward"
             size={20}
-            color="#94a3b8"
+            color="#8BA3AB"
           />
         </Pressable>
 
@@ -153,7 +153,7 @@ export default function CommunityScreen() {
             <Ionicons
               name="information-circle-outline"
               size={23}
-              color="#4f46e5"
+              color="#0E7C86"
             />
 
             <View className="ml-3 flex-1">

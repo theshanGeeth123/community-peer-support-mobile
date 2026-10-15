@@ -212,7 +212,7 @@ export default function ModeratorMembersScreen() {
             "destructive",
 
           onPress: (
-            value
+            value: string | undefined
           ) => {
             const reason =
               value?.trim() ??
@@ -348,7 +348,7 @@ export default function ModeratorMembersScreen() {
           <Ionicons
             name="arrow-back"
             size={22}
-            color="#0f172a"
+            color="#0E2A47"
           />
         </Pressable>
 
@@ -393,7 +393,7 @@ export default function ModeratorMembersScreen() {
           <Ionicons
             name="search-outline"
             size={20}
-            color="#94a3b8"
+            color="#8BA3AB"
           />
 
           <TextInput
@@ -402,7 +402,7 @@ export default function ModeratorMembersScreen() {
               setSearch
             }
             placeholder="Search members..."
-            placeholderTextColor="#94a3b8"
+            placeholderTextColor="#8BA3AB"
             style={
               styles.searchInput
             }
@@ -433,7 +433,7 @@ export default function ModeratorMembersScreen() {
           >
             <ActivityIndicator
               size="large"
-              color="#4f46e5"
+              color="#0E7C86"
             />
           </View>
         ) : filteredMemberships.length ===
@@ -446,7 +446,7 @@ export default function ModeratorMembersScreen() {
             <Ionicons
               name="people-outline"
               size={34}
-              color="#94a3b8"
+              color="#8BA3AB"
             />
 
             <Text
@@ -569,7 +569,7 @@ export default function ModeratorMembersScreen() {
                       }
                     >
                       <ActivityIndicator
-                        color="#4f46e5"
+                        color="#0E7C86"
                       />
                     </View>
                   ) : membership.status ===
@@ -779,7 +779,7 @@ const styles =
     safeArea: {
       flex: 1,
       backgroundColor:
-        "#f8fafc",
+        "#F5FAF9",
     },
 
     header: {
@@ -792,7 +792,7 @@ const styles =
         "center",
       borderBottomWidth: 1,
       borderBottomColor:
-        "#e2e8f0",
+        "#E0EDEB",
       backgroundColor:
         "#ffffff",
     },
@@ -806,19 +806,19 @@ const styles =
         "center",
       borderRadius: 14,
       backgroundColor:
-        "#f1f5f9",
+        "#EDF5F4",
     },
 
     title: {
       fontSize: 17,
       fontWeight: "800",
-      color: "#0f172a",
+      color: "#0E2A47",
     },
 
     subtitle: {
       marginTop: 2,
       fontSize: 11,
-      color: "#64748b",
+      color: "#64808C",
     },
 
     content: {
@@ -836,7 +836,7 @@ const styles =
         "center",
       borderWidth: 1,
       borderColor:
-        "#e2e8f0",
+        "#E0EDEB",
       borderRadius: 16,
       backgroundColor:
         "#ffffff",
@@ -845,7 +845,7 @@ const styles =
     searchInput: {
       flex: 1,
       marginLeft: 9,
-      color: "#0f172a",
+      color: "#0E2A47",
     },
 
     errorBox: {
@@ -876,7 +876,7 @@ const styles =
         "center",
       borderWidth: 1,
       borderColor:
-        "#e2e8f0",
+        "#E0EDEB",
       borderRadius: 20,
       backgroundColor:
         "#ffffff",
@@ -885,7 +885,7 @@ const styles =
     emptyTitle: {
       marginTop: 10,
       fontWeight: "700",
-      color: "#475569",
+      color: "#4D6C78",
     },
 
     memberCard: {
@@ -893,7 +893,7 @@ const styles =
       padding: 16,
       borderWidth: 1,
       borderColor:
-        "#e2e8f0",
+        "#E0EDEB",
       borderRadius: 18,
       backgroundColor:
         "#ffffff",
@@ -915,23 +915,23 @@ const styles =
         "center",
       borderRadius: 22,
       backgroundColor:
-        "#eef2ff",
+        "#EAF8F5",
     },
 
     avatarText: {
       fontWeight: "800",
-      color: "#4f46e5",
+      color: "#0E7C86",
     },
 
     memberName: {
       fontWeight: "800",
-      color: "#0f172a",
+      color: "#0E2A47",
     },
 
     memberEmail: {
       marginTop: 3,
       fontSize: 11,
-      color: "#64748b",
+      color: "#64808C",
     },
 
     statusBadge: {
@@ -945,19 +945,19 @@ const styles =
       padding: 11,
       borderRadius: 12,
       backgroundColor:
-        "#f8fafc",
+        "#F5FAF9",
     },
 
     reasonLabel: {
       fontSize: 10,
       fontWeight: "700",
-      color: "#64748b",
+      color: "#64808C",
     },
 
     reasonText: {
       marginTop: 4,
       lineHeight: 18,
-      color: "#475569",
+      color: "#4D6C78",
     },
 
     actions: {

@@ -28,7 +28,6 @@ import {
     router,
     useFocusEffect,
     useLocalSearchParams,
-    type Href,
 } from "expo-router";
 
 import {
@@ -221,7 +220,7 @@ export default function UserGroupDetailsScreen() {
 
             router.replace({
               pathname:
-                "/(app)/user/group/[groupId]/posts" as Href,
+                "/(app)/user/group/[groupId]/posts",
 
               params: {
                 groupId,
@@ -373,7 +372,7 @@ export default function UserGroupDetailsScreen() {
         >
           <ActivityIndicator
             size="large"
-            color="#4f46e5"
+            color="#0E7C86"
           />
 
           <Text
@@ -490,7 +489,7 @@ export default function UserGroupDetailsScreen() {
           <Ionicons
             name="arrow-back"
             size={22}
-            color="#0f172a"
+            color="#0E2A47"
           />
         </Pressable>
 
@@ -531,7 +530,7 @@ export default function UserGroupDetailsScreen() {
             <Ionicons
               name="people"
               size={34}
-              color="#4f46e5"
+              color="#0E7C86"
             />
           </View>
 
@@ -560,7 +559,7 @@ export default function UserGroupDetailsScreen() {
               <Ionicons
                 name="location-outline"
                 size={16}
-                color="#64748b"
+                color="#64808C"
               />
 
               <Text
@@ -629,7 +628,7 @@ export default function UserGroupDetailsScreen() {
               <Ionicons
                 name="heart-outline"
                 size={20}
-                color="#4f46e5"
+                color="#0E7C86"
               />
             </View>
 
@@ -678,7 +677,7 @@ export default function UserGroupDetailsScreen() {
               <Ionicons
                 name="shield-checkmark-outline"
                 size={20}
-                color="#4f46e5"
+                color="#0E7C86"
               />
             </View>
 
@@ -904,7 +903,7 @@ export default function UserGroupDetailsScreen() {
                   <Ionicons
                     name="close"
                     size={26}
-                    color="#475569"
+                    color="#4D6C78"
                   />
                 </Pressable>
               </View>
@@ -923,7 +922,7 @@ export default function UserGroupDetailsScreen() {
                   <Ionicons
                     name="lock-closed-outline"
                     size={19}
-                    color="#4f46e5"
+                    color="#0E7C86"
                   />
 
                   <Text
@@ -961,7 +960,7 @@ export default function UserGroupDetailsScreen() {
                   textAlignVertical="top"
                   maxLength={500}
                   placeholder="Briefly explain why this support group would be helpful for you..."
-                  placeholderTextColor="#94a3b8"
+                  placeholderTextColor="#8BA3AB"
                   style={
                     styles.reasonInput
                   }
@@ -1072,7 +1071,7 @@ function InfoSection({
         <Ionicons
           name={icon}
           size={20}
-          color="#4f46e5"
+          color="#0E7C86"
         />
 
         <Text
@@ -1223,7 +1222,7 @@ const styles =
     safeArea: {
       flex: 1,
       backgroundColor:
-        "#f8fafc",
+        "#F5FAF9",
     },
 
     centerArea: {
@@ -1236,7 +1235,7 @@ const styles =
 
     loadingText: {
       marginTop: 12,
-      color: "#64748b",
+      color: "#64808C",
     },
 
     header: {
@@ -1254,7 +1253,7 @@ const styles =
       borderBottomWidth: 1,
 
       borderBottomColor:
-        "#e2e8f0",
+        "#E0EDEB",
 
       backgroundColor:
         "#ffffff",
@@ -1273,7 +1272,7 @@ const styles =
       borderRadius: 14,
 
       backgroundColor:
-        "#f1f5f9",
+        "#EDF5F4",
     },
 
     headerTitle: {
@@ -1290,7 +1289,7 @@ const styles =
       fontWeight:
         "800",
 
-      color: "#0f172a",
+      color: "#0E2A47",
     },
 
     content: {
@@ -1313,7 +1312,7 @@ const styles =
       borderWidth: 1,
 
       borderColor:
-        "#e2e8f0",
+        "#E0EDEB",
 
       backgroundColor:
         "#ffffff",
@@ -1332,7 +1331,7 @@ const styles =
       borderRadius: 35,
 
       backgroundColor:
-        "#eef2ff",
+        "#EAF8F5",
     },
 
     groupName: {
@@ -1346,7 +1345,7 @@ const styles =
       fontWeight:
         "800",
 
-      color: "#0f172a",
+      color: "#0E2A47",
     },
 
     category: {
@@ -1357,7 +1356,7 @@ const styles =
       fontWeight:
         "700",
 
-      color: "#6366f1",
+      color: "#168994",
     },
 
     locationRow: {
@@ -1372,7 +1371,7 @@ const styles =
 
     locationText: {
       marginLeft: 5,
-      color: "#64748b",
+      color: "#64808C",
     },
 
     statusMessage: {
@@ -1403,7 +1402,7 @@ const styles =
 
       lineHeight: 18,
 
-      color: "#64748b",
+      color: "#64808C",
     },
 
     postsButton: {
@@ -1419,11 +1418,11 @@ const styles =
 
       borderWidth: 1,
 
-      borderColor: "#c7d2fe",
+      borderColor: "#B7E7DA",
 
       borderRadius: 18,
 
-      backgroundColor: "#eef2ff",
+      backgroundColor: "#EAF8F5",
     },
 
     postsButtonIcon: {
@@ -1444,7 +1443,7 @@ const styles =
 
       fontWeight: "800",
 
-      color: "#0f172a",
+      color: "#0E2A47",
     },
 
     postsButtonDescription: {
@@ -1452,7 +1451,7 @@ const styles =
 
       fontSize: 11,
 
-      color: "#64748b",
+      color: "#64808C",
     },
 
     section: {
@@ -1465,7 +1464,7 @@ const styles =
       borderWidth: 1,
 
       borderColor:
-        "#e2e8f0",
+        "#E0EDEB",
 
       backgroundColor:
         "#ffffff",
@@ -1489,7 +1488,7 @@ const styles =
       fontWeight:
         "800",
 
-      color: "#0f172a",
+      color: "#0E2A47",
     },
 
     bodyText: {
@@ -1497,12 +1496,12 @@ const styles =
 
       lineHeight: 22,
 
-      color: "#475569",
+      color: "#4D6C78",
     },
 
     mutedText: {
       lineHeight: 20,
-      color: "#64748b",
+      color: "#64808C",
     },
 
     teamRow: {
@@ -1526,21 +1525,21 @@ const styles =
       borderRadius: 14,
 
       backgroundColor:
-        "#eef2ff",
+        "#EAF8F5",
     },
 
     teamTitle: {
       marginLeft: 10,
       fontWeight:
         "700",
-      color: "#334155",
+      color: "#31515F",
     },
 
     teamDescription: {
       marginTop: 2,
       marginLeft: 10,
       fontSize: 12,
-      color: "#64748b",
+      color: "#64808C",
     },
 
     ruleRow: {
@@ -1566,7 +1565,7 @@ const styles =
       borderRadius: 13,
 
       backgroundColor:
-        "#eef2ff",
+        "#EAF8F5",
     },
 
     ruleNumberText: {
@@ -1575,7 +1574,7 @@ const styles =
       fontWeight:
         "800",
 
-      color: "#4f46e5",
+      color: "#0E7C86",
     },
 
     ruleText: {
@@ -1587,7 +1586,7 @@ const styles =
 
       lineHeight: 20,
 
-      color: "#475569",
+      color: "#4D6C78",
     },
 
     requestButton: {
@@ -1607,7 +1606,7 @@ const styles =
       borderRadius: 17,
 
       backgroundColor:
-        "#4f46e5",
+        "#0E7C86",
     },
 
     requestButtonText: {
@@ -1709,7 +1708,7 @@ const styles =
       fontWeight:
         "800",
 
-      color: "#0f172a",
+      color: "#0E2A47",
     },
 
     errorPageText: {
@@ -1720,7 +1719,7 @@ const styles =
 
       lineHeight: 20,
 
-      color: "#64748b",
+      color: "#64808C",
     },
 
     backButtonLarge: {
@@ -1735,7 +1734,7 @@ const styles =
       borderRadius: 14,
 
       backgroundColor:
-        "#4f46e5",
+        "#0E7C86",
     },
 
     backButtonLargeText: {
@@ -1785,7 +1784,7 @@ const styles =
       borderBottomWidth: 1,
 
       borderBottomColor:
-        "#f1f5f9",
+        "#EDF5F4",
     },
 
     modalTitle: {
@@ -1794,13 +1793,13 @@ const styles =
       fontWeight:
         "800",
 
-      color: "#0f172a",
+      color: "#0E2A47",
     },
 
     modalSubtitle: {
       marginTop: 3,
       fontSize: 13,
-      color: "#64748b",
+      color: "#64808C",
     },
 
     modalContent: {
@@ -1820,7 +1819,7 @@ const styles =
       borderRadius: 14,
 
       backgroundColor:
-        "#eef2ff",
+        "#EAF8F5",
     },
 
     privacyText: {
@@ -1832,7 +1831,7 @@ const styles =
 
       lineHeight: 18,
 
-      color: "#4338ca",
+      color: "#09646E",
     },
 
     inputLabel: {
@@ -1845,7 +1844,7 @@ const styles =
       fontWeight:
         "700",
 
-      color: "#334155",
+      color: "#31515F",
     },
 
     reasonInput: {
@@ -1856,7 +1855,7 @@ const styles =
       borderWidth: 1,
 
       borderColor:
-        "#cbd5e1",
+        "#C4D8DA",
 
       borderRadius: 15,
 
@@ -1864,7 +1863,7 @@ const styles =
 
       lineHeight: 21,
 
-      color: "#0f172a",
+      color: "#0E2A47",
 
       backgroundColor:
         "#ffffff",
@@ -1878,7 +1877,7 @@ const styles =
 
       fontSize: 11,
 
-      color: "#94a3b8",
+      color: "#8BA3AB",
     },
 
     requestError: {
@@ -1919,7 +1918,7 @@ const styles =
       borderRadius: 16,
 
       backgroundColor:
-        "#4f46e5",
+        "#0E7C86",
     },
 
     submitButtonText: {

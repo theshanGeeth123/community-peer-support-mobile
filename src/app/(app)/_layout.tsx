@@ -30,7 +30,7 @@ export default function AppLayout() {
       >
         <ActivityIndicator
           size="large"
-          color="#4f46e5"
+          color="#0E7C86"
         />
       </View>
     );
@@ -52,7 +52,7 @@ export default function AppLayout() {
 
           contentStyle: {
             backgroundColor:
-              "#f8fafc",
+              "#F5FAF9",
           },
         }}
       />
@@ -72,7 +72,7 @@ const styles =
     container: {
       flex: 1,
       backgroundColor:
-        "#f8fafc",
+        "#F5FAF9",
     },
 
     loadingContainer: {
@@ -80,6 +80,6 @@ const styles =
       alignItems: "center",
       justifyContent: "center",
       backgroundColor:
-        "#f8fafc",
+        "#F5FAF9",
     },
   });

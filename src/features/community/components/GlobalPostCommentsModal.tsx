@@ -120,7 +120,7 @@ export default function GlobalPostCommentsModal({
               <Text style={styles.title}>Comments</Text>
 
               <Pressable hitSlop={10} onPress={onClose}>
-                <Ionicons name="close" size={24} color="#475569" />
+                <Ionicons name="close" size={24} color="#4D6C78" />
               </Pressable>
             </View>
 
@@ -132,7 +132,7 @@ export default function GlobalPostCommentsModal({
               {loading ? (
                 <ActivityIndicator
                   size="large"
-                  color="#4f46e5"
+                  color="#0E7C86"
                   style={{ marginTop: 20 }}
                 />
               ) : comments.length === 0 ? (
@@ -161,7 +161,7 @@ export default function GlobalPostCommentsModal({
                             <Ionicons
                               name="trash-outline"
                               size={16}
-                              color="#94a3b8"
+                              color="#8BA3AB"
                             />
                           </Pressable>
                         )}
@@ -184,7 +184,7 @@ export default function GlobalPostCommentsModal({
                 onChangeText={setNewComment}
                 editable={!submitting}
                 placeholder="Write a comment..."
-                placeholderTextColor="#94a3b8"
+                placeholderTextColor="#8BA3AB"
                 style={styles.input}
                 multiline
               />
@@ -235,13 +235,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     borderBottomWidth: 1,
-    borderBottomColor: "#f1f5f9",
+    borderBottomColor: "#EDF5F4",
   },
 
   title: {
     fontSize: 18,
     fontWeight: "800",
-    color: "#0f172a",
+    color: "#0E2A47",
   },
 
   list: {
@@ -255,7 +255,7 @@ const styles = StyleSheet.create({
   emptyText: {
     marginTop: 20,
     textAlign: "center",
-    color: "#94a3b8",
+    color: "#8BA3AB",
   },
 
   commentRow: {
@@ -271,14 +271,14 @@ const styles = StyleSheet.create({
   commentAuthor: {
     fontWeight: "700",
     fontSize: 13,
-    color: "#0f172a",
+    color: "#0E2A47",
   },
 
   commentContent: {
     marginTop: 3,
     fontSize: 13,
     lineHeight: 19,
-    color: "#475569",
+    color: "#4D6C78",
   },
 
   errorText: {
@@ -291,7 +291,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-end",
     borderTopWidth: 1,
-    borderTopColor: "#f1f5f9",
+    borderTopColor: "#EDF5F4",
   },
 
   input: {
@@ -301,10 +301,10 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     marginRight: 10,
     borderWidth: 1,
-    borderColor: "#cbd5e1",
+    borderColor: "#C4D8DA",
     borderRadius: 16,
     fontSize: 14,
-    color: "#0f172a",
+    color: "#0E2A47",
   },
 
   sendButton: {
@@ -313,6 +313,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 20,
-    backgroundColor: "#4f46e5",
+    backgroundColor: "#0E7C86",
   },
 });

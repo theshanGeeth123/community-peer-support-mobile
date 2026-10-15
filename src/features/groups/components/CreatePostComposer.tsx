@@ -467,7 +467,7 @@ export default function CreatePostComposer({
             textAlignVertical="top"
             maxLength={MAX_CONTENT_LENGTH}
             placeholder="What's on your mind?"
-            placeholderTextColor="#94a3b8"
+            placeholderTextColor="#8BA3AB"
             style={styles.input}
           />
         ) : (
@@ -489,7 +489,7 @@ export default function CreatePostComposer({
 
           {hasRestoredDraft && (
             <View style={styles.draftNote}>
-              <Ionicons name="document-text-outline" size={14} color="#4f46e5" />
+              <Ionicons name="document-text-outline" size={14} color="#0E7C86" />
 
               <Text style={styles.draftNoteText}>
                 Draft restored — saved on this phone only
@@ -543,7 +543,7 @@ export default function CreatePostComposer({
 
           {groupOptions && groupOptions.length === 1 && selectedGroupName && (
             <View style={styles.singleGroupBadge}>
-              <Ionicons name="people-outline" size={13} color="#4f46e5" />
+              <Ionicons name="people-outline" size={13} color="#0E7C86" />
 
               <Text style={styles.singleGroupBadgeText}>
                 {selectedGroupName}
@@ -583,7 +583,7 @@ export default function CreatePostComposer({
               <Ionicons
                 name={image ? "image" : "image-outline"}
                 size={16}
-                color={image ? "#4f46e5" : "#64748b"}
+                color={image ? "#0E7C86" : "#64808C"}
               />
 
               <Text
@@ -607,7 +607,7 @@ export default function CreatePostComposer({
                   contentWarnings.length > 0 ? "warning" : "warning-outline"
                 }
                 size={16}
-                color={contentWarnings.length > 0 ? "#b45309" : "#64748b"}
+                color={contentWarnings.length > 0 ? "#b45309" : "#64808C"}
               />
 
               <Text
@@ -625,7 +625,7 @@ export default function CreatePostComposer({
               <Ionicons
                 name={showWarningPicker ? "chevron-up" : "chevron-down"}
                 size={14}
-                color="#94a3b8"
+                color="#8BA3AB"
               />
             </Pressable>
           </View>
@@ -673,7 +673,7 @@ export default function CreatePostComposer({
               <Ionicons
                 name={isAnonymous ? "checkbox" : "square-outline"}
                 size={19}
-                color="#4f46e5"
+                color="#0E7C86"
               />
 
               <Text style={styles.anonymousLabel}>Post anonymously</Text>
@@ -725,11 +725,11 @@ const styles = StyleSheet.create({
   card: {
     padding: 16,
     borderWidth: 1,
-    borderColor: "#e2e8f0",
+    borderColor: "#E0EDEB",
     borderRadius: 20,
     backgroundColor: "#ffffff",
 
-    shadowColor: "#0f172a",
+    shadowColor: "#0E2A47",
     shadowOpacity: 0.04,
     shadowRadius: 10,
     shadowOffset: { width: 0, height: 4 },
@@ -747,12 +747,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 21,
-    backgroundColor: "#eef2ff",
+    backgroundColor: "#EAF8F5",
   },
 
   avatarText: {
     fontWeight: "800",
-    color: "#4f46e5",
+    color: "#0E7C86",
   },
 
   trigger: {
@@ -762,18 +762,18 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: 16,
     borderRadius: 21,
-    backgroundColor: "#f8fafc",
+    backgroundColor: "#F5FAF9",
   },
 
   triggerText: {
     fontSize: 14,
-    color: "#94a3b8",
+    color: "#8BA3AB",
   },
 
   triggerDraftText: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#4f46e5",
+    color: "#0E7C86",
   },
 
   draftNote: {
@@ -783,7 +783,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     borderRadius: 12,
-    backgroundColor: "#eef2ff",
+    backgroundColor: "#EAF8F5",
   },
 
   draftNoteText: {
@@ -791,7 +791,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 7,
     fontSize: 12,
     fontWeight: "600",
-    color: "#4338ca",
+    color: "#09646E",
   },
 
   draftDiscardText: {
@@ -806,7 +806,7 @@ const styles = StyleSheet.create({
     minHeight: 64,
     fontSize: 15,
     lineHeight: 21,
-    color: "#0f172a",
+    color: "#0E2A47",
   },
 
   groupPickerSection: {
@@ -817,7 +817,7 @@ const styles = StyleSheet.create({
     marginBottom: 7,
     fontSize: 11,
     fontWeight: "700",
-    color: "#94a3b8",
+    color: "#8BA3AB",
     textTransform: "uppercase",
     letterSpacing: 0.4,
   },
@@ -831,23 +831,23 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 999,
     borderWidth: 1,
-    borderColor: "#e2e8f0",
-    backgroundColor: "#f8fafc",
+    borderColor: "#E0EDEB",
+    backgroundColor: "#F5FAF9",
   },
 
   groupChipActive: {
-    borderColor: "#4f46e5",
-    backgroundColor: "#eef2ff",
+    borderColor: "#0E7C86",
+    backgroundColor: "#EAF8F5",
   },
 
   groupChipText: {
     fontSize: 12,
     fontWeight: "600",
-    color: "#64748b",
+    color: "#64808C",
   },
 
   groupChipTextActive: {
-    color: "#4f46e5",
+    color: "#0E7C86",
   },
 
   singleGroupBadge: {
@@ -858,14 +858,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 999,
-    backgroundColor: "#eef2ff",
+    backgroundColor: "#EAF8F5",
   },
 
   singleGroupBadgeText: {
     marginLeft: 5,
     fontSize: 11,
     fontWeight: "700",
-    color: "#4f46e5",
+    color: "#0E7C86",
   },
 
   imagePreviewWrapper: {
@@ -877,7 +877,7 @@ const styles = StyleSheet.create({
   imagePreview: {
     width: "100%",
     height: 190,
-    backgroundColor: "#f1f5f9",
+    backgroundColor: "#EDF5F4",
   },
 
   imageRemoveButton: {
@@ -907,13 +907,13 @@ const styles = StyleSheet.create({
   },
 
   photoToggleTextActive: {
-    color: "#4f46e5",
+    color: "#0E7C86",
   },
 
   warningToggleText: {
     fontSize: 13,
     fontWeight: "600",
-    color: "#64748b",
+    color: "#64808C",
   },
 
   warningToggleTextActive: {
@@ -972,7 +972,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     borderTopWidth: 1,
-    borderTopColor: "#f1f5f9",
+    borderTopColor: "#EDF5F4",
   },
 
   anonymousToggle: {
@@ -984,7 +984,7 @@ const styles = StyleSheet.create({
     marginLeft: 7,
     fontSize: 13,
     fontWeight: "600",
-    color: "#334155",
+    color: "#31515F",
   },
 
   footerButtons: {
@@ -1000,7 +1000,7 @@ const styles = StyleSheet.create({
   cancelButtonText: {
     fontSize: 13,
     fontWeight: "600",
-    color: "#94a3b8",
+    color: "#8BA3AB",
   },
 
   submitButton: {
@@ -1011,7 +1011,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 19,
-    backgroundColor: "#4f46e5",
+    backgroundColor: "#0E7C86",
   },
 
   submitButtonText: {
@@ -1029,6 +1029,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 11,
     lineHeight: 16,
-    color: "#94a3b8",
+    color: "#8BA3AB",
   },
 });

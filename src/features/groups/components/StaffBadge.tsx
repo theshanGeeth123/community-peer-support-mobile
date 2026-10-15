@@ -22,14 +22,14 @@ const BADGE_CONFIG: Record<
   MODERATOR: {
     label: "Moderator",
     icon: "shield-checkmark",
-    background: "#e0e7ff",
-    color: "#4338ca",
+    background: "#D8F3EA",
+    color: "#09646E",
   },
   ADMIN: {
     label: "Admin",
     icon: "star",
-    background: "#f3e8ff",
-    color: "#7e22ce",
+    background: "#D8F3EA",
+    color: "#09646E",
   },
 };
 

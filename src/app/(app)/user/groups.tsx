@@ -1,3 +1,4 @@
+import SectionBanner from "@/features/branding/components/SectionBanner";
 import { useCallback, useMemo, useState } from "react";
 
 import {
@@ -339,7 +340,7 @@ export default function UserGroupsFeedScreen() {
             onPress={() => router.push("/(app)/user/discover" as Href)}
             style={styles.discoverButton}
           >
-            <Ionicons name="compass-outline" size={16} color="#4f46e5" />
+            <Ionicons name="compass-outline" size={16} color="#0E7C86" />
 
             <Text style={styles.discoverButtonText}>Discover</Text>
           </Pressable>
@@ -357,18 +358,24 @@ export default function UserGroupsFeedScreen() {
         }
         keyboardShouldPersistTaps="handled"
       >
+        <SectionBanner
+          eyebrow="YOUR COMMUNITY"
+          title="Spaces that understand you."
+          description="Connect with your groups, follow conversations, and share at your pace."
+          icon="people-outline"
+        />
         <View style={styles.searchBox}>
           <Ionicons
             name="search-outline"
             size={19}
-            color="#94a3b8"
+            color="#8BA3AB"
           />
 
           <TextInput
             value={search}
             onChangeText={setSearch}
             placeholder="Search your groups to visit..."
-            placeholderTextColor="#94a3b8"
+            placeholderTextColor="#8BA3AB"
             style={styles.searchInput}
           />
 
@@ -380,7 +387,7 @@ export default function UserGroupsFeedScreen() {
               <Ionicons
                 name="close-circle"
                 size={19}
-                color="#94a3b8"
+                color="#8BA3AB"
               />
             </Pressable>
           )}
@@ -403,7 +410,7 @@ export default function UserGroupsFeedScreen() {
                     <Ionicons
                       name="people"
                       size={18}
-                      color="#4f46e5"
+                      color="#0E7C86"
                     />
                   </View>
 
@@ -414,7 +421,7 @@ export default function UserGroupsFeedScreen() {
                   <Ionicons
                     name="chevron-forward"
                     size={18}
-                    color="#94a3b8"
+                    color="#8BA3AB"
                   />
                 </Pressable>
               ))
@@ -447,7 +454,7 @@ export default function UserGroupsFeedScreen() {
           <View style={styles.center}>
             <ActivityIndicator
               size="large"
-              color="#4f46e5"
+              color="#0E7C86"
             />
 
             <Text style={styles.loadingText}>
@@ -460,7 +467,7 @@ export default function UserGroupsFeedScreen() {
               <Ionicons
                 name="people-outline"
                 size={30}
-                color="#4f46e5"
+                color="#0E7C86"
               />
             </View>
 
@@ -498,7 +505,7 @@ export default function UserGroupsFeedScreen() {
               <Ionicons
                 name="chatbubbles-outline"
                 size={29}
-                color="#4f46e5"
+                color="#0E7C86"
               />
             </View>
 
@@ -578,7 +585,7 @@ export default function UserGroupsFeedScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#f8fafc",
+    backgroundColor: "#F5FAF9",
   },
 
   header: {
@@ -592,7 +599,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 24,
     fontWeight: "800",
-    color: "#0f172a",
+    color: "#0E2A47",
   },
 
   headerActions: {
@@ -608,15 +615,15 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 999,
     borderWidth: 1,
-    borderColor: "#c7d2fe",
-    backgroundColor: "#eef2ff",
+    borderColor: "#B7E7DA",
+    backgroundColor: "#EAF8F5",
   },
 
   discoverButtonText: {
     marginLeft: 6,
     fontSize: 13,
     fontWeight: "700",
-    color: "#4f46e5",
+    color: "#0E7C86",
   },
 
   content: {
@@ -632,7 +639,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: "#e2e8f0",
+    borderColor: "#E0EDEB",
     backgroundColor: "#ffffff",
   },
 
@@ -640,7 +647,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 8,
     fontSize: 14,
-    color: "#0f172a",
+    color: "#0E2A47",
   },
 
   searchResults: {
@@ -648,14 +655,14 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: "#e2e8f0",
+    borderColor: "#E0EDEB",
     backgroundColor: "#ffffff",
   },
 
   searchResultsEmpty: {
     padding: 10,
     fontSize: 13,
-    color: "#94a3b8",
+    color: "#8BA3AB",
   },
 
   searchResultRow: {
@@ -671,7 +678,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 10,
-    backgroundColor: "#eef2ff",
+    backgroundColor: "#EAF8F5",
   },
 
   searchResultName: {
@@ -679,7 +686,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     fontSize: 14,
     fontWeight: "600",
-    color: "#0f172a",
+    color: "#0E2A47",
   },
 
   errorBox: {
@@ -702,7 +709,7 @@ const styles = StyleSheet.create({
 
   loadingText: {
     marginTop: 12,
-    color: "#64748b",
+    color: "#64808C",
   },
 
   emptyCard: {
@@ -711,7 +718,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 22,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#e2e8f0",
+    borderColor: "#E0EDEB",
     borderRadius: 20,
     backgroundColor: "#ffffff",
   },
@@ -722,14 +729,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 31,
-    backgroundColor: "#eef2ff",
+    backgroundColor: "#EAF8F5",
   },
 
   emptyTitle: {
     marginTop: 13,
     fontSize: 17,
     fontWeight: "700",
-    color: "#475569",
+    color: "#4D6C78",
   },
 
   emptyDescription: {
@@ -738,7 +745,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 12,
     lineHeight: 18,
-    color: "#94a3b8",
+    color: "#8BA3AB",
   },
 
   emptyDiscoverButton: {
@@ -748,7 +755,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
     paddingVertical: 12,
     borderRadius: 14,
-    backgroundColor: "#4f46e5",
+    backgroundColor: "#0E7C86",
   },
 
   emptyDiscoverButtonText: {

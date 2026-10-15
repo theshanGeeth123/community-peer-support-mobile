@@ -80,7 +80,7 @@ export default function NeedsResponseQuickAction({
         <Ionicons
           name={hasCrisis ? "warning-outline" : "chatbubble-ellipses-outline"}
           size={24}
-          color={hasCrisis ? "#e11d48" : "#4f46e5"}
+          color={hasCrisis ? "#e11d48" : "#0E7C86"}
         />
       </View>
 
@@ -110,7 +110,7 @@ export default function NeedsResponseQuickAction({
         </View>
       )}
 
-      <Ionicons name="chevron-forward" size={20} color="#94a3b8" />
+      <Ionicons name="chevron-forward" size={20} color="#8BA3AB" />
     </Pressable>
   );
 }

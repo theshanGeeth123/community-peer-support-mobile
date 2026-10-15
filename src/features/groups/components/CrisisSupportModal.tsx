@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 20,
     fontWeight: "800",
-    color: "#0f172a",
+    color: "#0E2A47",
   },
 
   message: {
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 14,
     lineHeight: 21,
-    color: "#475569",
+    color: "#4D6C78",
   },
 
   resourceCard: {
@@ -148,9 +148,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#e2e8f0",
+    borderColor: "#E0EDEB",
     borderRadius: 16,
-    backgroundColor: "#f8fafc",
+    backgroundColor: "#F5FAF9",
   },
 
   resourceText: {
@@ -161,13 +161,13 @@ const styles = StyleSheet.create({
   resourceName: {
     fontSize: 14,
     fontWeight: "800",
-    color: "#0f172a",
+    color: "#0E2A47",
   },
 
   resourceDescription: {
     marginTop: 3,
     fontSize: 12,
-    color: "#64748b",
+    color: "#64808C",
   },
 
   callButton: {
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     borderRadius: 999,
-    backgroundColor: "#4f46e5",
+    backgroundColor: "#0E7C86",
   },
 
   callButtonText: {
@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
     textAlign: "center",
     fontSize: 12,
-    color: "#94a3b8",
+    color: "#8BA3AB",
   },
 
   closeButton: {
@@ -198,12 +198,12 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     alignItems: "center",
     borderRadius: 16,
-    backgroundColor: "#f1f5f9",
+    backgroundColor: "#EDF5F4",
   },
 
   closeButtonText: {
     fontSize: 15,
     fontWeight: "800",
-    color: "#334155",
+    color: "#31515F",
   },
 });

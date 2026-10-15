@@ -199,117 +199,6 @@ export default function LoginScreen() {
         message={apiError}
       />
 
-      {/*
-       * DEVELOPMENT-ONLY DEMO LOGIN
-       *
-       * These buttons are shown only while
-       * running the app in development mode.
-       */}
-      {__DEV__ && (
-        <View className="mb-6 rounded-2xl border border-amber-200 bg-amber-50 p-4">
-          <View className="mb-3 flex-row items-center">
-            <View className="mr-2 h-8 w-8 items-center justify-center rounded-full bg-amber-100">
-              <Ionicons
-                name="flash-outline"
-                size={17}
-                color="#b45309"
-              />
-            </View>
-
-            <View className="flex-1">
-              <Text className="font-bold text-amber-900">
-                Demo Login
-              </Text>
-
-              <Text className="mt-0.5 text-xs text-amber-700">
-                Quick access for role testing
-              </Text>
-            </View>
-          </View>
-
-          <View className="gap-2">
-            {DEMO_ACCOUNTS.map(
-              (
-                account
-              ) => {
-                const isCurrentLoading =
-                  demoLoadingRole ===
-                  account.role;
-
-                const isDisabled =
-                  isSubmitting ||
-                  isDemoLoginLoading;
-
-                return (
-                  <Pressable
-                    key={
-                      account.role
-                    }
-                    disabled={
-                      isDisabled
-                    }
-                    onPress={() =>
-                      handleDemoLogin(
-                        account.role,
-                        account.email
-                      )
-                    }
-                    className={`min-h-12 flex-row items-center rounded-xl border px-4 ${
-                      isDisabled
-                        ? "border-slate-200 bg-slate-100"
-                        : "border-amber-200 bg-white active:bg-amber-100"
-                    }`}
-                  >
-                    <View className="mr-3 h-8 w-8 items-center justify-center rounded-lg bg-indigo-50">
-                      {isCurrentLoading ? (
-                        <ActivityIndicator
-                          size="small"
-                          color="#4f46e5"
-                        />
-                      ) : (
-                        <Ionicons
-                          name={
-                            account.icon
-                          }
-                          size={
-                            18
-                          }
-                          color="#4f46e5"
-                        />
-                      )}
-                    </View>
-
-                    <View className="flex-1">
-                      <Text className="font-semibold text-slate-800">
-                        {
-                          account.label
-                        }
-                      </Text>
-
-                      <Text
-                        numberOfLines={
-                          1
-                        }
-                        className="text-xs text-slate-500"
-                      >
-                        {
-                          account.email
-                        }
-                      </Text>
-                    </View>
-
-                    <Ionicons
-                      name="arrow-forward-outline"
-                      size={18}
-                      color="#64748b"
-                    />
-                  </Pressable>
-                );
-              }
-            )}
-          </View>
-        </View>
-      )}
 
       <Controller
         control={control}
@@ -417,7 +306,7 @@ export default function LoginScreen() {
         <Ionicons
           name="logo-google"
           size={20}
-          color="#334155"
+          color="#31515F"
         />
 
         <Text className="ml-3 font-bold text-slate-700">
@@ -442,6 +331,118 @@ export default function LoginScreen() {
           </Text>
         </Pressable>
       </View>
+
+      {/*
+       * DEVELOPMENT-ONLY DEMO LOGIN
+       *
+       * These buttons are shown only while
+       * running the app in development mode.
+       */}
+      {__DEV__ && (
+        <View className="mb-6 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+          <View className="mb-3 flex-row items-center">
+            <View className="mr-2 h-8 w-8 items-center justify-center rounded-full bg-indigo-50">
+              <Ionicons
+                name="flash-outline"
+                size={17}
+                color="#b45309"
+              />
+            </View>
+
+            <View className="flex-1">
+              <Text className="font-bold text-slate-900">
+                Demo Login
+              </Text>
+
+              <Text className="mt-0.5 text-xs text-slate-500">
+                Development-only role shortcuts
+              </Text>
+            </View>
+          </View>
+
+          <View className="gap-2">
+            {DEMO_ACCOUNTS.map(
+              (
+                account
+              ) => {
+                const isCurrentLoading =
+                  demoLoadingRole ===
+                  account.role;
+
+                const isDisabled =
+                  isSubmitting ||
+                  isDemoLoginLoading;
+
+                return (
+                  <Pressable
+                    key={
+                      account.role
+                    }
+                    disabled={
+                      isDisabled
+                    }
+                    onPress={() =>
+                      handleDemoLogin(
+                        account.role,
+                        account.email
+                      )
+                    }
+                    className={`min-h-12 flex-row items-center rounded-xl border px-4 ${
+                      isDisabled
+                        ? "border-slate-200 bg-slate-100"
+                        : "border-amber-200 bg-white active:bg-indigo-50"
+                    }`}
+                  >
+                    <View className="mr-3 h-8 w-8 items-center justify-center rounded-lg bg-indigo-50">
+                      {isCurrentLoading ? (
+                        <ActivityIndicator
+                          size="small"
+                          color="#0E7C86"
+                        />
+                      ) : (
+                        <Ionicons
+                          name={
+                            account.icon
+                          }
+                          size={
+                            18
+                          }
+                          color="#0E7C86"
+                        />
+                      )}
+                    </View>
+
+                    <View className="flex-1">
+                      <Text className="font-semibold text-slate-800">
+                        {
+                          account.label
+                        }
+                      </Text>
+
+                      <Text
+                        numberOfLines={
+                          1
+                        }
+                        className="text-xs text-slate-500"
+                      >
+                        {
+                          account.email
+                        }
+                      </Text>
+                    </View>
+
+                    <Ionicons
+                      name="arrow-forward-outline"
+                      size={18}
+                      color="#64808C"
+                    />
+                  </Pressable>
+                );
+              }
+            )}
+          </View>
+        </View>
+      )}
     </AuthScreen>
   );
 }

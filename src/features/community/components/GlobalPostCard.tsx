@@ -89,7 +89,7 @@ export default function GlobalPostCard({
 
         {canDelete && (
           <Pressable hitSlop={10} onPress={onDelete}>
-            <Ionicons name="trash-outline" size={19} color="#94a3b8" />
+            <Ionicons name="trash-outline" size={19} color="#8BA3AB" />
           </Pressable>
         )}
       </View>
@@ -101,14 +101,14 @@ export default function GlobalPostCard({
           <Ionicons
             name={post.likedByMe ? "heart" : "heart-outline"}
             size={19}
-            color={post.likedByMe ? "#ef4444" : "#64748b"}
+            color={post.likedByMe ? "#ef4444" : "#64808C"}
           />
 
           <Text style={styles.actionText}>{post.likeCount}</Text>
         </Pressable>
 
         <Pressable style={styles.actionButton} onPress={onOpenComments}>
-          <Ionicons name="chatbubble-outline" size={18} color="#64748b" />
+          <Ionicons name="chatbubble-outline" size={18} color="#64808C" />
 
           <Text style={styles.actionText}>{post.commentCount}</Text>
         </Pressable>
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     marginTop: 14,
     padding: 16,
     borderWidth: 1,
-    borderColor: "#e2e8f0",
+    borderColor: "#E0EDEB",
     borderRadius: 18,
     backgroundColor: "#ffffff",
   },
@@ -161,12 +161,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 20,
-    backgroundColor: "#eef2ff",
+    backgroundColor: "#EAF8F5",
   },
 
   avatarText: {
     fontWeight: "800",
-    color: "#4f46e5",
+    color: "#0E7C86",
   },
 
   headerText: {
@@ -176,20 +176,20 @@ const styles = StyleSheet.create({
 
   authorName: {
     fontWeight: "700",
-    color: "#0f172a",
+    color: "#0E2A47",
   },
 
   timestamp: {
     marginTop: 2,
     fontSize: 11,
-    color: "#94a3b8",
+    color: "#8BA3AB",
   },
 
   content: {
     marginTop: 12,
     fontSize: 14,
     lineHeight: 21,
-    color: "#334155",
+    color: "#31515F",
   },
 
   footer: {
@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
     paddingTop: 12,
     flexDirection: "row",
     borderTopWidth: 1,
-    borderTopColor: "#f1f5f9",
+    borderTopColor: "#EDF5F4",
   },
 
   actionButton: {
@@ -210,6 +210,6 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     fontSize: 13,
     fontWeight: "600",
-    color: "#64748b",
+    color: "#64808C",
   },
 });

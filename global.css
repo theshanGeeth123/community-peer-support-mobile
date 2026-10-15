@@ -1,5 +1,35 @@
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/preflight.css" layer(base);
 @import "tailwindcss/utilities.css";
-
 @import "nativewind/theme";
+
+/* ALYVEN 2026 design system. Existing NativeWind classes keep working.
+   Indigo/purple legacy accents are mapped to the established brand palette. */
+@theme {
+  --color-indigo-50: #EAF8F5;
+  --color-indigo-100: #D8F3EA;
+  --color-indigo-200: #B7E7DA;
+  --color-indigo-300: #97DDCF;
+  --color-indigo-400: #45A5A8;
+  --color-indigo-500: #168994;
+  --color-indigo-600: #0E7C86;
+  --color-indigo-700: #09646E;
+  --color-indigo-800: #0C4A60;
+  --color-indigo-900: #0E2A47;
+  --color-violet-50: #EAF8F5;
+  --color-violet-100: #D8F3EA;
+  --color-violet-200: #B7E7DA;
+  --color-violet-500: #168994;
+  --color-violet-600: #0E7C86;
+  --color-violet-700: #09646E;
+  --color-slate-50: #F5FAF9;
+  --color-slate-100: #EDF5F4;
+  --color-slate-200: #E0EDEB;
+  --color-slate-300: #C4D8DA;
+  --color-slate-400: #8BA3AB;
+  --color-slate-500: #64808C;
+  --color-slate-600: #4D6C78;
+  --color-slate-700: #31515F;
+  --color-slate-800: #1C3A50;
+  --color-slate-900: #0E2A47;
+}

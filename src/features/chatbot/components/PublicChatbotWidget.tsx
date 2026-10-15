@@ -357,7 +357,7 @@ export default function PublicChatbotWidget() {
 
           <Pressable
             style={
-              StyleSheet.absoluteFillObject
+              StyleSheet.absoluteFill
             }
             onPress={
               closeChat
@@ -462,8 +462,8 @@ export default function PublicChatbotWidget() {
                   size={20}
                   color={
                     isSending
-                      ? "#cbd5e1"
-                      : "#64748b"
+                      ? "#C4D8DA"
+                      : "#64808C"
                   }
                 />
               </Pressable>
@@ -483,7 +483,7 @@ export default function PublicChatbotWidget() {
                 <Ionicons
                   name="close"
                   size={23}
-                  color="#475569"
+                  color="#4D6C78"
                 />
               </Pressable>
             </View>
@@ -498,7 +498,7 @@ export default function PublicChatbotWidget() {
               <Ionicons
                 name="information-circle-outline"
                 size={17}
-                color="#4f46e5"
+                color="#0E7C86"
               />
 
               <Text
@@ -552,7 +552,7 @@ export default function PublicChatbotWidget() {
                   >
                     <ActivityIndicator
                       size="small"
-                      color="#4f46e5"
+                      color="#0E7C86"
                     />
 
                     <Text
@@ -621,7 +621,7 @@ export default function PublicChatbotWidget() {
                     }
                   }}
                   placeholder="Ask about the app..."
-                  placeholderTextColor="#94a3b8"
+                  placeholderTextColor="#8BA3AB"
                   multiline
                   editable={
                     !isSending
@@ -711,7 +711,7 @@ const styles =
         "center",
 
       backgroundColor:
-        "#4f46e5",
+        "#0E7C86",
 
       shadowColor:
         "#312e81",
@@ -808,7 +808,7 @@ const styles =
         1,
 
       borderBottomColor:
-        "#e2e8f0",
+        "#E0EDEB",
 
       backgroundColor:
         "#ffffff",
@@ -828,7 +828,7 @@ const styles =
         "center",
 
       backgroundColor:
-        "#4f46e5",
+        "#0E7C86",
     },
 
     headerTextContainer: {
@@ -838,7 +838,7 @@ const styles =
     },
 
     headerTitle: {
-      color: "#0f172a",
+      color: "#0E2A47",
 
       fontSize: 16,
 
@@ -872,7 +872,7 @@ const styles =
     statusText: {
       flexShrink: 1,
 
-      color: "#64748b",
+      color: "#64808C",
 
       fontSize: 11,
 
@@ -896,7 +896,7 @@ const styles =
         "center",
 
       backgroundColor:
-        "#f8fafc",
+        "#F5FAF9",
     },
 
     disclaimer: {
@@ -913,13 +913,13 @@ const styles =
         10,
 
       backgroundColor:
-        "#eef2ff",
+        "#EAF8F5",
 
       borderBottomWidth:
         1,
 
       borderBottomColor:
-        "#e0e7ff",
+        "#D8F3EA",
     },
 
     disclaimerText: {
@@ -927,7 +927,7 @@ const styles =
 
       marginLeft: 7,
 
-      color: "#4338ca",
+      color: "#09646E",
 
       fontSize: 11.5,
 
@@ -974,13 +974,13 @@ const styles =
       borderRadius: 16,
 
       backgroundColor:
-        "#f1f5f9",
+        "#EDF5F4",
     },
 
     typingText: {
       marginLeft: 8,
 
-      color: "#64748b",
+      color: "#64808C",
 
       fontSize: 12,
 
@@ -1047,7 +1047,7 @@ const styles =
         1,
 
       borderTopColor:
-        "#e2e8f0",
+        "#E0EDEB",
 
       backgroundColor:
         "#ffffff",
@@ -1065,12 +1065,12 @@ const styles =
       borderWidth: 1,
 
       borderColor:
-        "#cbd5e1",
+        "#C4D8DA",
 
       borderRadius: 18,
 
       backgroundColor:
-        "#f8fafc",
+        "#F5FAF9",
     },
 
     input: {
@@ -1085,7 +1085,7 @@ const styles =
 
       paddingBottom: 10,
 
-      color: "#0f172a",
+      color: "#0E2A47",
 
       fontSize: 14,
 
@@ -1100,7 +1100,7 @@ const styles =
 
       bottom: 5,
 
-      color: "#94a3b8",
+      color: "#8BA3AB",
 
       fontSize: 10,
 
@@ -1122,11 +1122,11 @@ const styles =
         "center",
 
       backgroundColor:
-        "#4f46e5",
+        "#0E7C86",
     },
 
     sendButtonDisabled: {
       backgroundColor:
-        "#cbd5e1",
+        "#C4D8DA",
     },
   });

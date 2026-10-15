@@ -57,7 +57,7 @@ export const moderationApi = {
     >("/reports", payload);
 
     const data = response.data;
-    return { ...data, data: { report: normalizeReport(data.data.report as Record<string, unknown>) } };
+    return { ...data, data: { report: normalizeReport(data.data.report as unknown as Record<string, unknown>) } };
   },
 
   // --- Moderation: list reports for assigned groups (MODERATOR) -------------
@@ -93,7 +93,7 @@ export const moderationApi = {
     return {
       ...data,
       data: {
-        report: normalizeReport(data.data.report as Record<string, unknown>),
+        report: normalizeReport(data.data.report as unknown as Record<string, unknown>),
         moderationAction: rawAction ? (coerceId(rawAction) as unknown as ModerationActionSummary) : null,
       },
     };
@@ -115,7 +115,7 @@ export const moderationApi = {
     return {
       ...data,
       data: {
-        report: normalizeReport(data.data.report as Record<string, unknown>),
+        report: normalizeReport(data.data.report as unknown as Record<string, unknown>),
         moderationAction: rawAction ? (coerceId(rawAction) as unknown as ModerationActionSummary) : null,
       },
     };

@@ -56,8 +56,8 @@ export default function ReportCard({
             size={11}
             color={
               report.targetType === "POST"
-                ? "#4f46e5"
-                : "#0891b2"
+                ? "#0E7C86"
+                : "#0E7C86"
             }
           />
           <Text
@@ -93,7 +93,7 @@ export default function ReportCard({
           <Ionicons
             name="person-outline"
             size={12}
-            color="#94a3b8"
+            color="#8BA3AB"
           />
           <Text style={styles.footerText}>
             {report.reporter.fullName}
@@ -104,7 +104,7 @@ export default function ReportCard({
           <Ionicons
             name="people-outline"
             size={12}
-            color="#94a3b8"
+            color="#8BA3AB"
           />
           <Text style={styles.footerText} numberOfLines={1}>
             {groupName}
@@ -121,7 +121,7 @@ export default function ReportCard({
         <Ionicons
           name="chevron-forward"
           size={16}
-          color="#cbd5e1"
+          color="#C4D8DA"
         />
       </View>
     </Pressable>
@@ -133,14 +133,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: "#e2e8f0",
+    borderColor: "#E0EDEB",
     padding: 16,
     marginBottom: 12,
     position: "relative",
   },
   cardPressed: {
     opacity: 0.82,
-    backgroundColor: "#f8fafc",
+    backgroundColor: "#F5FAF9",
   },
   topRow: {
     flexDirection: "row",
@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
   },
   targetPost: {
-    backgroundColor: "#ede9fe",
+    backgroundColor: "#EAF8F5",
   },
   targetComment: {
     backgroundColor: "#cffafe",
@@ -168,17 +168,17 @@ const styles = StyleSheet.create({
     letterSpacing: 0.4,
   },
   targetPostLabel: {
-    color: "#4f46e5",
+    color: "#0E7C86",
   },
   targetCommentLabel: {
-    color: "#0891b2",
+    color: "#0E7C86",
   },
   reasonRow: {
     marginBottom: 8,
   },
   details: {
     fontSize: 13,
-    color: "#64748b",
+    color: "#64808C",
     lineHeight: 18,
     marginBottom: 12,
   },
@@ -197,16 +197,16 @@ const styles = StyleSheet.create({
   },
   footerText: {
     fontSize: 12,
-    color: "#94a3b8",
+    color: "#8BA3AB",
     flexShrink: 1,
   },
   footerSep: {
     fontSize: 12,
-    color: "#cbd5e1",
+    color: "#C4D8DA",
   },
   date: {
     fontSize: 12,
-    color: "#94a3b8",
+    color: "#8BA3AB",
     marginLeft: 8,
     flexShrink: 0,
   },

@@ -380,7 +380,7 @@ export default function GroupStaffAssignmentModal({
               <Ionicons
                 name="close"
                 size={26}
-                color="#475569"
+                color="#4D6C78"
               />
             </Pressable>
           </View>
@@ -415,7 +415,7 @@ export default function GroupStaffAssignmentModal({
             >
               <ActivityIndicator
                 size="large"
-                color="#4f46e5"
+                color="#0E7C86"
               />
 
               <Text
@@ -539,7 +539,7 @@ function StaffSection({
           <Ionicons
             name={icon}
             size={21}
-            color="#4f46e5"
+            color="#0E7C86"
           />
         </View>
 
@@ -576,7 +576,7 @@ function StaffSection({
           <Ionicons
             name="person-add-outline"
             size={25}
-            color="#94a3b8"
+            color="#8BA3AB"
           />
 
           <Text
@@ -842,7 +842,7 @@ const styles =
       borderBottomWidth: 1,
 
       borderBottomColor:
-        "#f1f5f9",
+        "#EDF5F4",
     },
 
     title: {
@@ -850,7 +850,7 @@ const styles =
 
       fontWeight: "800",
 
-      color: "#0f172a",
+      color: "#0E2A47",
     },
 
     subtitle: {
@@ -860,7 +860,7 @@ const styles =
 
       fontSize: 13,
 
-      color: "#64748b",
+      color: "#64808C",
     },
 
     errorBox: {
@@ -910,7 +910,7 @@ const styles =
     loadingText: {
       marginTop: 12,
 
-      color: "#64748b",
+      color: "#64808C",
     },
 
     scrollContent: {
@@ -948,7 +948,7 @@ const styles =
       borderRadius: 13,
 
       backgroundColor:
-        "#eef2ff",
+        "#EAF8F5",
     },
 
     sectionTitle: {
@@ -956,7 +956,7 @@ const styles =
 
       fontWeight: "800",
 
-      color: "#0f172a",
+      color: "#0E2A47",
     },
 
     sectionDescription: {
@@ -966,7 +966,7 @@ const styles =
 
       fontSize: 12,
 
-      color: "#64748b",
+      color: "#64808C",
     },
 
     emptyBox: {
@@ -981,12 +981,12 @@ const styles =
       borderWidth: 1,
 
       borderColor:
-        "#e2e8f0",
+        "#E0EDEB",
 
       borderRadius: 16,
 
       backgroundColor:
-        "#f8fafc",
+        "#F5FAF9",
     },
 
     emptyText: {
@@ -994,7 +994,7 @@ const styles =
 
       fontWeight: "700",
 
-      color: "#475569",
+      color: "#4D6C78",
     },
 
     emptySubText: {
@@ -1004,7 +1004,7 @@ const styles =
 
       fontSize: 12,
 
-      color: "#94a3b8",
+      color: "#8BA3AB",
     },
 
     staffRow: {
@@ -1020,7 +1020,7 @@ const styles =
       borderWidth: 1,
 
       borderColor:
-        "#e2e8f0",
+        "#E0EDEB",
 
       borderRadius: 16,
 
@@ -1042,7 +1042,7 @@ const styles =
       borderRadius: 21,
 
       backgroundColor:
-        "#eef2ff",
+        "#EAF8F5",
     },
 
     avatarText: {
@@ -1050,7 +1050,7 @@ const styles =
 
       fontWeight: "800",
 
-      color: "#4f46e5",
+      color: "#0E7C86",
     },
 
     staffInfo: {
@@ -1065,7 +1065,7 @@ const styles =
 
       fontWeight: "700",
 
-      color: "#0f172a",
+      color: "#0E2A47",
     },
 
     staffEmail: {
@@ -1073,7 +1073,7 @@ const styles =
 
       fontSize: 11,
 
-      color: "#64748b",
+      color: "#64808C",
     },
 
     assignedBadge: {
@@ -1126,7 +1126,7 @@ const styles =
 
     assignButton: {
       backgroundColor:
-        "#4f46e5",
+        "#0E7C86",
     },
 
     removeButton: {

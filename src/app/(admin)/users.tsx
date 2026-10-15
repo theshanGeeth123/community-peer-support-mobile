@@ -300,7 +300,7 @@ export default function AdminUsersScreen() {
     <SafeAreaView
       style={{
         flex: 1,
-        backgroundColor: "#f8fafc",
+        backgroundColor: "#F5FAF9",
       }}
       edges={[
         "top",
@@ -340,7 +340,7 @@ export default function AdminUsersScreen() {
             <Ionicons
               name="arrow-back"
               size={22}
-              color="#0f172a"
+              color="#0E2A47"
             />
           </Pressable>
 
@@ -384,7 +384,7 @@ export default function AdminUsersScreen() {
               <Ionicons
                 name="people-outline"
                 size={21}
-                color="#4f46e5"
+                color="#0E7C86"
               />
             </View>
 
@@ -428,13 +428,13 @@ export default function AdminUsersScreen() {
           <Ionicons
             name="search-outline"
             size={21}
-            color="#94a3b8"
+            color="#8BA3AB"
           />
 
           <TextInput
             className="ml-3 flex-1 text-base text-slate-900"
             placeholder="Search name or email..."
-            placeholderTextColor="#94a3b8"
+            placeholderTextColor="#8BA3AB"
             value={search}
             onChangeText={
               setSearch
@@ -452,7 +452,7 @@ export default function AdminUsersScreen() {
               <Ionicons
                 name="close-circle"
                 size={21}
-                color="#94a3b8"
+                color="#8BA3AB"
               />
             </Pressable>
           )}
@@ -599,7 +599,7 @@ export default function AdminUsersScreen() {
           <View className="items-center py-16">
             <ActivityIndicator
               size="large"
-              color="#4f46e5"
+              color="#0E7C86"
             />
 
             <Text className="mt-4 text-slate-500">
@@ -612,7 +612,7 @@ export default function AdminUsersScreen() {
               <Ionicons
                 name="people-outline"
                 size={30}
-                color="#64748b"
+                color="#64808C"
               />
             </View>
 
@@ -673,7 +673,7 @@ export default function AdminUsersScreen() {
                   <Ionicons
                     name="chevron-forward"
                     size={20}
-                    color="#94a3b8"
+                    color="#8BA3AB"
                   />
                 </View>
 
@@ -767,8 +767,8 @@ export default function AdminUsersScreen() {
                 size={18}
                 color={
                   pagination.hasPreviousPage
-                    ? "#4f46e5"
-                    : "#94a3b8"
+                    ? "#0E7C86"
+                    : "#8BA3AB"
                 }
               />
 
@@ -836,8 +836,8 @@ export default function AdminUsersScreen() {
                 size={18}
                 color={
                   pagination.hasNextPage
-                    ? "#4f46e5"
-                    : "#94a3b8"
+                    ? "#0E7C86"
+                    : "#8BA3AB"
                 }
               />
             </Pressable>

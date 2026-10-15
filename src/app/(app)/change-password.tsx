@@ -180,7 +180,7 @@ export default function ProfileScreen() {
     <SafeAreaView
       style={{
         flex: 1,
-        backgroundColor: "#f8fafc",
+        backgroundColor: "#F5FAF9",
       }}
       edges={[
         "top",
@@ -250,7 +250,7 @@ export default function ProfileScreen() {
               <Ionicons
                 name="person-outline"
                 size={21}
-                color="#4f46e5"
+                color="#0E7C86"
               />
             </View>
 
@@ -313,7 +313,7 @@ export default function ProfileScreen() {
               <Ionicons
                 name="mail-outline"
                 size={19}
-                color="#64748b"
+                color="#64808C"
               />
 
               <Text className="ml-3 flex-1 text-slate-500">
@@ -386,7 +386,7 @@ export default function ProfileScreen() {
               <Ionicons
                 name="key-outline"
                 size={21}
-                color="#4f46e5"
+                color="#0E7C86"
               />
             </View>
 
@@ -403,7 +403,7 @@ export default function ProfileScreen() {
             <Ionicons
               name="chevron-forward"
               size={20}
-              color="#94a3b8"
+              color="#8BA3AB"
             />
           </Pressable>
 
@@ -490,7 +490,7 @@ export default function ProfileScreen() {
               <Ionicons
                 name="chevron-forward"
                 size={20}
-                color="#cbd5e1"
+                color="#C4D8DA"
               />
             </View>
           </Pressable>

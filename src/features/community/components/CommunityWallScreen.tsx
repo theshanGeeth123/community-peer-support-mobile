@@ -1,3 +1,4 @@
+import SectionBanner from "@/features/branding/components/SectionBanner";
 import { useCallback, useState } from "react";
 
 import {
@@ -163,6 +164,12 @@ export default function CommunityWallScreen() {
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }
       >
+        <SectionBanner
+          eyebrow="COMMUNITY WALL"
+          title="Stronger together."
+          description="Stay connected through encouraging, thoughtful conversations."
+          icon="chatbubbles-outline"
+        />
         {canPost && (
           <CreateGlobalPostComposer
             currentUserName={user?.fullName}
@@ -182,14 +189,14 @@ export default function CommunityWallScreen() {
 
         {loading ? (
           <View style={styles.center}>
-            <ActivityIndicator size="large" color="#4f46e5" />
+            <ActivityIndicator size="large" color="#0E7C86" />
 
             <Text style={styles.loadingText}>Loading community wall...</Text>
           </View>
         ) : posts.length === 0 ? (
           <View style={styles.emptyCard}>
             <View style={styles.emptyIcon}>
-              <Ionicons name="globe-outline" size={29} color="#4f46e5" />
+              <Ionicons name="globe-outline" size={29} color="#0E7C86" />
             </View>
 
             <Text style={styles.emptyTitle}>Nothing here yet</Text>
@@ -229,7 +236,7 @@ export default function CommunityWallScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#f8fafc",
+    backgroundColor: "#F5FAF9",
   },
 
   header: {
@@ -238,14 +245,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     borderBottomWidth: 1,
-    borderBottomColor: "#e2e8f0",
+    borderBottomColor: "#E0EDEB",
     backgroundColor: "#ffffff",
   },
 
   headerTitle: {
     fontSize: 20,
     fontWeight: "800",
-    color: "#0f172a",
+    color: "#0E2A47",
   },
 
   content: {
@@ -273,7 +280,7 @@ const styles = StyleSheet.create({
 
   loadingText: {
     marginTop: 12,
-    color: "#64748b",
+    color: "#64808C",
   },
 
   emptyCard: {
@@ -282,7 +289,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 22,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#e2e8f0",
+    borderColor: "#E0EDEB",
     borderRadius: 20,
     backgroundColor: "#ffffff",
   },
@@ -293,14 +300,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 31,
-    backgroundColor: "#eef2ff",
+    backgroundColor: "#EAF8F5",
   },
 
   emptyTitle: {
     marginTop: 13,
     fontSize: 17,
     fontWeight: "700",
-    color: "#475569",
+    color: "#4D6C78",
   },
 
   emptyDescription: {
@@ -309,6 +316,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 12,
     lineHeight: 18,
-    color: "#94a3b8",
+    color: "#8BA3AB",
   },
 });

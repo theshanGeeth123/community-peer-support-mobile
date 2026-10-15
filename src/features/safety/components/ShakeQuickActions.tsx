@@ -134,7 +134,7 @@ export default function ShakeQuickActions() {
 
             <Pressable onPress={handleWritePost} style={styles.postCard}>
               <View style={styles.postIcon}>
-                <Ionicons name="create-outline" size={24} color="#4f46e5" />
+                <Ionicons name="create-outline" size={24} color="#0E7C86" />
               </View>
 
               <View style={styles.cardText}>
@@ -147,7 +147,7 @@ export default function ShakeQuickActions() {
                 </Text>
               </View>
 
-              <Ionicons name="chevron-forward" size={20} color="#94a3b8" />
+              <Ionicons name="chevron-forward" size={20} color="#8BA3AB" />
             </Pressable>
 
             {/* EMERGENCY */}
@@ -193,7 +193,7 @@ export default function ShakeQuickActions() {
                 </View>
 
                 <View style={styles.callPill}>
-                  <Ionicons name="call" size={13} color="#4f46e5" />
+                  <Ionicons name="call" size={13} color="#0E7C86" />
 
                   <Text style={styles.callPillText}>
                     {resource.displayPhone}
@@ -237,13 +237,13 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     alignSelf: "center",
     borderRadius: 3,
-    backgroundColor: "#e2e8f0",
+    backgroundColor: "#E0EDEB",
   },
 
   title: {
     fontSize: 21,
     fontWeight: "800",
-    color: "#0f172a",
+    color: "#0E2A47",
   },
 
   subtitle: {
@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
     marginBottom: 18,
     fontSize: 13,
     lineHeight: 19,
-    color: "#64748b",
+    color: "#64808C",
   },
 
   postCard: {
@@ -260,9 +260,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#c7d2fe",
+    borderColor: "#B7E7DA",
     borderRadius: 20,
-    backgroundColor: "#eef2ff",
+    backgroundColor: "#EAF8F5",
   },
 
   postIcon: {
@@ -282,14 +282,14 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 16,
     fontWeight: "800",
-    color: "#0f172a",
+    color: "#0E2A47",
   },
 
   cardDescription: {
     marginTop: 3,
     fontSize: 12,
     lineHeight: 17,
-    color: "#475569",
+    color: "#4D6C78",
   },
 
   emergencyCard: {
@@ -329,7 +329,7 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     letterSpacing: 0.5,
     textTransform: "uppercase",
-    color: "#94a3b8",
+    color: "#8BA3AB",
   },
 
   helplineRow: {
@@ -339,19 +339,19 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     borderBottomWidth: 1,
-    borderBottomColor: "#f1f5f9",
+    borderBottomColor: "#EDF5F4",
   },
 
   helplineName: {
     fontSize: 14,
     fontWeight: "700",
-    color: "#0f172a",
+    color: "#0E2A47",
   },
 
   helplineDescription: {
     marginTop: 2,
     fontSize: 12,
-    color: "#64748b",
+    color: "#64808C",
   },
 
   callPill: {
@@ -361,13 +361,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 5,
     borderRadius: 999,
-    backgroundColor: "#eef2ff",
+    backgroundColor: "#EAF8F5",
   },
 
   callPillText: {
     fontSize: 13,
     fontWeight: "800",
-    color: "#4f46e5",
+    color: "#0E7C86",
   },
 
   closeButton: {
@@ -375,12 +375,12 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     alignItems: "center",
     borderRadius: 16,
-    backgroundColor: "#f1f5f9",
+    backgroundColor: "#EDF5F4",
   },
 
   closeButtonText: {
     fontSize: 15,
     fontWeight: "800",
-    color: "#334155",
+    color: "#31515F",
   },
 });

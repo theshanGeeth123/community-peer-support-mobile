@@ -38,7 +38,7 @@ export default function RoleAreaGuard({
       <View style={styles.loadingContainer}>
         <ActivityIndicator
           size="large"
-          color="#4f46e5"
+          color="#0E7C86"
         />
       </View>
     );
@@ -71,6 +71,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#f8fafc",
+    backgroundColor: "#F5FAF9",
   },
 });

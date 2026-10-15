@@ -26,7 +26,6 @@ import {
 import {
   router,
   useFocusEffect,
-  type Href,
 } from "expo-router";
 
 import {
@@ -224,7 +223,7 @@ export default function ModeratorGroupsScreen() {
             <Ionicons
               name="shield-checkmark-outline"
               size={25}
-              color="#4f46e5"
+              color="#0E7C86"
             />
           </View>
 
@@ -259,7 +258,7 @@ export default function ModeratorGroupsScreen() {
           <Ionicons
             name="search-outline"
             size={20}
-            color="#94a3b8"
+            color="#8BA3AB"
           />
 
           <TextInput
@@ -268,7 +267,7 @@ export default function ModeratorGroupsScreen() {
               setSearch
             }
             placeholder="Search groups..."
-            placeholderTextColor="#94a3b8"
+            placeholderTextColor="#8BA3AB"
             style={
               styles.searchInput
             }
@@ -299,7 +298,7 @@ export default function ModeratorGroupsScreen() {
           >
             <ActivityIndicator
               size="large"
-              color="#4f46e5"
+              color="#0E7C86"
             />
 
             <Text
@@ -320,7 +319,7 @@ export default function ModeratorGroupsScreen() {
             <Ionicons
               name="shield-outline"
               size={34}
-              color="#94a3b8"
+              color="#8BA3AB"
             />
 
             <Text
@@ -365,7 +364,7 @@ export default function ModeratorGroupsScreen() {
                     <Ionicons
                       name="people"
                       size={23}
-                      color="#4f46e5"
+                      color="#0E7C86"
                     />
                   </View>
 
@@ -410,7 +409,7 @@ export default function ModeratorGroupsScreen() {
                   onPress={() =>
                     router.push({
                       pathname:
-                        "/(app)/moderator/group/[groupId]/members" as Href,
+                        "/(app)/moderator/group/[groupId]/members",
 
                       params: {
                         groupId:
@@ -425,7 +424,7 @@ export default function ModeratorGroupsScreen() {
                   <Ionicons
                     name="people-circle-outline"
                     size={20}
-                    color="#4f46e5"
+                    color="#0E7C86"
                   />
 
                   <Text
@@ -439,7 +438,7 @@ export default function ModeratorGroupsScreen() {
                   <Ionicons
                     name="chevron-forward"
                     size={19}
-                    color="#6366f1"
+                    color="#168994"
                   />
                 </Pressable>
 
@@ -447,7 +446,7 @@ export default function ModeratorGroupsScreen() {
                   onPress={() =>
                     router.push({
                       pathname:
-                        "/(app)/moderator/group/[groupId]/posts" as Href,
+                        "/(app)/moderator/group/[groupId]/posts",
 
                       params: {
                         groupId:
@@ -463,7 +462,7 @@ export default function ModeratorGroupsScreen() {
                   <Ionicons
                     name="chatbubbles-outline"
                     size={20}
-                    color="#4f46e5"
+                    color="#0E7C86"
                   />
 
                   <Text
@@ -477,7 +476,7 @@ export default function ModeratorGroupsScreen() {
                   <Ionicons
                     name="chevron-forward"
                     size={19}
-                    color="#6366f1"
+                    color="#168994"
                   />
                 </Pressable>
               </View>
@@ -494,7 +493,7 @@ const styles =
     safeArea: {
       flex: 1,
       backgroundColor:
-        "#f8fafc",
+        "#F5FAF9",
     },
 
     content: {
@@ -511,13 +510,13 @@ const styles =
     heading: {
       fontSize: 28,
       fontWeight: "800",
-      color: "#0f172a",
+      color: "#0E2A47",
     },
 
     description: {
       marginTop: 6,
       lineHeight: 21,
-      color: "#64748b",
+      color: "#64808C",
     },
 
     summaryCard: {
@@ -529,7 +528,7 @@ const styles =
         "center",
       borderWidth: 1,
       borderColor:
-        "#e2e8f0",
+        "#E0EDEB",
       borderRadius: 20,
       backgroundColor:
         "#ffffff",
@@ -544,19 +543,19 @@ const styles =
         "center",
       borderRadius: 16,
       backgroundColor:
-        "#eef2ff",
+        "#EAF8F5",
     },
 
     summaryLabel: {
       fontSize: 12,
-      color: "#64748b",
+      color: "#64808C",
     },
 
     summaryValue: {
       marginTop: 2,
       fontSize: 25,
       fontWeight: "800",
-      color: "#0f172a",
+      color: "#0E2A47",
     },
 
     searchBox: {
@@ -570,7 +569,7 @@ const styles =
         "center",
       borderWidth: 1,
       borderColor:
-        "#e2e8f0",
+        "#E0EDEB",
       borderRadius: 16,
       backgroundColor:
         "#ffffff",
@@ -579,7 +578,7 @@ const styles =
     searchInput: {
       flex: 1,
       marginLeft: 9,
-      color: "#0f172a",
+      color: "#0E2A47",
     },
 
     errorBox: {
@@ -605,7 +604,7 @@ const styles =
 
     loadingText: {
       marginTop: 10,
-      color: "#64748b",
+      color: "#64808C",
     },
 
     emptyCard: {
@@ -615,7 +614,7 @@ const styles =
         "center",
       borderWidth: 1,
       borderColor:
-        "#e2e8f0",
+        "#E0EDEB",
       borderRadius: 20,
       backgroundColor:
         "#ffffff",
@@ -624,12 +623,12 @@ const styles =
     emptyTitle: {
       marginTop: 10,
       fontWeight: "700",
-      color: "#475569",
+      color: "#4D6C78",
     },
 
     emptyText: {
       marginTop: 5,
-      color: "#94a3b8",
+      color: "#8BA3AB",
     },
 
     groupCard: {
@@ -637,7 +636,7 @@ const styles =
       padding: 17,
       borderWidth: 1,
       borderColor:
-        "#e2e8f0",
+        "#E0EDEB",
       borderRadius: 20,
       backgroundColor:
         "#ffffff",
@@ -659,26 +658,26 @@ const styles =
         "center",
       borderRadius: 14,
       backgroundColor:
-        "#eef2ff",
+        "#EAF8F5",
     },
 
     groupName: {
       fontSize: 17,
       fontWeight: "800",
-      color: "#0f172a",
+      color: "#0E2A47",
     },
 
     category: {
       marginTop: 3,
       fontSize: 12,
       fontWeight: "600",
-      color: "#6366f1",
+      color: "#168994",
     },
 
     groupDescription: {
       marginTop: 13,
       lineHeight: 20,
-      color: "#475569",
+      color: "#4D6C78",
     },
 
     manageButton: {
@@ -692,16 +691,16 @@ const styles =
         "center",
       borderWidth: 1,
       borderColor:
-        "#c7d2fe",
+        "#B7E7DA",
       borderRadius: 13,
       backgroundColor:
-        "#eef2ff",
+        "#EAF8F5",
     },
 
     manageButtonText: {
       flex: 1,
       marginLeft: 8,
       fontWeight: "700",
-      color: "#4f46e5",
+      color: "#0E7C86",
     },
   });
