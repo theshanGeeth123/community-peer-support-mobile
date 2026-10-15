@@ -3,6 +3,7 @@ import apiClient from "@/services/api/apiClient";
 import type { ApiResponse } from "@/features/auth/types/auth.types";
 
 import type {
+  AiReview,
   ModerationActionSummary,
   Report,
   ReportListParams,
@@ -118,6 +119,18 @@ export const moderationApi = {
         moderationAction: rawAction ? (coerceId(rawAction) as unknown as ModerationActionSummary) : null,
       },
     };
+  },
+
+  // --- Moderation: AI review suggestion for a report (MODERATOR) ------------
+  // Backend route: GET /reports/:id/ai-review
+
+  async getReportAiReview(
+    reportId: string
+  ): Promise<ApiResponse<{ aiReview: AiReview }>> {
+    const response = await apiClient.get<
+      ApiResponse<{ aiReview: AiReview }>
+    >(`/reports/${reportId}/ai-review`);
+    return response.data;
   },
 
 };

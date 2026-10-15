@@ -17,6 +17,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 
 import { useReportDetail } from "@/features/moderation/hooks/useReportDetail";
+import { useAiReview } from "@/features/moderation/hooks/useAiReview";
+import AiReviewCard from "@/features/moderation/components/AiReviewCard";
 import ReasonBadge from "@/features/moderation/components/ReasonBadge";
 import ReportStatusBadge from "@/features/moderation/components/ReportStatusBadge";
 
@@ -79,6 +81,9 @@ export default function ModeratorReportDetailScreen() {
 
   const { report, moderationAction, loading, error, reviewing, reviewError, reviewReport, refetch } =
     useReportDetail(reportId);
+
+  const { aiReview, loading: aiLoading, error: aiError, generate: generateAiReview } =
+    useAiReview(reportId);
 
   const [selectedAction, setSelectedAction] = useState<ModerationActionType | null>(null);
   const [reason, setReason] = useState("");
@@ -316,6 +321,16 @@ export default function ModeratorReportDetailScreen() {
               })() : null}
             </View>
           ) : null}
+
+          {/* AI Review — on-demand, only for PENDING reports */}
+          {isPending && (
+            <AiReviewCard
+              aiReview={aiReview}
+              loading={aiLoading}
+              error={aiError}
+              onGenerate={() => void generateAiReview()}
+            />
+          )}
 
           {/* Review form */}
           {isPending ? (
