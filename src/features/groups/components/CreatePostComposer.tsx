@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import {
   ActivityIndicator,
   Alert,
+  AppState,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -21,6 +22,11 @@ import {
   CONTENT_WARNING_OPTIONS,
 } from "../constants/contentWarnings";
 
+import {
+  postDraftStorage,
+  type PostDraft,
+} from "@/storage/postDraft.storage";
+
 import type {
   ContentWarning,
   CreatePostPayload,
@@ -28,6 +34,11 @@ import type {
 } from "../types/post.types";
 
 const MAX_CONTENT_LENGTH = 3000;
+
+/*
+ * How long after the last change the draft is written to the phone.
+ */
+const DRAFT_SAVE_DELAY_MS = 1000;
 
 /*
  * Same limits as the backend upload middleware.
@@ -73,6 +84,7 @@ export default function CreatePostComposer({
   onSubmit,
   groupOptions,
   autoExpandKey,
+  draftKey,
 }: {
   currentUserName?: string;
   submitting: boolean;
@@ -91,6 +103,13 @@ export default function CreatePostComposer({
    * focuses the text box (used by "shake → Write a post").
    */
   autoExpandKey?: string;
+
+  /*
+   * When set, the text and options are auto-saved on this phone under
+   * this key and restored next time (see postDraft.storage.ts).
+   * Photos are not saved.
+   */
+  draftKey?: string;
 }) {
   const [expanded, setExpanded] = useState(false);
   const [content, setContent] = useState("");
@@ -135,6 +154,158 @@ export default function CreatePostComposer({
     return undefined;
   }, [autoExpandKey]);
 
+  /*
+  |--------------------------------------------------------------------------
+  | AUTO-SAVED DRAFT
+  |--------------------------------------------------------------------------
+  |
+  | The text and options are saved on this phone about a second after
+  | typing stops, and restored the next time the composer is shown.
+  |
+  | draftReadyRef  → false until the stored draft has been read, so an
+  |                  empty composer can never overwrite a saved draft
+  | unsavedDraftRef → the latest changes not yet written; flushed when
+  |                  the composer goes away or the app is backgrounded
+  |
+  */
+
+  const [hasRestoredDraft, setHasRestoredDraft] = useState(false);
+
+  const draftReadyRef = useRef(false);
+  const contentRef = useRef(content);
+  contentRef.current = content;
+
+  const groupOptionsRef = useRef(groupOptions);
+  groupOptionsRef.current = groupOptions;
+
+  const unsavedDraftRef = useRef<{
+    draftKey: string;
+    draft: Omit<PostDraft, "savedAt">;
+  } | null>(null);
+
+  const flushDraft = useCallback(() => {
+    const unsaved = unsavedDraftRef.current;
+
+    if (!unsaved) {
+      return;
+    }
+
+    unsavedDraftRef.current = null;
+
+    if (unsaved.draft.content.trim().length > 0) {
+      void postDraftStorage.saveDraft(unsaved.draftKey, unsaved.draft);
+    } else {
+      void postDraftStorage.removeDraft(unsaved.draftKey);
+    }
+  }, []);
+
+  /*
+   * Load the stored draft. Runs again if the composer is reused for
+   * another group (draftKey changes).
+   */
+  useEffect(() => {
+    draftReadyRef.current = false;
+    setHasRestoredDraft(false);
+
+    if (!draftKey) {
+      return undefined;
+    }
+
+    let cancelled = false;
+
+    postDraftStorage.getDraft(draftKey).then((draft) => {
+      if (cancelled) {
+        return;
+      }
+
+      /*
+       * Only restore into an empty composer — never over text the
+       * member has already started typing.
+       */
+      if (draft && contentRef.current.length === 0) {
+        setContent(draft.content);
+        setIsAnonymous(draft.isAnonymous);
+        setContentWarnings(draft.contentWarnings);
+
+        if (
+          draft.selectedGroupId &&
+          groupOptionsRef.current?.some(
+            (option) => option.id === draft.selectedGroupId
+          )
+        ) {
+          setSelectedGroupId(draft.selectedGroupId);
+        }
+
+        setHasRestoredDraft(true);
+      }
+
+      draftReadyRef.current = true;
+    });
+
+    return () => {
+      cancelled = true;
+
+      /*
+       * Leaving this draft (screen closed, or switched to another
+       * group): write anything not saved yet, then start clean.
+       */
+      flushDraft();
+
+      setContent("");
+      setIsAnonymous(false);
+      setContentWarnings([]);
+      setImage(null);
+    };
+  }, [draftKey, flushDraft]);
+
+  /*
+   * Save about a second after the last change.
+   */
+  useEffect(() => {
+    if (!draftKey || !draftReadyRef.current) {
+      return undefined;
+    }
+
+    unsavedDraftRef.current = {
+      draftKey,
+      draft: { content, isAnonymous, contentWarnings, selectedGroupId },
+    };
+
+    const timeout = setTimeout(flushDraft, DRAFT_SAVE_DELAY_MS);
+
+    return () => clearTimeout(timeout);
+  }, [
+    draftKey,
+    content,
+    isAnonymous,
+    contentWarnings,
+    selectedGroupId,
+    flushDraft,
+  ]);
+
+  /*
+   * App sent to the background (or about to be closed): save now.
+   */
+  useEffect(() => {
+    const subscription = AppState.addEventListener("change", (state) => {
+      if (state !== "active") {
+        flushDraft();
+      }
+    });
+
+    return () => subscription.remove();
+  }, [flushDraft]);
+
+  const discardDraft = () => {
+    unsavedDraftRef.current = null;
+
+    if (draftKey) {
+      void postDraftStorage.removeDraft(draftKey);
+    }
+
+    setHasRestoredDraft(false);
+  };
+
   const resetForm = () => {
     setContent("");
     setIsAnonymous(false);
@@ -142,6 +313,55 @@ export default function CreatePostComposer({
     setContentWarnings([]);
     setShowWarningPicker(false);
     setExpanded(false);
+  };
+
+  /*
+   * Cancel with text in the box: ask, because the text is a saved
+   * draft and silently deleting it would defeat the point.
+   */
+  const handleCancel = () => {
+    if (content.trim().length === 0) {
+      discardDraft();
+      resetForm();
+      return;
+    }
+
+    if (!draftKey) {
+      resetForm();
+      return;
+    }
+
+    Alert.alert("Keep this draft?", "You can come back and finish it later.", [
+      {
+        text: "Discard",
+        style: "destructive",
+        onPress: () => {
+          discardDraft();
+          resetForm();
+        },
+      },
+      {
+        text: "Keep draft",
+        onPress: () => {
+          flushDraft();
+          setExpanded(false);
+        },
+      },
+    ]);
+  };
+
+  const handleDiscardRestoredDraft = () => {
+    Alert.alert("Discard draft?", "The saved text will be deleted.", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Discard",
+        style: "destructive",
+        onPress: () => {
+          discardDraft();
+          resetForm();
+        },
+      },
+    ]);
   };
 
   const handlePickImage = async () => {
@@ -216,6 +436,10 @@ export default function CreatePostComposer({
     );
 
     if (created) {
+      /*
+       * Posted: the draft has done its job.
+       */
+      discardDraft();
       resetForm();
     }
   };
@@ -248,13 +472,39 @@ export default function CreatePostComposer({
           />
         ) : (
           <Pressable style={styles.trigger} onPress={handleExpand}>
-            <Text style={styles.triggerText}>What's on your mind?</Text>
+            {content.trim().length > 0 ? (
+              <Text numberOfLines={1} style={styles.triggerDraftText}>
+                Draft: {content.trim()}
+              </Text>
+            ) : (
+              <Text style={styles.triggerText}>What's on your mind?</Text>
+            )}
           </Pressable>
         )}
       </View>
 
       {expanded && (
         <>
+          {/* RESTORED DRAFT */}
+
+          {hasRestoredDraft && (
+            <View style={styles.draftNote}>
+              <Ionicons name="document-text-outline" size={14} color="#4f46e5" />
+
+              <Text style={styles.draftNoteText}>
+                Draft restored — saved on this phone only
+              </Text>
+
+              <Pressable
+                hitSlop={8}
+                disabled={submitting}
+                onPress={handleDiscardRestoredDraft}
+              >
+                <Text style={styles.draftDiscardText}>Discard</Text>
+              </Pressable>
+            </View>
+          )}
+
           {groupOptions && groupOptions.length > 1 && (
             <View style={styles.groupPickerSection}>
               <Text style={styles.groupPickerLabel}>Posting to</Text>
@@ -432,7 +682,7 @@ export default function CreatePostComposer({
             <View style={styles.footerButtons}>
               <Pressable
                 disabled={submitting}
-                onPress={resetForm}
+                onPress={handleCancel}
                 style={styles.cancelButton}
               >
                 <Text style={styles.cancelButtonText}>Cancel</Text>
@@ -518,6 +768,36 @@ const styles = StyleSheet.create({
   triggerText: {
     fontSize: 14,
     color: "#94a3b8",
+  },
+
+  triggerDraftText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#4f46e5",
+  },
+
+  draftNote: {
+    marginTop: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 12,
+    backgroundColor: "#eef2ff",
+  },
+
+  draftNoteText: {
+    flex: 1,
+    marginHorizontal: 7,
+    fontSize: 12,
+    fontWeight: "600",
+    color: "#4338ca",
+  },
+
+  draftDiscardText: {
+    fontSize: 12,
+    fontWeight: "800",
+    color: "#be123c",
   },
 
   input: {

@@ -36,7 +36,14 @@ import type {
   PostSort,
 } from "@/features/groups/types/post.types";
 
-import { getApiErrorMessage } from "@/services/api/apiError";
+import {
+  getApiErrorMessage,
+  isNotFoundError,
+} from "@/services/api/apiError";
+
+import { buildPostDraftKey } from "@/storage/postDraft.storage";
+
+import LanguageButton from "@/features/language/components/LanguageButton";
 
 import SubmitReportSheet from "@/features/moderation/components/SubmitReportSheet";
 
@@ -115,6 +122,15 @@ function sortPosts(posts: Post[]) {
   });
 }
 
+function getSingleParam(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value[0] : value;
+}
+
+/*
+ * How long a post opened from a notification stays highlighted.
+ */
+const FOCUS_HIGHLIGHT_MS = 2500;
+
 export default function GroupPostsScreen() {
   const params = useLocalSearchParams();
   const rawGroupId = params.groupId;
@@ -122,6 +138,14 @@ export default function GroupPostsScreen() {
   const groupId = Array.isArray(rawGroupId)
     ? rawGroupId[0]
     : rawGroupId;
+
+  /*
+   * Set when the screen is opened from a notification:
+   * scroll to this post, highlight it, and maybe open its comments.
+   */
+  const focusPostId = getSingleParam(params.focusPostId);
+  const focusKey = getSingleParam(params.focusKey);
+  const focusOpensComments = getSingleParam(params.openComments) === "1";
 
   const { user } = useAuth();
 
@@ -213,6 +237,36 @@ export default function GroupPostsScreen() {
     useRef(false);
 
   /*
+  |--------------------------------------------------------------------------
+  | OPENED FROM A NOTIFICATION
+  |--------------------------------------------------------------------------
+  |
+  | highlightedPostId      → briefly tinted so the eye lands on it
+  | notificationPostId     → a post that was not in the loaded feed and
+  |                          was fetched on its own; it is shown at the
+  |                          top with a "From your notification" label
+  | loadCount              → goes up after every completed feed load, so
+  |                          the focus runs once the posts are on screen
+  |
+  */
+
+  const [highlightedPostId, setHighlightedPostId] = useState<string | null>(
+    null
+  );
+  const [notificationPostId, setNotificationPostId] = useState<string | null>(
+    null
+  );
+  const [loadCount, setLoadCount] = useState(0);
+
+  const scrollRef = useRef<ScrollView | null>(null);
+  const postPositionsRef = useRef(new Map<string, number>());
+  const pendingScrollPostIdRef = useRef<string | null>(null);
+  const handledFocusKeyRef = useRef<string | null>(null);
+
+  const postsRef = useRef<Post[]>([]);
+  postsRef.current = posts;
+
+  /*
    * Fetches posts for the current search/sort.
    * Responses from older requests are ignored, so fast typing
    * or quick sort changes cannot show stale results.
@@ -253,18 +307,14 @@ export default function GroupPostsScreen() {
       const isDefault =
         !q && sort === "newest";
 
-      setPosts(
-        isDefault
-          ? sortPosts(fetchedPosts)
-          : fetchedPosts
-      );
+      setPosts(isDefault ? sortPosts(fetchedPosts) : fetchedPosts);
+      setSearchResultCount(q ? response.data.pagination.totalPosts : null);
 
-      setSearchResultCount(
-        q
-          ? response.data.pagination
-              .totalPosts
-          : null
-      );
+      /*
+       * The list was replaced, so a post added on top from a
+       * notification is no longer in it.
+       */
+      setNotificationPostId(null);
     },
     [groupId]
   );
@@ -278,6 +328,12 @@ export default function GroupPostsScreen() {
       try {
         if (showLoading) {
           setLoading(true);
+
+          /*
+           * The list is rebuilt after the spinner, so every post is
+           * measured again; old positions would be wrong.
+           */
+          postPositionsRef.current.clear();
         }
 
         setError(null);
@@ -347,6 +403,8 @@ export default function GroupPostsScreen() {
         );
 
         hasLoadedRef.current = true;
+
+        setLoadCount((count) => count + 1);
       } catch (requestError) {
         setError(
           getApiErrorMessage(
@@ -411,6 +469,161 @@ export default function GroupPostsScreen() {
     sortOption,
     fetchPosts,
   ]);
+
+  /*
+   * Scrolls to a post if its position is known. Otherwise remembers
+   * it, and the post's onLayout does the scroll once it is measured.
+   */
+  const scrollToPost = useCallback((postId: string) => {
+    const y = postPositionsRef.current.get(postId);
+
+    if (y === undefined) {
+      pendingScrollPostIdRef.current = postId;
+      return;
+    }
+
+    pendingScrollPostIdRef.current = null;
+
+    scrollRef.current?.scrollTo({ y: Math.max(0, y - 12), animated: true });
+  }, []);
+
+  const handlePostLayout = (postId: string, y: number) => {
+    postPositionsRef.current.set(postId, y);
+
+    if (pendingScrollPostIdRef.current === postId) {
+      scrollToPost(postId);
+    }
+  };
+
+  /*
+   * Runs after each completed feed load. Handles a focus request from
+   * a notification once: finds the post (fetching it if it is older
+   * than the loaded page), scrolls to it, highlights it, and opens its
+   * comments when asked.
+   */
+  useEffect(() => {
+    if (loadCount === 0 || !focusPostId || !groupId) {
+      return undefined;
+    }
+
+    const requestKey = `${groupId}:${focusPostId}:${focusKey ?? ""}`;
+
+    if (handledFocusKeyRef.current === requestKey) {
+      return undefined;
+    }
+
+    handledFocusKeyRef.current = requestKey;
+
+    let cancelled = false;
+    let finished = false;
+
+    const showPost = () => {
+      finished = true;
+
+      setHighlightedPostId(focusPostId);
+      scrollToPost(focusPostId);
+
+      if (focusOpensComments) {
+        /*
+         * A short pause so the member sees which post it is
+         * before its comments slide up.
+         */
+        setTimeout(() => setActiveCommentsPostId(focusPostId), 450);
+      }
+    };
+
+    const focusOnPost = async () => {
+      if (postsRef.current.some((post) => post.id === focusPostId)) {
+        showPost();
+        return;
+      }
+
+      /*
+       * Not in the loaded page (an older post): fetch it on its own
+       * and show it at the top.
+       */
+      try {
+        const response = await postApi.getPost(focusPostId);
+        const fetchedPost = response.data.post;
+
+        if (cancelled) {
+          return;
+        }
+
+        if (fetchedPost.isRemoved || fetchedPost.group !== groupId) {
+          finished = true;
+
+          Alert.alert(
+            "Post not available",
+            "This post is no longer available."
+          );
+          return;
+        }
+
+        setPosts((previous) =>
+          previous.some((post) => post.id === fetchedPost.id)
+            ? previous
+            : [fetchedPost, ...previous]
+        );
+
+        setNotificationPostId(fetchedPost.id);
+        showPost();
+      } catch (requestError) {
+        if (cancelled) {
+          return;
+        }
+
+        finished = true;
+
+        /*
+         * 404 = deleted by its author or removed by a moderator.
+         */
+        Alert.alert(
+          "Post not available",
+          isNotFoundError(requestError)
+            ? "This post is no longer available."
+            : getApiErrorMessage(requestError)
+        );
+      }
+    };
+
+    void focusOnPost();
+
+    return () => {
+      cancelled = true;
+
+      /*
+       * Interrupted while still fetching the post: allow the next
+       * run to handle this request again.
+       */
+      if (!finished) {
+        handledFocusKeyRef.current = null;
+      }
+    };
+  }, [
+    loadCount,
+    focusPostId,
+    focusKey,
+    focusOpensComments,
+    groupId,
+    scrollToPost,
+  ]);
+
+  /*
+   * The highlight fades after a moment.
+   */
+  useEffect(() => {
+    if (!highlightedPostId) {
+      return undefined;
+    }
+
+    const timeout = setTimeout(
+      () => setHighlightedPostId(null),
+      FOCUS_HIGHLIGHT_MS
+    );
+
+    return () => clearTimeout(timeout);
+  }, [highlightedPostId]);
 
   const clearSearch = () => {
     setSearchText("");
@@ -754,18 +967,13 @@ export default function GroupPostsScreen() {
           {group?.name ?? "Posts"}
         </Text>
 
-        <View
-          style={{ width: 42 }}
-        />
+        <LanguageButton />
       </View>
 
       <ScrollView
-        contentContainerStyle={
-          styles.content
-        }
-        showsVerticalScrollIndicator={
-          false
-        }
+        ref={scrollRef}
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
         refreshControl={
           <RefreshControl
@@ -916,20 +1124,18 @@ export default function GroupPostsScreen() {
             </Text>
           )}
 
-        {canPost &&
-          !isSearchActive && (
-            <CreatePostComposer
-              currentUserName={
-                user?.fullName
-              }
-              submitting={
-                submittingPost
-              }
-              onSubmit={
-                handleCreatePost
-              }
-            />
-          )}
+        {canPost && !isSearchActive && (
+          <CreatePostComposer
+            currentUserName={user?.fullName}
+            submitting={submittingPost}
+            onSubmit={handleCreatePost}
+            draftKey={
+              user && groupId
+                ? buildPostDraftKey(user.id, `group:${groupId}`)
+                : undefined
+            }
+          />
+        )}
 
         {error && (
           <View
@@ -1096,49 +1302,34 @@ export default function GroupPostsScreen() {
           </View>
         ) : (
           posts.map((post) => (
-            <PostCard
+            /*
+             * The wrapper records where each post sits, so a post
+             * opened from a notification can be scrolled to.
+             */
+            <View
               key={post.id}
-              post={post}
-              currentUserId={
-                user?.id
+              onLayout={(event) =>
+                handlePostLayout(post.id, event.nativeEvent.layout.y)
               }
-              canModerate={
-                canModerateAll
-              }
-              onToggleReaction={(
-                reactionType
-              ) =>
-                void handleToggleReaction(
-                  post.id,
-                  reactionType
-                )
-              }
-              onOpenComments={() =>
-                setActiveCommentsPostId(
-                  post.id
-                )
-              }
-              onDelete={() =>
-                handleDeletePost(
-                  post.id
-                )
-              }
-              onTogglePin={() =>
-                void handleTogglePin(
-                  post.id
-                )
-              }
-              onReport={() =>
-                setReportingPostId(
-                  post.id
-                )
-              }
-              onMarkCrisisHandled={() =>
-                void handleMarkCrisisHandled(
-                  post.id
-                )
-              }
-            />
+            >
+              <PostCard
+                post={post}
+                currentUserId={user?.id}
+                canModerate={canModerateAll}
+                highlighted={post.id === highlightedPostId}
+                fromNotification={post.id === notificationPostId}
+                onToggleReaction={(reactionType) =>
+                  void handleToggleReaction(post.id, reactionType)
+                }
+                onOpenComments={() => setActiveCommentsPostId(post.id)}
+                onDelete={() => handleDeletePost(post.id)}
+                onTogglePin={() => void handleTogglePin(post.id)}
+                onReport={() => setReportingPostId(post.id)}
+                onMarkCrisisHandled={() =>
+                  void handleMarkCrisisHandled(post.id)
+                }
+              />
+            </View>
           ))
         )}
       </ScrollView>
