@@ -288,36 +288,6 @@ export default function LoginScreen() {
         )}
       />
 
-      <View className={themeClass("my-6 flex-row items-center")}>
-        <View className={themeClass("h-px flex-1 bg-slate-200")} />
-
-        <Text className={themeClass("mx-3 text-sm text-slate-400")}>
-          or continue with
-        </Text>
-
-        <View className={themeClass("h-px flex-1 bg-slate-200")} />
-      </View>
-
-      <Pressable
-        className={themeClass("min-h-14 flex-row items-center justify-center rounded-2xl border border-slate-300 bg-white")}
-        onPress={() => {
-          /*
-           * Google Login will be integrated
-           * separately.
-           */
-        }}
-      >
-        <Ionicons
-          name="logo-google"
-          size={20}
-          color={themeTone("#31515F", "color")}
-        />
-
-        <Text className={themeClass("ml-3 font-bold text-slate-700")}>
-          Continue with Google
-        </Text>
-      </Pressable>
-
       <View className={themeClass("mt-6 flex-row justify-center")}>
         <Text className={themeClass("text-slate-500")}>
           Don't have an account?{" "}

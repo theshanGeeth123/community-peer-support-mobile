@@ -1,74 +1,44 @@
-import { useThemeTone, useThemedStyles } from '@/theme/useAlyvenAppearance';
-import {
-  ActivityIndicator,
-  StyleSheet,
-  View,
-} from "react-native";
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { Redirect, type Href } from 'expo-router';
 
-import {
-  Redirect,
-} from "expo-router";
-
-import {
-  useAuth,
-} from "@/features/auth/hooks/useAuth";
-
-import {
-  getRoleHomeRoute,
-} from "@/features/navigation/roleNavigation";
+import { useAuth } from '@/features/auth/hooks/useAuth';
+import { getRoleHomeRoute } from '@/features/navigation/roleNavigation';
+import { hasCompletedOnboarding } from '@/features/onboarding/onboarding.storage';
+import { useTheme } from '@/theme/ThemeProvider';
 
 export default function IndexScreen() {
-  const themeStyles = useThemedStyles(styles);
-  const themeTone = useThemeTone();
+  const { user, isAuthenticated, isInitializing } = useAuth();
+  const { colors } = useTheme();
+  const [onboardingComplete, setOnboardingComplete] = useState<boolean | null>(null);
 
-  const {
-    user,
-    isAuthenticated,
-    isInitializing,
-  } = useAuth();
+  useEffect(() => {
+    let mounted = true;
+    void hasCompletedOnboarding().then((completed) => {
+      if (mounted) setOnboardingComplete(completed);
+    });
+    return () => { mounted = false; };
+  }, []);
 
-  if (isInitializing) {
+  if (isInitializing || onboardingComplete === null) {
     return (
-      <View style={themeStyles.container}>
-        <ActivityIndicator
-          size="large"
-          color={themeTone("#0E7C86", "color")}
-        />
+      <View style={[styles.loading, { backgroundColor: colors.background }]}>
+        <ActivityIndicator size="large" color={colors.teal} />
       </View>
     );
   }
 
-  if (
-    isAuthenticated &&
-    user
-  ) {
-    return (
-      <Redirect
-        href={getRoleHomeRoute(
-          user.role
-        )}
-      />
-    );
+  if (isAuthenticated && user) {
+    return <Redirect href={getRoleHomeRoute(user.role)} />;
   }
 
-  return (
-    <Redirect
-      href="/(auth)/login"
-    />
-  );
+  if (!onboardingComplete) {
+    return <Redirect href={'/onboarding' as Href} />;
+  }
+
+  return <Redirect href="/(auth)/login" />;
 }
 
-const styles =
-  StyleSheet.create({
-    container: {
-      flex: 1,
-
-      alignItems: "center",
-
-      justifyContent:
-        "center",
-
-      backgroundColor:
-        "#F5FAF9",
-    },
-  });
+const styles = StyleSheet.create({
+  loading: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+});

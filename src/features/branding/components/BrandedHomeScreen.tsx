@@ -1,6 +1,7 @@
 import { useThemeTone, useThemedStyles } from '@/theme/useAlyvenAppearance';
-import { type ReactNode } from 'react';
+import { type ReactNode, useEffect, useRef, useState } from 'react';
 import {
+  Animated,
   Image,
   Pressable,
   ScrollView,
@@ -11,13 +12,13 @@ import {
 import { type Href, router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import LottieView from 'lottie-react-native';
 
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import BrandMark from '@/features/branding/components/BrandMark';
 import NeedsResponseQuickAction from '@/features/groups/components/NeedsResponseQuickAction';
 import NotificationBell from '@/features/notifications/components/NotificationBell';
 import { Brand } from '@/theme/brand';
+import { useTheme } from '@/theme/ThemeProvider';
 
 type HomeRole = 'USER' | 'PEER_SUPPORTER' | 'MODERATOR' | 'ADMIN';
 type IconName = keyof typeof Ionicons.glyphMap;
@@ -91,6 +92,73 @@ const roleSettings: Record<HomeRole, {
   },
 };
 
+type HeroCopy = {
+  eyebrow: string;
+  heading: string;
+  description: string;
+  highlights: string[];
+};
+
+/** Two additional slides for each role; existing home copy remains slide one. */
+const additionalHeroSlides: Record<HomeRole, HeroCopy[]> = {
+  USER: [
+    {
+      eyebrow: 'DISCOVER YOUR SPACE',
+      heading: 'Find a community\nthat feels right.',
+      description: 'Explore peer-support groups, discover shared interests, and take the first step when you feel ready.',
+      highlights: ['Explore', 'Discover', 'Connect'],
+    },
+    {
+      eyebrow: 'A PLACE TO BELONG',
+      heading: 'Good conversations\nstart with care.',
+      description: 'Make space to listen, share your thoughts, and grow meaningful connections with your community.',
+      highlights: ['Listen', 'Share', 'Grow'],
+    },
+  ],
+  PEER_SUPPORTER: [
+    {
+      eyebrow: 'GUIDE WITH EMPATHY',
+      heading: 'Help new voices\nfeel welcome.',
+      description: 'Thoughtfully review requests and introduce members to supportive group conversations.',
+      highlights: ['Welcome', 'Connect', 'Support'],
+    },
+    {
+      eyebrow: 'BE PRESENT, BE KIND',
+      heading: 'A listening ear\ncan make space.',
+      description: 'Encourage respectful participation and help groups remain warm and welcoming.',
+      highlights: ['Listen', 'Respect', 'Encourage'],
+    },
+  ],
+  MODERATOR: [
+    {
+      eyebrow: 'CARE THROUGH ACTION',
+      heading: 'Thoughtful reviews.\nStronger trust.',
+      description: 'Address reported content with consistency, care and clear decisions.',
+      highlights: ['Assess', 'Respond', 'Protect'],
+    },
+    {
+      eyebrow: 'NURTURE EVERY SPACE',
+      heading: 'Keep conversations\nrespectful.',
+      description: 'Support healthy group participation with transparent and responsible moderation.',
+      highlights: ['Guide', 'Moderate', 'Improve'],
+    },
+  ],
+  ADMIN: [
+    {
+      eyebrow: 'BRING PEOPLE TOGETHER',
+      heading: 'Build communities\nwith purpose.',
+      description: 'Coordinate users, groups and access from one organized workspace.',
+      highlights: ['Organize', 'Connect', 'Grow'],
+    },
+    {
+      eyebrow: 'SUPPORT PLATFORM TRUST',
+      heading: 'Better oversight.\nBetter experiences.',
+      description: 'Monitor community activity and strengthen responsible management at every level.',
+      highlights: ['Review', 'Support', 'Improve'],
+    },
+  ],
+};
+
 function ActionCard({ action, wide }: { action: HomeAction; wide?: boolean }) {
   const themeStyles = useThemedStyles(styles);
   const themeTone = useThemeTone();
@@ -117,6 +185,10 @@ function ActionCard({ action, wide }: { action: HomeAction; wide?: boolean }) {
 export default function BrandedHomeScreen({ role }: { role: HomeRole }) {
   const themeStyles = useThemedStyles(styles);
   const themeTone = useThemeTone();
+  const { isDark, colors } = useTheme();
+  const [heroIndex, setHeroIndex] = useState(0);
+  const heroOpacity = useRef(new Animated.Value(1)).current;
+  const heroOffset = useRef(new Animated.Value(0)).current;
 
   const { user } = useAuth();
   const firstName = user?.fullName?.trim().split(/\s+/)[0] || 'there';
@@ -125,6 +197,28 @@ export default function BrandedHomeScreen({ role }: { role: HomeRole }) {
     ? '/(app)/moderator/needs-response'
     : '/(app)/peer-supporter/needs-response';
   const showResponse = role === 'MODERATOR' || role === 'PEER_SUPPORTER';
+  const heroSlides: HeroCopy[] = [
+    { eyebrow: settings.eyebrow, heading: settings.heading, description: settings.description, highlights: settings.highlights },
+    ...additionalHeroSlides[role],
+  ];
+  const currentHero = heroSlides[heroIndex] ?? heroSlides[0];
+
+  // Rotate every four seconds; clean up when the screen unmounts or role changes.
+  useEffect(() => {
+    setHeroIndex(0);
+    const timer = setInterval(() => setHeroIndex((previous) => (previous + 1) % 3), 4000);
+    return () => clearInterval(timer);
+  }, [role]);
+
+  useEffect(() => {
+    heroOpacity.setValue(0.2);
+    heroOffset.setValue(20);
+    Animated.parallel([
+      Animated.timing(heroOpacity, { toValue: 1, duration: 450, useNativeDriver: true }),
+      Animated.timing(heroOffset, { toValue: 0, duration: 450, useNativeDriver: true }),
+    ]).start();
+    return () => { heroOpacity.stopAnimation(); heroOffset.stopAnimation(); };
+  }, [heroIndex, heroOpacity, heroOffset]);
 
   return (
     <SafeAreaView style={themeStyles.safe} edges={['top', 'left', 'right']}>
@@ -150,43 +244,60 @@ export default function BrandedHomeScreen({ role }: { role: HomeRole }) {
         <View style={themeStyles.hero}>
           <View pointerEvents="none" style={themeStyles.heroOrbitOne} />
           <View pointerEvents="none" style={themeStyles.heroOrbitTwo} />
-          <View style={themeStyles.heroBadge}>
-            <View style={themeStyles.badgeDot} />
-            <Text style={themeStyles.heroBadgeText}>{settings.badge}</Text>
-          </View>
-          <Text style={themeStyles.heroEyebrow}>{settings.eyebrow}</Text>
-          <Text style={themeStyles.heroTitle}>{settings.heading}</Text>
-          <Text style={themeStyles.heroDescription}>{settings.description}</Text>
-          <View style={themeStyles.heroFooter}>
-            {settings.highlights.map((item, index) => (
-              <View key={item} style={themeStyles.heroHighlight}>
-                {index > 0 && <View style={themeStyles.highlightDot} />}
-                <Text style={themeStyles.heroHighlightText}>{item}</Text>
-              </View>
-            ))}
-          </View>
           <Image
             source={require('../../../../assets/images/logo.png')}
             style={themeStyles.heroMark}
             resizeMode="contain"
             accessible={false}
           />
+          <Animated.View style={{ opacity: heroOpacity, transform: [{ translateX: heroOffset }] }}>
+            <View style={themeStyles.heroBadge}>
+              <View style={themeStyles.badgeDot} />
+              <Text style={themeStyles.heroBadgeText}>{settings.badge}</Text>
+            </View>
+            <Text style={themeStyles.heroEyebrow}>{currentHero.eyebrow}</Text>
+            <Text style={themeStyles.heroTitle}>{currentHero.heading}</Text>
+            <Text style={themeStyles.heroDescription}>{currentHero.description}</Text>
+            <View style={themeStyles.heroFooter}>
+              {currentHero.highlights.map((item, index) => (
+                <View key={item} style={themeStyles.heroHighlight}>
+                  {index > 0 && <View style={themeStyles.highlightDot} />}
+                  <Text style={themeStyles.heroHighlightText}>{item}</Text>
+                </View>
+              ))}
+            </View>
+          </Animated.View>
+          <View style={themeStyles.heroNavigation}>
+            <View style={themeStyles.heroDots}>
+              {heroSlides.map((slide, index) => (
+                <Pressable
+                  key={`${role}-${slide.eyebrow}`}
+                  onPress={() => setHeroIndex(index)}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Show home banner ${index + 1} of ${heroSlides.length}`}
+                  style={[themeStyles.heroDot, { width: heroIndex === index ? 27 : 8, backgroundColor: heroIndex === index ? Brand.aqua : '#517987' }]}
+                />
+              ))}
+            </View>
+            <Text style={themeStyles.heroCounter}>0{heroIndex + 1} / 0{heroSlides.length}</Text>
+          </View>
         </View>
 
         {role === 'USER' && (
-          <View style={themeStyles.wellbeingCard}>
-            <View style={themeStyles.wellbeingAnimation}>
-              <LottieView
-                source={require('../../../../assets/animations/breathing-pulse.json')}
-                autoPlay
-                loop
-                style={themeStyles.animation}
-              />
+          <View style={[themeStyles.wellbeingCard, { backgroundColor: isDark ? '#143C42' : '#DFF4EE', borderColor: isDark ? '#286067' : '#C8E8E0' }]}>
+            <View style={[themeStyles.wellbeingIconFrame, { backgroundColor: isDark ? '#215560' : '#FFFFFF' }]}>
+              <View style={themeStyles.wellbeingIconCore}>
+                <Ionicons name="heart-outline" size={25} color="#FFFFFF" />
+              </View>
             </View>
             <View style={themeStyles.wellbeingCopy}>
-              <Text style={themeStyles.wellbeingLabel}>A GENTLE REMINDER</Text>
-              <Text style={themeStyles.wellbeingTitle}>Make room for yourself.</Text>
-              <Text style={themeStyles.wellbeingDescription}>A little moment of calm can go a long way.</Text>
+              <Text style={[themeStyles.wellbeingLabel, { color: colors.teal }]}>A MOMENT FOR YOU</Text>
+              <Text style={[themeStyles.wellbeingTitle, { color: colors.text }]}>Your pace. Your space.</Text>
+              <Text style={[themeStyles.wellbeingDescription, { color: colors.muted }]}>Take your time. Meaningful connection begins with feeling comfortable.</Text>
+              <View style={themeStyles.wellbeingTagRow}>
+                <Ionicons name="leaf-outline" size={13} color={colors.teal} />
+                <Text style={[themeStyles.wellbeingTag, { color: colors.teal }]}>Gentle steps, genuine support</Text>
+              </View>
             </View>
           </View>
         )}
@@ -230,7 +341,7 @@ const styles = StyleSheet.create({
   welcomeName: { color: Brand.navy, fontSize: 28, letterSpacing: -0.8, fontWeight: '800', marginTop: 4 },
   welcomeDot: { color: Brand.teal },
   welcomeIcon: { width: 44, height: 44, backgroundColor: Brand.mint, borderRadius: 16, justifyContent: 'center', alignItems: 'center' },
-  hero: { backgroundColor: Brand.navy, borderRadius: 29, minHeight: 262, paddingHorizontal: 23, paddingTop: 23, paddingBottom: 21, overflow: 'hidden' },
+  hero: { backgroundColor: Brand.navy, borderRadius: 29, minHeight: 306, paddingHorizontal: 23, paddingTop: 23, paddingBottom: 18, overflow: 'hidden', justifyContent: 'space-between' },
   heroOrbitOne: { position: 'absolute', backgroundColor: '#14536B', height: 250, width: 250, borderRadius: 125, top: -124, right: -130, opacity: 0.55 },
   heroOrbitTwo: { position: 'absolute', borderWidth: 40, borderColor: '#166A76', height: 230, width: 230, borderRadius: 115, bottom: -167, right: -80, opacity: 0.6 },
   heroBadge: { alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center', backgroundColor: '#245069', borderRadius: 20, paddingHorizontal: 11, paddingVertical: 7 },
@@ -244,13 +355,19 @@ const styles = StyleSheet.create({
   highlightDot: { height: 3, width: 3, borderRadius: 2, backgroundColor: Brand.aqua, marginHorizontal: 10 },
   heroHighlightText: { color: Brand.aqua, fontSize: 11, fontWeight: '700' },
   heroMark: { width: 95, height: 95, position: 'absolute', right: -15, top: 43, opacity: 0.14 },
-  wellbeingCard: { marginTop: 16, padding: 16, borderRadius: 23, backgroundColor: Brand.mint, flexDirection: 'row', alignItems: 'center' },
-  wellbeingAnimation: { width: 80, height: 80, backgroundColor: '#F7FFFD', borderRadius: 22, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
-  animation: { width: 108, height: 108 },
+  heroNavigation: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 16 },
+  heroDots: { flexDirection: 'row', alignItems: 'center', gap: 7 },
+  heroDot: { height: 7, borderRadius: 4 },
+  heroCounter: { color: '#9FD0D2', fontSize: 10, fontWeight: '800', letterSpacing: 1.2 },
+  wellbeingCard: { marginTop: 16, padding: 16, borderRadius: 23, borderWidth: 1, flexDirection: 'row', alignItems: 'center' },
+  wellbeingIconFrame: { width: 64, height: 76, borderRadius: 19, alignItems: 'center', justifyContent: 'center' },
+  wellbeingIconCore: { height: 46, width: 46, borderRadius: 16, backgroundColor: '#0E7C86', alignItems: 'center', justifyContent: 'center' },
   wellbeingCopy: { flex: 1, paddingLeft: 14 },
-  wellbeingLabel: { fontSize: 9, color: Brand.teal, letterSpacing: 1.1, fontWeight: '800' },
-  wellbeingTitle: { fontSize: 16, color: Brand.navy, fontWeight: '800', marginTop: 5 },
-  wellbeingDescription: { fontSize: 12, lineHeight: 18, color: '#376A74', marginTop: 5 },
+  wellbeingLabel: { fontSize: 9, letterSpacing: 1.4, fontWeight: '900' },
+  wellbeingTitle: { fontSize: 16, fontWeight: '800', marginTop: 5 },
+  wellbeingDescription: { fontSize: 11.5, lineHeight: 17.5, marginTop: 5 },
+  wellbeingTagRow: { flexDirection: 'row', gap: 5, alignItems: 'center', marginTop: 11 },
+  wellbeingTag: { fontSize: 9.5, fontWeight: '700' },
   sectionHeading: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 27, marginBottom: 15 },
   sectionEyebrow: { color: Brand.teal, fontSize: 10, fontWeight: '800', letterSpacing: 1.3 },
   sectionTitle: { color: Brand.navy, fontSize: 21, fontWeight: '800', marginTop: 4, letterSpacing: -0.45 },
