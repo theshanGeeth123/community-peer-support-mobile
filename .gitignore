@@ -43,6 +43,5 @@ example
 /android
 
 
-.env
-.env.local
 .env*.local
+config.bat

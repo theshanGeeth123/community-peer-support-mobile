@@ -547,6 +547,28 @@ export default function PublicChatbotWidget() {
               onContentSizeChange={
                 scrollToBottom
               }
+              ListHeaderComponent={messages.length === 1 ? (
+                <View style={themeStyles.suggestions}>
+                  <Text style={themeStyles.suggestionsTitle}>QUICK QUESTIONS</Text>
+                  {[
+                    'How do I join a support group?',
+                    'How can I report a post?',
+                    'Where do I find my notifications?',
+                  ].map((question) => (
+                    <Pressable
+                      key={question}
+                      accessibilityRole="button"
+                      accessibilityLabel={`Ask: ${question}`}
+                      onPress={() => setInput(question)}
+                      style={themeStyles.suggestionButton}
+                    >
+                      <Ionicons name="sparkles-outline" size={15} color={themeTone('#0E7C86', 'color')} />
+                      <Text style={themeStyles.suggestionText}>{question}</Text>
+                      <Ionicons name="arrow-forward" size={14} color={themeTone('#64808C', 'color')} />
+                    </Pressable>
+                  ))}
+                </View>
+              ) : null}
               ListFooterComponent={
                 isSending ? (
                   <View
@@ -1132,5 +1154,35 @@ const styles =
     sendButtonDisabled: {
       backgroundColor:
         "#C4D8DA",
+    },
+    suggestions: {
+      marginBottom: 17,
+      paddingHorizontal: 4,
+    },
+    suggestionsTitle: {
+      color: '#64808C',
+      letterSpacing: 1.2,
+      fontSize: 10,
+      fontWeight: '900',
+      marginBottom: 10,
+    },
+    suggestionButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 9,
+      minHeight: 44,
+      paddingVertical: 9,
+      paddingHorizontal: 11,
+      marginBottom: 7,
+      borderWidth: 1,
+      borderColor: '#E0EDEB',
+      backgroundColor: '#FFFFFF',
+      borderRadius: 14,
+    },
+    suggestionText: {
+      flex: 1,
+      fontSize: 11.5,
+      fontWeight: '600',
+      color: '#31515F',
     },
   });

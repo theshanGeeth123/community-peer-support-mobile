@@ -1,7 +1,9 @@
 import { useThemeTone, useThemedStyles } from '@/theme/useAlyvenAppearance';
-import { type ReactNode, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
+  AccessibilityInfo,
   Animated,
+  AppState,
   Image,
   Pressable,
   ScrollView,
@@ -9,7 +11,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import { type Href, router } from 'expo-router';
+import { type Href, router, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -187,6 +189,10 @@ export default function BrandedHomeScreen({ role }: { role: HomeRole }) {
   const themeTone = useThemeTone();
   const { isDark, colors } = useTheme();
   const [heroIndex, setHeroIndex] = useState(0);
+  const [isFocused, setIsFocused] = useState(false);
+  const [isForeground, setIsForeground] = useState(AppState.currentState === 'active');
+  const [reducedMotion, setReducedMotion] = useState(false);
+  const [manuallyPaused, setManuallyPaused] = useState(false);
   const heroOpacity = useRef(new Animated.Value(1)).current;
   const heroOffset = useRef(new Animated.Value(0)).current;
 
@@ -203,14 +209,56 @@ export default function BrandedHomeScreen({ role }: { role: HomeRole }) {
   ];
   const currentHero = heroSlides[heroIndex] ?? heroSlides[0];
 
-  // Rotate every four seconds; clean up when the screen unmounts or role changes.
+  useFocusEffect(useCallback(() => {
+    setIsFocused(true);
+    return () => setIsFocused(false);
+  }, []));
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (state) => {
+      setIsForeground(state === 'active');
+    });
+    return () => subscription.remove();
+  }, []);
+
+  useEffect(() => {
+    let mounted = true;
+    void AccessibilityInfo.isReduceMotionEnabled().then((enabled) => {
+      if (mounted) setReducedMotion(enabled);
+    }).catch(() => {});
+    const subscription = AccessibilityInfo.addEventListener('reduceMotionChanged', setReducedMotion);
+    return () => { mounted = false; subscription.remove(); };
+  }, []);
+
   useEffect(() => {
     setHeroIndex(0);
-    const timer = setInterval(() => setHeroIndex((previous) => (previous + 1) % 3), 4000);
-    return () => clearInterval(timer);
+    setManuallyPaused(false);
   }, [role]);
 
   useEffect(() => {
+    if (!manuallyPaused) return;
+    const timeout = setTimeout(() => setManuallyPaused(false), 12000);
+    return () => clearTimeout(timeout);
+  }, [manuallyPaused]);
+
+  // Autoplay only while visible and active. Manual navigation pauses for 12s.
+  useEffect(() => {
+    if (!isFocused || !isForeground || reducedMotion || manuallyPaused) return;
+    const timer = setInterval(() => setHeroIndex((previous) => (previous + 1) % 3), 4000);
+    return () => clearInterval(timer);
+  }, [role, isFocused, isForeground, reducedMotion, manuallyPaused]);
+
+  const chooseHero = (index: number) => {
+    setHeroIndex(index);
+    setManuallyPaused(true);
+  };
+
+  useEffect(() => {
+    if (reducedMotion) {
+      heroOpacity.setValue(1);
+      heroOffset.setValue(0);
+      return;
+    }
     heroOpacity.setValue(0.2);
     heroOffset.setValue(20);
     Animated.parallel([
@@ -218,7 +266,7 @@ export default function BrandedHomeScreen({ role }: { role: HomeRole }) {
       Animated.timing(heroOffset, { toValue: 0, duration: 450, useNativeDriver: true }),
     ]).start();
     return () => { heroOpacity.stopAnimation(); heroOffset.stopAnimation(); };
-  }, [heroIndex, heroOpacity, heroOffset]);
+  }, [heroIndex, heroOpacity, heroOffset, reducedMotion]);
 
   return (
     <SafeAreaView style={themeStyles.safe} edges={['top', 'left', 'right']}>
@@ -272,14 +320,33 @@ export default function BrandedHomeScreen({ role }: { role: HomeRole }) {
               {heroSlides.map((slide, index) => (
                 <Pressable
                   key={`${role}-${slide.eyebrow}`}
-                  onPress={() => setHeroIndex(index)}
+                  onPress={() => chooseHero(index)}
                   accessibilityRole="button"
+                  accessibilityState={{ selected: heroIndex === index }}
                   accessibilityLabel={`Show home banner ${index + 1} of ${heroSlides.length}`}
                   style={[themeStyles.heroDot, { width: heroIndex === index ? 27 : 8, backgroundColor: heroIndex === index ? Brand.aqua : '#517987' }]}
                 />
               ))}
             </View>
-            <Text style={themeStyles.heroCounter}>0{heroIndex + 1} / 0{heroSlides.length}</Text>
+            <View style={themeStyles.heroControls}>
+              <Pressable
+                onPress={() => chooseHero((heroIndex + heroSlides.length - 1) % heroSlides.length)}
+                accessibilityRole="button"
+                accessibilityLabel="Previous home banner"
+                style={themeStyles.heroControl}
+              >
+                <Ionicons name="chevron-back" size={17} color="#D8F3EA" />
+              </Pressable>
+              <Text style={themeStyles.heroCounter}>0{heroIndex + 1} / 0{heroSlides.length}</Text>
+              <Pressable
+                onPress={() => chooseHero((heroIndex + 1) % heroSlides.length)}
+                accessibilityRole="button"
+                accessibilityLabel="Next home banner"
+                style={themeStyles.heroControl}
+              >
+                <Ionicons name="chevron-forward" size={17} color="#D8F3EA" />
+              </Pressable>
+            </View>
           </View>
         </View>
 
@@ -358,7 +425,9 @@ const styles = StyleSheet.create({
   heroNavigation: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 16 },
   heroDots: { flexDirection: 'row', alignItems: 'center', gap: 7 },
   heroDot: { height: 7, borderRadius: 4 },
-  heroCounter: { color: '#9FD0D2', fontSize: 10, fontWeight: '800', letterSpacing: 1.2 },
+  heroCounter: { color: '#D8F3EA', fontSize: 10, fontWeight: '800', letterSpacing: 1.1 },
+  heroControls: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  heroControl: { width: 34, height: 34, borderRadius: 12, borderWidth: 1, borderColor: '#417083', backgroundColor: '#214A5F', alignItems: 'center', justifyContent: 'center' },
   wellbeingCard: { marginTop: 16, padding: 16, borderRadius: 23, borderWidth: 1, flexDirection: 'row', alignItems: 'center' },
   wellbeingIconFrame: { width: 64, height: 76, borderRadius: 19, alignItems: 'center', justifyContent: 'center' },
   wellbeingIconCore: { height: 46, width: 46, borderRadius: 16, backgroundColor: '#0E7C86', alignItems: 'center', justifyContent: 'center' },

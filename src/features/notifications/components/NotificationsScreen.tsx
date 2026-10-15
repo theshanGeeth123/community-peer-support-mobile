@@ -257,6 +257,8 @@ export default function NotificationsScreen() {
     return (
       <Pressable
         key={notification.id}
+        accessibilityRole="button"
+        accessibilityLabel={getNotificationText(notification)}
         onPress={() => handleOpenNotification(notification)}
         style={[themeStyles.item, !notification.isRead && themeStyles.itemUnread]}
       >
@@ -295,7 +297,7 @@ export default function NotificationsScreen() {
   return (
     <SafeAreaView style={themeStyles.safeArea} edges={["top", "left", "right"]}>
       <View style={themeStyles.header}>
-        <Pressable onPress={() => router.back()} style={themeStyles.backButton}>
+        <Pressable accessibilityRole="button" accessibilityLabel="Back" onPress={() => router.back()} style={themeStyles.backButton}>
           <Ionicons name="arrow-back" size={22} color={themeTone("#0E2A47", "color")} />
         </Pressable>
 
@@ -304,6 +306,8 @@ export default function NotificationsScreen() {
         {unreadCount > 0 ? (
           <Pressable
             disabled={markingAll}
+            accessibilityRole="button"
+            accessibilityLabel="Mark all notifications as read"
             hitSlop={8}
             onPress={() => void handleMarkAllRead()}
             style={themeStyles.markAllButton}
@@ -328,7 +332,16 @@ export default function NotificationsScreen() {
       >
         {error && (
           <View style={themeStyles.errorBox}>
-            <Text style={themeStyles.errorText}>{error}</Text>
+            <Ionicons name="cloud-offline-outline" size={22} color={themeTone("#b91c1c", "color")} />
+            <Text style={[themeStyles.errorText, { marginTop: 7 }]}>{error}</Text>
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => void loadNotifications()}
+              style={themeStyles.retryButton}
+            >
+              <Text style={themeStyles.retryText}>Try again</Text>
+              <Ionicons name="refresh-outline" size={15} color={themeTone("#0E7C86", "color")} />
+            </Pressable>
           </View>
         )}
 
@@ -355,6 +368,16 @@ export default function NotificationsScreen() {
           </View>
         ) : (
           <>
+            <View style={themeStyles.activityHeader}>
+              <View>
+                <Text style={themeStyles.activityEyebrow}>STAY CONNECTED</Text>
+                <Text style={themeStyles.activityTitle}>Recent activity</Text>
+              </View>
+              <View style={themeStyles.activityPill}>
+                <Ionicons name="notifications-outline" size={15} color={themeTone("#0E7C86", "color")} />
+                <Text style={themeStyles.activityPillText}>{unreadCount} unread</Text>
+              </View>
+            </View>
             {unreadCount > 0 && (
               <Text style={themeStyles.unreadSummary}>
                 {unreadCount} unread · tap ✓✓ to mark all as read
@@ -431,6 +454,18 @@ const styles = StyleSheet.create({
     paddingBottom: 60,
   },
 
+  activityHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 18,
+  },
+  activityEyebrow: { color: '#0E7C86', fontSize: 10, fontWeight: '900', letterSpacing: 1.2 },
+  activityTitle: { color: '#0E2A47', fontWeight: '900', fontSize: 22, marginTop: 5 },
+  activityPill: { flexDirection: 'row', gap: 6, alignItems: 'center', borderRadius: 20, backgroundColor: '#EAF8F5', paddingHorizontal: 12, paddingVertical: 9 },
+  activityPillText: { fontSize: 11, color: '#0E7C86', fontWeight: '800' },
+  retryButton: { marginTop: 12, flexDirection: 'row', alignItems: 'center', gap: 7, paddingVertical: 10 },
+  retryText: { color: '#0E7C86', fontWeight: '800', fontSize: 13 },
   unreadSummary: {
     marginBottom: 12,
     fontSize: 12,
