@@ -1,7 +1,16 @@
+
 {
   "name": "app",
   "main": "expo-router/entry",
   "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "lint": "expo lint"
+  },
   "dependencies": {
     "@expo/ui": "~57.0.12",
     "@expo/vector-icons": "^15.0.2",
@@ -47,16 +56,7 @@
     "tailwindcss": "^4.3.3",
     "typescript": "~6.0.3"
   },
-  "scripts": {
-    "start": "node init && expo start",
-    "reset-project": "node ./scripts/reset-project.js",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web",
-    "lint": "expo lint"
-  },
   "overrides": {
     "lightningcss": "1.30.1"
-  },
-  "private": true
+  }
 }
